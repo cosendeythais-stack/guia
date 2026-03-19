@@ -872,7 +872,7 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
     </div>
     <div class="modal-body">
       <div style="background:var(--blue-lt);border:1.5px solid var(--blue-bd);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--gray700);line-height:1.8">
-        📋 Importe um arquivo com prescrições (<strong>.json</strong>, <strong>.docx</strong>, <strong>.doc</strong> ou <strong>.pdf</strong>). O sistema verifica automaticamente:<br>
+        📋 Importe um arquivo com prescrições (<strong>.txt</strong>, <strong>.json</strong>, <strong>.docx</strong>, <strong>.doc</strong> ou <strong>.pdf</strong>). O sistema verifica automaticamente:<br>
         <span style="color:var(--green)">✅ Novo</span> → adicionado normalmente &nbsp;|&nbsp;
         <span style="color:var(--orange)">⚠️ Similar</span> → medicamento diferente vira nota &nbsp;|&nbsp;
         <span style="color:var(--gray500)">⊘ Duplicado</span> → ignorado
@@ -892,9 +892,9 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
         ondrop="handleIgDrop(event)">
         <div style="font-size:28px;margin-bottom:8px">📎</div>
         <div style="font-size:13px;color:var(--gray600)">Clique para selecionar ou arraste o arquivo aqui</div>
-        <div style="font-size:11px;color:var(--gray400);margin-top:4px">Suporta .json, .docx, .doc, .pdf</div>
+        <div style="font-size:11px;color:var(--gray400);margin-top:4px">Suporta .txt, .json, .docx, .doc, .pdf</div>
       </div>
-      <input type="file" id="igUploadFile" accept=".json,.doc,.docx,.pdf,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none" onchange="handleIgUpload(event)">
+      <input type="file" id="igUploadFile" accept=".txt,.json,.doc,.docx,.pdf,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none" onchange="handleIgUpload(event)">
       <div id="igPreview" style="display:none;margin-top:14px">
         <label>Análise dos itens</label>
         <div id="igPreviewContent" style="background:var(--gray50);border:1px solid var(--gray200);border-radius:6px;padding:10px;max-height:220px;overflow-y:auto;font-size:12px;line-height:1.7"></div>
@@ -4994,83 +4994,275 @@ function processIgFile(file) {
   const isPDF  = name.endsWith('.pdf')  || file.type === 'application/pdf';
   const isDOCX = name.endsWith('.docx') || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
   const isDOC  = name.endsWith('.doc')  || file.type === 'application/msword';
+  const isTXT  = name.endsWith('.txt');
+  const isHTML = name.endsWith('.html') || name.endsWith('.htm');
+  const isJSON = name.endsWith('.json');
 
-  // Para Word e PDF: extrai texto → converte em itens → passa pelo analisador
-  if (isPDF || isDOCX || isDOC) {
-    const afterExtract = (raw) => {
-      const parsed = _rxParseText(raw, file.name);
-      const items = parsed.map(p => ({ title: p.title, content: p.content, icon: p.icon || '💊' }));
-      _igRunAnalysis(items);
-    };
-    if (isPDF)       { _igExtractAndRun(file, 'pdf',  afterExtract); return; }
-    if (isDOCX)      { _igExtractAndRun(file, 'docx', afterExtract); return; }
-    if (isDOC)       { _igExtractAndRun(file, 'doc',  afterExtract); return; }
-  }
-
-  // JSON — fluxo original
-  if (!name.endsWith('.json')) { toast('⚠️ Use .json, .docx, .doc ou .pdf'); return; }
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    let items = [];
-    try {
-      const parsed = JSON.parse(e.target.result);
-      if (Array.isArray(parsed)) items = parsed;
-      else if (parsed.items) items = parsed.items;
-      else { toast('⚠️ JSON inválido — esperado array de itens'); return; }
-    } catch(err) { toast('⚠️ Erro ao ler JSON: ' + err.message); return; }
+  const run = (raw) => {
+    const items = _igSmartParse(raw, file.name);
+    if (!items.length) { toast('⚠️ Nenhuma prescrição detectada no arquivo'); return; }
     _igRunAnalysis(items);
   };
-  reader.readAsText(file);
-}
 
-// ── Lê arquivo binário e chama callback com texto extraído ──
-function _igExtractAndRun(file, type, cb) {
+  if (isJSON) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      let items = [];
+      try {
+        const parsed = JSON.parse(e.target.result);
+        if (Array.isArray(parsed)) items = parsed;
+        else if (parsed.items) items = parsed.items;
+        else { toast('⚠️ JSON inválido — esperado array de itens'); return; }
+      } catch(err) { toast('⚠️ Erro ao ler JSON: ' + err.message); return; }
+      _igRunAnalysis(items);
+    };
+    reader.readAsText(file);
+    return;
+  }
+
+  if (isTXT) {
+    const reader = new FileReader();
+    reader.onload = e => run(e.target.result);
+    reader.readAsText(file, 'UTF-8');
+    return;
+  }
+
+  if (isHTML) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const raw = e.target.result.replace(/<[^>]+>/g,'\n').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').replace(/\n{3,}/g,'\n\n').trim();
+      run(raw);
+    };
+    reader.readAsText(file, 'UTF-8');
+    return;
+  }
+
+  if (!isPDF && !isDOCX && !isDOC) { toast('⚠️ Use .txt, .json, .docx, .doc ou .pdf'); return; }
+
   const reader = new FileReader();
   reader.onload = ev => {
     try {
-      if (type === 'docx') {
+      let raw = '';
+      if (isDOCX) {
         const str = new TextDecoder('utf-8', {fatal:false}).decode(new Uint8Array(ev.target.result));
-        const xmlStart = str.indexOf('<w:body');
-        const xmlEnd   = str.indexOf('</w:body>');
-        let raw = '';
-        if (xmlStart !== -1 && xmlEnd !== -1) {
-          raw = str.slice(xmlStart, xmlEnd + 9)
-            .replace(/<w:p[ >]/g, '\n')
-            .replace(/<w:t[^>]*>([^<]*)<\/w:t>/g, '$1')
-            .replace(/<[^>]+>/g, '')
-            .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&apos;/g,"'").replace(/&quot;/g,'"')
-            .replace(/\n{3,}/g, '\n\n').trim();
+        const xs = str.indexOf('<w:body'), xe = str.indexOf('</w:body>');
+        if (xs !== -1 && xe !== -1) {
+          raw = str.slice(xs, xe+9)
+            .replace(/<w:p[ >]/g,'\n').replace(/<w:t[^>]*>([^<]*)<\/w:t>/g,'$1').replace(/<[^>]+>/g,'')
+            .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/\n{3,}/g,'\n\n').trim();
         } else {
           raw = str.replace(/[^\x20-\x7E\xA0-\xFF\n\r\t]/g,' ').replace(/ {4,}/g,'\n').trim();
         }
-        if (!raw) { toast('⚠️ Não foi possível extrair texto do DOCX'); return; }
-        cb(raw);
-      } else if (type === 'pdf') {
+      } else if (isDOC) {
+        raw = new TextDecoder('latin1').decode(new Uint8Array(ev.target.result))
+          .replace(/[^\x20-\x7E\xA0-\xFF\n\r\t]/g,' ').replace(/ {3,}/g,'\n').trim();
+      } else {
         const str = new TextDecoder('latin1').decode(new Uint8Array(ev.target.result));
-        let raw = '';
         const re = /BT[\s\S]*?ET/g; let m;
         while ((m = re.exec(str)) !== null) {
-          const texts = [];
           const tRe = /\(([^)\\]*(?:\\.[^)\\]*)*)\)\s*Tj/g; let t;
+          const texts = [];
           while ((t = tRe.exec(m[0])) !== null)
-            texts.push(t[1].replace(/\\n/g,'\n').replace(/\\r/g,'').replace(/\\\(/g,'(').replace(/\\\)/g,')').replace(/\\\\/g,'\\'));
+            texts.push(t[1].replace(/\\n/g,'\n').replace(/\\\(/g,'(').replace(/\\\)/g,')').replace(/\\\\/g,'\\'));
           if (texts.length) raw += texts.join(' ') + '\n';
         }
         if (!raw.trim()) raw = str.replace(/[^\x20-\x7E\xA0-\xFF\n]/g,' ').replace(/ {5,}/g,'\n').trim();
         if (!raw.trim()) { toast('⚠️ PDF protegido ou sem texto extraível'); return; }
-        cb(raw.trim());
-      } else {
-        // .doc binário
-        const raw = new TextDecoder('latin1').decode(new Uint8Array(ev.target.result))
-          .replace(/[^\x20-\x7E\xA0-\xFF\n\r\t]/g,' ').replace(/ {3,}/g,'\n').trim();
-        cb(raw);
       }
+      if (!raw.trim()) { toast('⚠️ Não foi possível extrair texto do arquivo'); return; }
+      run(raw.trim());
     } catch(e) { toast('⚠️ Erro ao processar arquivo: ' + e.message); }
   };
   reader.readAsArrayBuffer(file);
 }
 
-// ── Roda a análise e exibe preview ──
+// ════════════════════════════════════════════════════════════
+// PARSER INTELIGENTE DE PRESCRIÇÕES
+// Detecta múltiplas prescrições, organiza vias de uso,
+// medicações, posologia, seções e ícone automaticamente.
+// ════════════════════════════════════════════════════════════
+function _igSmartParse(raw, filename) {
+  const text = raw.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  const fileTitle = filename.replace(/\.[^.]+$/, '').trim();
+
+  // ── Linhas de lixo de receituário a ignorar completamente ──
+  const LIXO_RE = [
+    /^(paciente|patient)\s*:/i,
+    /^(médico|medico|doutor|doutora|dr\.?|dra\.?)\s*[:\-]/i,
+    /^(crm|crf|cfm|cro|cns)\s*[:\-nº°#\d]/i,
+    /^(data|date)\s*[:\/\-]/i,
+    /^(endereço|endereco|rua|av\.|avenida|logradouro|alameda)/i,
+    /^(tel|fone|telefone|celular|whatsapp)\s*[:\.]/i,
+    /^(cnpj|cpf|rg)\s*[:\.]/i,
+    /^(receituário|receituario|prescri[cç][aã]o\s+médica|prescri[cç][aã]o)/i,
+    /^(hospital|clínica|clinica|consultório|consultorio|unidade de saúde)/i,
+    /^(cidade|cep|bairro|estado|município|municipio)\s*[:.\/]/i,
+    /^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}\s*$/,
+    /^\s*_{3,}\s*$/,
+    /^(assinatura|ass\.|carimbo|rubrica)\s*/i,
+    /^(válid|valido|validade|prescrevo|prescrito)/i,
+    /^(atenciosamente|cordialmente|respeitosamente)/i,
+  ];
+  function isLixo(line) { return LIXO_RE.some(re => re.test(line.trim())); }
+
+  // ── Detectar se uma linha é título de diagnóstico ──
+  // Critérios: linha curta (3-80 chars), começa com letra maiúscula,
+  // não parece medicação (sem traços longos, sem mg/ml, sem verbos de posologia)
+  function isDiagnostico(line) {
+    const t = line.trim();
+    if (t.length < 3 || t.length > 80) return false;
+    if (!/^[A-ZÁÉÍÓÚÃÕÂÊÎÔÛÇÜÀÈÌÒÙÑa-z]/.test(t)) return false;
+    if (/[-–—─]{3,}/.test(t)) return false;                         // linha de traços = medicação
+    if (/\d+\s*(mg|mcg|ml|g|ui|meq|cp|amp|fr|cx|gts)/i.test(t)) return false; // tem dose = medicação
+    if (/^(USO\s|VIA\s|TOMAR|DAR\s|APLICAR|FAZER\s|USAR\s|PINGAR|INALAR|DILUIR|CORRER|#)/i.test(t)) return false;
+    if (isLixo(t)) return false;
+    return true;
+  }
+
+  // ── Dividir o texto em blocos por diagnóstico ──
+  const allLines = text.split('\n');
+  const blocks = [];
+  let cur = { title: fileTitle, lines: [] };
+
+  for (let i = 0; i < allLines.length; i++) {
+    const raw_line = allLines[i];
+    const t = raw_line.trim();
+
+    // Pular linhas de lixo de receituário
+    if (isLixo(t)) continue;
+
+    // Linha vazia: separador entre blocos
+    if (t === '') {
+      cur.lines.push('');
+      continue;
+    }
+
+    // Detectar título de diagnóstico:
+    // - linha precedida de linha vazia (ou início do arquivo)
+    // - linha seguida de prescrição (próxima não-vazia começa com USO/VIA/nº/medicação)
+    const prevEmpty = i === 0 || allLines[i-1].trim() === '';
+    const nextNonEmpty = allLines.slice(i+1).find(l => l.trim() !== '')?.trim() || '';
+    const nextIsPresc = /^(USO\s|VIA\s|\d+[)\.]\s|#)/i.test(nextNonEmpty)
+                     || /[-–—─]{3,}/.test(nextNonEmpty);
+
+    if (prevEmpty && isDiagnostico(t) && (nextIsPresc || cur.lines.every(l => l.trim() === ''))) {
+      // Salvar bloco anterior se tiver conteúdo de prescrição
+      if (cur.lines.some(l => _hasPresc(l))) blocks.push(cur);
+      cur = { title: t, lines: [] };
+      continue;
+    }
+
+    cur.lines.push(raw_line);
+  }
+  // Último bloco
+  if (cur.lines.some(l => _hasPresc(l))) blocks.push(cur);
+
+  // Se não dividiu em blocos (arquivo com 1 prescrição), usar nome do arquivo como título
+  if (!blocks.length) {
+    const allContent = allLines.filter(l => !isLixo(l.trim())).join('\n');
+    return [_igBuildItem(fileTitle, allContent, 0)].filter(Boolean);
+  }
+
+  return blocks.map((b, i) => _igBuildItem(b.title, b.lines.join('\n'), i)).filter(Boolean);
+}
+
+// Verifica se a linha tem conteúdo de prescrição real
+function _hasPresc(line) {
+  const t = line.trim();
+  return t.length > 0
+    && !/^\s*$/.test(t)
+    && !(/^(paciente|médico|crm|data|endereço|cnpj|cpf|assinatura)/i.test(t));
+}
+
+// Constrói um item final a partir de título + texto bruto da prescrição
+function _igBuildItem(title, rawContent, idx) {
+  // Limpar o conteúdo: preservar exatamente como está no documento,
+  // apenas removendo linhas de lixo e normalizando espaços
+  const LIXO_RE2 = [
+    /^(paciente|patient)\s*:/i,
+    /^(médico|medico|dr\.?|dra\.?)\s*[:\-]/i,
+    /^(crm|crf|cfm|cro|cns)\s*[:\-nº°#\d]/i,
+    /^(data|date)\s*[:\/\-]/i,
+    /^(endereço|endereco|rua|av\.)\s/i,
+    /^(tel|fone|telefone|celular)\s*[:\.]/i,
+    /^(cnpj|cpf|rg)\s*[:\.]/i,
+    /^(receituário|receituario|prescri[cç][aã]o\s+médica)/i,
+    /^(hospital|clínica|clinica|consultório)/i,
+    /^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}\s*$/,
+    /^\s*_{3,}\s*$/,
+    /^(assinatura|ass\.|carimbo|válid|valido)/i,
+    /^(atenciosamente|cordialmente)/i,
+  ];
+  function isLx(l) { return LIXO_RE2.some(re => re.test(l.trim())); }
+
+  const contentLines = rawContent.split('\n')
+    .filter(l => !isLx(l))
+    .map(l => l.trimEnd());       // preserva indentação inicial, remove só trailing
+
+  // Remover linhas vazias no início e fim
+  while (contentLines.length && contentLines[0].trim() === '') contentLines.shift();
+  while (contentLines.length && contentLines[contentLines.length-1].trim() === '') contentLines.pop();
+
+  // Colapsar linhas vazias múltiplas em uma única
+  const clean = [];
+  let wasEmpty = false;
+  for (const l of contentLines) {
+    if (l.trim() === '') { if (!wasEmpty) clean.push(''); wasEmpty = true; }
+    else { clean.push(l); wasEmpty = false; }
+  }
+
+  const content = clean.join('\n').trim();
+  if (!content) return null;
+
+  // Ícone pelo TÍTULO do diagnóstico (não pelo conteúdo)
+  const up = title.toUpperCase();
+  let icon = '💊';
+  if (/AFTA|ESTOMATITE|BOCA/.test(up))                                      icon = '😮';
+  else if (/AMIDALITE|AMIGDALITE|TONSILITE|FARINGITE|FARINGOAMIG/.test(up)) icon = '🦠';
+  else if (/PNEUMONIA|BRONCOPNEUMONIA/.test(up))                             icon = '🫁';
+  else if (/ASMA|BRONCOESPASMO|BRONQUITE/.test(up))                         icon = '💨';
+  else if (/SINUSITE|RINITE|RINOSSINUSITE/.test(up))                        icon = '👃';
+  else if (/OTITE|OUVIDO/.test(up))                                         icon = '👂';
+  else if (/CONJUNTIVITE|OLHO/.test(up))                                    icon = '👁️';
+  else if (/DENGUE|ARBOVIROSE|ZIKA|CHIKUNGUNYA/.test(up))                   icon = '🦟';
+  else if (/GRIPE|INFLUENZA|RESFRI|VIRAL|GRIPAL/.test(up))                  icon = '🤧';
+  else if (/FEBRE|HIPERTERMIA/.test(up))                                     icon = '🌡️';
+  else if (/GASTRITE|EPIGASTRALGIA|DRGE|REFLUXO/.test(up))                  icon = '🔥';
+  else if (/GEA|GASTROENTERITE|DIARREIA|VOMITO|VÔMITO/.test(up))            icon = '🤢';
+  else if (/ITU|CISTITE|URINARIA|PIELONEFRITE/.test(up))                    icon = '🫘';
+  else if (/CEFALEIA|ENXAQUECA|MIGRÂNEA|CEFALIA/.test(up))                  icon = '🤕';
+  else if (/LOMBALGIA|CERVICALGIA|DORSALGIA|COLUNA/.test(up))               icon = '🦴';
+  else if (/CONTUS|ENTORSE|FRATURA|LUXAÇÃO|ORTOPED/.test(up))               icon = '🦴';
+  else if (/GOTA|ARTRITE|ARTRALGIA|ARTROSE/.test(up))                       icon = '🦶';
+  else if (/PELE|DERMATITE|IMPETIGO|CELULITE|ERISIPELA|ECZEMA/.test(up))    icon = '🩹';
+  else if (/ESCABIOSE|SARNA/.test(up))                                      icon = '🔬';
+  else if (/HERPES/.test(up))                                               icon = '🔥';
+  else if (/ALERGIA|URTICARIA|URTICÁRIA|ANGIOEDEMA/.test(up))               icon = '🤧';
+  else if (/PRESSAO|PRESSÃO|HIPERTEN|HAS\b/.test(up))                       icon = '🔴';
+  else if (/DIABET|DMG|DM\b/.test(up))                                      icon = '🩸';
+  else if (/IAM|INFARTO|CORONAR|ANGINA/.test(up))                           icon = '❤️';
+  else if (/AVC|AVE|ACIDENTE VASCULAR/.test(up))                            icon = '🧠';
+  else if (/CONVULSAO|CONVULSÃO|EPILEPSIA|STATUS/.test(up))                 icon = '⚡';
+  else if (/PCR|PARADA CARDIO/.test(up))                                    icon = '❤️';
+  else if (/ANAFILAXIA|ANAFILÁTICO/.test(up))                               icon = '🚨';
+  else if (/SURTO|PSICOTICO|PSICÓTICO|PSIQUIATRIA/.test(up))                icon = '🧠';
+  else if (/DENGUE/.test(up))                                               icon = '🦟';
+  else if (/VERTIGEM|LABIRINTITE|TONTURA/.test(up))                         icon = '🌀';
+  else if (/INSONIA|INSÔNIA|ANSIEDADE/.test(up))                            icon = '🧘';
+  else if (/CANDIDIA|VAGINOSE|TRICOMONAS|VULVO/.test(up))                   icon = '🔬';
+  else if (/PRENATAL|PRÉ.NATAL|GESTAÇÃO|GRAVIDEZ/.test(up))                 icon = '🤰';
+  else if (/DOR\b|ANALGESIA/.test(up))                                      icon = '💊';
+
+  return {
+    id: 'imported_' + Date.now() + '_' + idx,
+    icon,
+    title: title.trim(),
+    content,
+    badge: null
+  };
+}
+
+// ── Roda a análise de duplicatas e exibe preview ──
 function _igRunAnalysis(items) {
     const k = document.getElementById('ig_tab').value;
     const analyzed = igAnalyzeItems(items, k, 0);
@@ -5093,9 +5285,10 @@ function _igRunAnalysis(items) {
       }
       return `<div style="margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid var(--gray200)">
         <span style="font-size:10px;font-weight:700;color:${color};background:${color}18;padding:1px 6px;border-radius:10px;margin-right:6px">${label}</span>
-        <strong style="font-size:12px">${esc(it.title||'')}</strong>${detail}
+        <strong style="font-size:12px">${esc(it.icon||'💊')} ${esc(it.title||'')}</strong>${detail}
+        <div style="color:var(--gray500);font-size:10px;margin-top:2px;font-family:var(--mono)">${esc((it.content||'').slice(0,120))}${(it.content||'').length>120?'...':''}</div>
       </div>`;
-    }).join('') + (analyzed.length > 12 ? `<div style="color:var(--gray500);font-size:11px">... e mais ${analyzed.length-12} item(s)</div>` : '');
+    }).join('') + (analyzed.length > 12 ? `<div style="color:var(--gray500);font-size:11px;margin-top:6px">... e mais ${analyzed.length-12} item(s)</div>` : '');
     document.getElementById('igCount').innerHTML =
       `<span style="color:var(--green)">✅ ${nNew} novo(s)</span> &nbsp;` +
       `<span style="color:var(--orange)">⚠️ ${nNote} virará nota</span> &nbsp;` +
@@ -5103,6 +5296,7 @@ function _igRunAnalysis(items) {
     document.getElementById('igPreview').style.display = 'block';
     document.getElementById('igImportBtn').disabled = (nNew + nNote) === 0;
 }
+
 
 function confirmImportGlobal() {
   if (!_igParsedItems.length) return;
