@@ -1,8 +1,10 @@
-<html lang="pt-BR"><head>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MedGuia Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
@@ -534,7 +536,7 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
         <div class="sb-logo-sub">URGÊNCIA · EMERGÊNCIA</div>
       </div>
     </div>
-    <div class="sb-nav" id="sidebarNav"><div class="sg">PRINCIPAL</div><div class="si on" data-k="geral"><span class="si-ico" data-k="geral">📋</span><span class="sl">Geral / Anamnese</span></div><div class="si" data-k="documentos"><span class="si-ico" data-k="documentos">📄</span><span class="sl">Documentos</span></div><div class="sg">SETOR / ESPECIALIDADE</div><div class="si" data-k="pediatria"><span class="si-ico" data-k="pediatria">🍼</span><span class="sl">Pediatria</span></div><div class="si" data-k="obstetricia"><span class="si-ico" data-k="obstetricia">🤰</span><span class="sl">Obstetrícia / GO</span></div><div class="si" data-k="vermelho"><span class="si-ico" data-k="vermelho">🔴</span><span class="sl">Sala Vermelha</span></div><div class="si" data-k="laranja"><span class="si-ico" data-k="laranja">🟠</span><span class="sl">Sala Laranja</span></div><div class="si" data-k="pronto"><span class="si-ico" data-k="pronto">🟢</span><span class="sl">Pronto Atendimento (Verde/Azul)</span></div><div class="sg">FARMÁCIA</div><div class="si" data-k="receitas"><span class="si-ico" data-k="receitas">💊</span><span class="sl">Receitas para Casa</span></div><div class="si" data-k="diluicoes"><span class="si-ico" data-k="diluicoes">💉</span><span class="sl">Diluições / EV</span></div><div class="sg">REFERÊNCIA</div><div class="si" data-k="info"><span class="si-ico" data-k="info">🧠</span><span class="sl">Info Clínica / Escores</span></div><div class="si" data-k="esf"><span class="si-ico" data-k="esf">🏠</span><span class="sl">ESF / Ambulatório</span></div><div class="si" data-k="calculos"><span class="si-ico" data-k="calculos">🧮</span><span class="sl">Calculadoras</span></div><div class="sg">SISTEMA</div><div class="si" data-k="config"><span class="si-ico" data-k="config">⚙️</span><span class="sl">Configurações</span></div></div>
+    <div class="sb-nav" id="sidebarNav"></div>
     <div class="sb-foot" id="sbFoot" onclick="toggleMini()">‹</div>
   </nav>
 
@@ -545,7 +547,7 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
     <header id="topbar">
       <div class="top-l">
         <button class="tbtn" id="btn-mob" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
-        <div id="breadcrumb">Geral / Anamnese</div>
+        <div id="breadcrumb">—</div>
       </div>
       <div class="top-r">
         <div class="searchbox">
@@ -566,673 +568,36 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
     </div>
 
     <!-- CONTENT -->
-    <div id="content">
-    <div class="section">
-      <div class="sec-header">
-        <span class="sec-title" id="sttl-geral-0">ANAMNESE — MODELOS</span>
-        <div class="sec-actions">
-          <button class="sec-btn" onclick="openModalAddItemIn('geral',0)">+ item</button>
-          <button class="sec-btn danger" onclick="confirmDelSec('geral',0)">🗑 seção</button>
-        </div>
-      </div>
-      <div id="rows-geral-0">
-  <div class="row-item" id="row-geral-0-0" onclick="toggleRow('geral',0,0)">
-    <div class="row-top">
-      <div class="row-accent"></div>
-      <div class="row-info">
-        <span class="row-icon" id="rico-geral-0-0" onclick="event.stopPropagation();openEmojiPicker('geral',0,0,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">👨</span>
-        <span class="row-title" id="rttl-geral-0-0">Exame Físico — Adulto Masculino</span>
-        
-      </div>
-      <div class="row-controls" onclick="event.stopPropagation()">
-        <button class="rc cp" onclick="copyItem('geral',0,0)" title="Copiar">📋</button>
-        <button class="btn-edit-item" id="ebtn-geral-0-0" onclick="toggleItemEdit('geral',0,0)" title="Editar">✏️</button>
-        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',0,0)" title="Excluir">🗑</button>
-      </div>
-      <div class="row-arrow">›</div>
-    </div>
-    <div class="row-body" onclick="event.stopPropagation()">
-      <div id="view-geral-0-0">
-        <div class="presc-wrap">
-            <pre class="presc" id="rpresc-geral-0-0">PACIENTE RELATA QUADRO DE [QUEIXA PRINCIPAL] INICIADO HÁ [TEMPO], EVOLUINDO COM [SINTOMAS ASSOCIADOS].
-NEGA FEBRE, NÁUSEAS OU VÔMITOS.
-HPP: NEGA COMORBIDADES PRÉVIAS | ALERGIA MEDICAMENTOSA: NEGA
-
-AO EXAME FÍSICO:
-BEG, LOTE, EUPEICO, CORADO, HIDRATADO, AFEBRIL, ANICTÉRICO, ACIANÓTICO
-NEURO: GLASGOW 15, SEM DÉFICITS MOTORES, PUPILAS ISOCORICAS E FOTORREATIVAS, SEM DÉFICITS FOCAIS, SEM SINAIS DE IRRITAÇÃO MENÍNGEA
-AR: MVUA S/RA, EXPANSIBILIDADE PRESERVADA SIMÉTRICA
-ACV: RCR 2T BNF S/S
-OROSCOPIA: SEM ALTERAÇÕES
-ABD: NORMOTENSO, RHA+, INDOLOR À PALPAÇÃO, BLUMBERG NEGATIVO, GIORDANO NEGATIVO
-MMII: PANTURRILHAS LIVRES, SEM EDEMA, FLOGISMOS OU SINAIS DE TVP</pre>
-          </div>
-        <div class="row-footer">
-          <button class="btn-copy" onclick="copyItem('geral',0,0)">📋 Copiar</button>
-          
-        </div>
-      </div>
-      <div id="edit-geral-0-0" style="display:none">
-        <div style="padding:10px 14px 6px;background:#fffef0">
-          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
-          <input class="edit-title-input" id="etitle-geral-0-0" value="Exame Físico — Adulto Masculino" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
-          
-            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
-            <textarea class="field-edit" id="econtent-geral-0-0" style="margin-top:4px">PACIENTE RELATA QUADRO DE [QUEIXA PRINCIPAL] INICIADO HÁ [TEMPO], EVOLUINDO COM [SINTOMAS ASSOCIADOS].
-NEGA FEBRE, NÁUSEAS OU VÔMITOS.
-HPP: NEGA COMORBIDADES PRÉVIAS | ALERGIA MEDICAMENTOSA: NEGA
-
-AO EXAME FÍSICO:
-BEG, LOTE, EUPEICO, CORADO, HIDRATADO, AFEBRIL, ANICTÉRICO, ACIANÓTICO
-NEURO: GLASGOW 15, SEM DÉFICITS MOTORES, PUPILAS ISOCORICAS E FOTORREATIVAS, SEM DÉFICITS FOCAIS, SEM SINAIS DE IRRITAÇÃO MENÍNGEA
-AR: MVUA S/RA, EXPANSIBILIDADE PRESERVADA SIMÉTRICA
-ACV: RCR 2T BNF S/S
-OROSCOPIA: SEM ALTERAÇÕES
-ABD: NORMOTENSO, RHA+, INDOLOR À PALPAÇÃO, BLUMBERG NEGATIVO, GIORDANO NEGATIVO
-MMII: PANTURRILHAS LIVRES, SEM EDEMA, FLOGISMOS OU SINAIS DE TVP</textarea>
-          
-        </div>
-        <div class="edit-actions">
-          <button class="btn-save-edit" onclick="saveItemEdit('geral',0,0)">💾 Salvar</button>
-          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',0,0)">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row-item" id="row-geral-0-1" onclick="toggleRow('geral',0,1)">
-    <div class="row-top">
-      <div class="row-accent"></div>
-      <div class="row-info">
-        <span class="row-icon" id="rico-geral-0-1" onclick="event.stopPropagation();openEmojiPicker('geral',0,1,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">👩</span>
-        <span class="row-title" id="rttl-geral-0-1">Exame Físico — Adulto Feminino</span>
-        
-      </div>
-      <div class="row-controls" onclick="event.stopPropagation()">
-        <button class="rc cp" onclick="copyItem('geral',0,1)" title="Copiar">📋</button>
-        <button class="btn-edit-item" id="ebtn-geral-0-1" onclick="toggleItemEdit('geral',0,1)" title="Editar">✏️</button>
-        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',0,1)" title="Excluir">🗑</button>
-      </div>
-      <div class="row-arrow">›</div>
-    </div>
-    <div class="row-body" onclick="event.stopPropagation()">
-      <div id="view-geral-0-1">
-        <div class="presc-wrap">
-            <pre class="presc" id="rpresc-geral-0-1">PACIENTE RELATA QUADRO DE [QUEIXA PRINCIPAL] INICIADO HÁ [TEMPO], EVOLUINDO COM [SINTOMAS ASSOCIADOS].
-NEGA FEBRE, NÁUSEAS OU VÔMITOS. NEGA GRAVIDEZ.
-HPP: NEGA COMORBIDADES PRÉVIAS | ALERGIA MEDICAMENTOSA: NEGA
-
-AO EXAME FÍSICO:
-BEG, LOTE, EUPNEICA, CORADA, HIDRATADA, AFEBRIL, ANICTÉRICA, ACIANÓTICA
-NEURO: GLASGOW 15, SEM DÉFICITS MOTORES, PUPILAS ISOCORICAS E FOTORREATIVAS, SEM DÉFICITS FOCAIS, SEM SINAIS DE IRRITAÇÃO MENÍNGEA
-AR: MVUA S/RA, EXPANSIBILIDADE PRESERVADA SIMÉTRICA
-ACV: RCR 2T BNF S/S
-OROSCOPIA: SEM ALTERAÇÕES
-ABD: NORMOTENSO, RHA+, INDOLOR À PALPAÇÃO, BLUMBERG NEGATIVO, GIORDANO NEGATIVO, MURPHY NEGATIVO
-MMII: PANTURRILHAS LIVRES, SEM EDEMA, FLOGISMOS OU SINAIS DE TVP</pre>
-          </div>
-        <div class="row-footer">
-          <button class="btn-copy" onclick="copyItem('geral',0,1)">📋 Copiar</button>
-          
-        </div>
-      </div>
-      <div id="edit-geral-0-1" style="display:none">
-        <div style="padding:10px 14px 6px;background:#fffef0">
-          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
-          <input class="edit-title-input" id="etitle-geral-0-1" value="Exame Físico — Adulto Feminino" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
-          
-            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
-            <textarea class="field-edit" id="econtent-geral-0-1" style="margin-top:4px">PACIENTE RELATA QUADRO DE [QUEIXA PRINCIPAL] INICIADO HÁ [TEMPO], EVOLUINDO COM [SINTOMAS ASSOCIADOS].
-NEGA FEBRE, NÁUSEAS OU VÔMITOS. NEGA GRAVIDEZ.
-HPP: NEGA COMORBIDADES PRÉVIAS | ALERGIA MEDICAMENTOSA: NEGA
-
-AO EXAME FÍSICO:
-BEG, LOTE, EUPNEICA, CORADA, HIDRATADA, AFEBRIL, ANICTÉRICA, ACIANÓTICA
-NEURO: GLASGOW 15, SEM DÉFICITS MOTORES, PUPILAS ISOCORICAS E FOTORREATIVAS, SEM DÉFICITS FOCAIS, SEM SINAIS DE IRRITAÇÃO MENÍNGEA
-AR: MVUA S/RA, EXPANSIBILIDADE PRESERVADA SIMÉTRICA
-ACV: RCR 2T BNF S/S
-OROSCOPIA: SEM ALTERAÇÕES
-ABD: NORMOTENSO, RHA+, INDOLOR À PALPAÇÃO, BLUMBERG NEGATIVO, GIORDANO NEGATIVO, MURPHY NEGATIVO
-MMII: PANTURRILHAS LIVRES, SEM EDEMA, FLOGISMOS OU SINAIS DE TVP</textarea>
-          
-        </div>
-        <div class="edit-actions">
-          <button class="btn-save-edit" onclick="saveItemEdit('geral',0,1)">💾 Salvar</button>
-          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',0,1)">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row-item" id="row-geral-0-2" onclick="toggleRow('geral',0,2)">
-    <div class="row-top">
-      <div class="row-accent"></div>
-      <div class="row-info">
-        <span class="row-icon" id="rico-geral-0-2" onclick="event.stopPropagation();openEmojiPicker('geral',0,2,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">👶</span>
-        <span class="row-title" id="rttl-geral-0-2">Exame Físico — Criança</span>
-        
-      </div>
-      <div class="row-controls" onclick="event.stopPropagation()">
-        <button class="rc cp" onclick="copyItem('geral',0,2)" title="Copiar">📋</button>
-        <button class="btn-edit-item" id="ebtn-geral-0-2" onclick="toggleItemEdit('geral',0,2)" title="Editar">✏️</button>
-        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',0,2)" title="Excluir">🗑</button>
-      </div>
-      <div class="row-arrow">›</div>
-    </div>
-    <div class="row-body" onclick="event.stopPropagation()">
-      <div id="view-geral-0-2">
-        <div class="presc-wrap">
-            <pre class="presc" id="rpresc-geral-0-2">BEG, CORADO, HIDRATADO, ACIANÓTICO, AFEBRIL
-CRIANÇA ATIVA E REATIVA, SEM SINAIS DE MENINGISMO, SEM DÉFICITS
-OROSCOPIA: SEM ALTERAÇÕES
-OTOSCOPIA: SEM ALTERAÇÕES
-AR: MVUA S/RA
-ACV: RCR 2T BNF S/S
-ABD: LIVRE, SEM ALTERAÇÕES, BLUMBERG NEGATIVO</pre>
-          </div>
-        <div class="row-footer">
-          <button class="btn-copy" onclick="copyItem('geral',0,2)">📋 Copiar</button>
-          
-        </div>
-      </div>
-      <div id="edit-geral-0-2" style="display:none">
-        <div style="padding:10px 14px 6px;background:#fffef0">
-          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
-          <input class="edit-title-input" id="etitle-geral-0-2" value="Exame Físico — Criança" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
-          
-            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
-            <textarea class="field-edit" id="econtent-geral-0-2" style="margin-top:4px">BEG, CORADO, HIDRATADO, ACIANÓTICO, AFEBRIL
-CRIANÇA ATIVA E REATIVA, SEM SINAIS DE MENINGISMO, SEM DÉFICITS
-OROSCOPIA: SEM ALTERAÇÕES
-OTOSCOPIA: SEM ALTERAÇÕES
-AR: MVUA S/RA
-ACV: RCR 2T BNF S/S
-ABD: LIVRE, SEM ALTERAÇÕES, BLUMBERG NEGATIVO</textarea>
-          
-        </div>
-        <div class="edit-actions">
-          <button class="btn-save-edit" onclick="saveItemEdit('geral',0,2)">💾 Salvar</button>
-          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',0,2)">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div></div></div>
-    <div class="section">
-      <div class="sec-header">
-        <span class="sec-title" id="sttl-geral-1">CONDUTAS E EVOLUÇÕES</span>
-        <div class="sec-actions">
-          <button class="sec-btn" onclick="openModalAddItemIn('geral',1)">+ item</button>
-          <button class="sec-btn danger" onclick="confirmDelSec('geral',1)">🗑 seção</button>
-        </div>
-      </div>
-      <div id="rows-geral-1">
-  <div class="row-item" id="row-geral-1-0" onclick="toggleRow('geral',1,0)">
-    <div class="row-top">
-      <div class="row-accent"></div>
-      <div class="row-info">
-        <span class="row-icon" id="rico-geral-1-0" onclick="event.stopPropagation();openEmojiPicker('geral',1,0,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">✅</span>
-        <span class="row-title" id="rttl-geral-1-0">Conduta — Alta com Sintomáticos</span>
-        
-      </div>
-      <div class="row-controls" onclick="event.stopPropagation()">
-        <button class="rc cp" onclick="copyItem('geral',1,0)" title="Copiar">📋</button>
-        <button class="btn-edit-item" id="ebtn-geral-1-0" onclick="toggleItemEdit('geral',1,0)" title="Editar">✏️</button>
-        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',1,0)" title="Excluir">🗑</button>
-      </div>
-      <div class="row-arrow">›</div>
-    </div>
-    <div class="row-body" onclick="event.stopPropagation()">
-      <div id="view-geral-1-0">
-        <div class="presc-wrap">
-            <pre class="presc" id="rpresc-geral-1-0">PACIENTE RELATA MELHORA CLÍNICA APÓS MEDICAÇÕES REALIZADAS NA UNIDADE.
-NO MOMENTO ASSINTOMÁTICO, ESTÁVEL CLÍNICA E HEMODINAMICAMENTE.
-PRESCREVO SINTOMÁTICOS PARA CASA.
-ORIENTAÇÕES QUANTO AOS SINAIS DE ALARME.
-ORIENTO RETORNO SE PIORA OU PERSISTÊNCIA DOS SINTOMAS EM 72 HORAS.
-ORIENTO ACOMPANHAMENTO NO PSF.
-ALTA EM BOM ESTADO GERAL.</pre>
-          </div>
-        <div class="row-footer">
-          <button class="btn-copy" onclick="copyItem('geral',1,0)">📋 Copiar</button>
-          
-        </div>
-      </div>
-      <div id="edit-geral-1-0" style="display:none">
-        <div style="padding:10px 14px 6px;background:#fffef0">
-          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
-          <input class="edit-title-input" id="etitle-geral-1-0" value="Conduta — Alta com Sintomáticos" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
-          
-            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
-            <textarea class="field-edit" id="econtent-geral-1-0" style="margin-top:4px">PACIENTE RELATA MELHORA CLÍNICA APÓS MEDICAÇÕES REALIZADAS NA UNIDADE.
-NO MOMENTO ASSINTOMÁTICO, ESTÁVEL CLÍNICA E HEMODINAMICAMENTE.
-PRESCREVO SINTOMÁTICOS PARA CASA.
-ORIENTAÇÕES QUANTO AOS SINAIS DE ALARME.
-ORIENTO RETORNO SE PIORA OU PERSISTÊNCIA DOS SINTOMAS EM 72 HORAS.
-ORIENTO ACOMPANHAMENTO NO PSF.
-ALTA EM BOM ESTADO GERAL.</textarea>
-          
-        </div>
-        <div class="edit-actions">
-          <button class="btn-save-edit" onclick="saveItemEdit('geral',1,0)">💾 Salvar</button>
-          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',1,0)">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row-item" id="row-geral-1-1" onclick="toggleRow('geral',1,1)">
-    <div class="row-top">
-      <div class="row-accent"></div>
-      <div class="row-info">
-        <span class="row-icon" id="rico-geral-1-1" onclick="event.stopPropagation();openEmojiPicker('geral',1,1,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">📋</span>
-        <span class="row-title" id="rttl-geral-1-1">Conduta Geral</span>
-        
-      </div>
-      <div class="row-controls" onclick="event.stopPropagation()">
-        <button class="rc cp" onclick="copyItem('geral',1,1)" title="Copiar">📋</button>
-        <button class="btn-edit-item" id="ebtn-geral-1-1" onclick="toggleItemEdit('geral',1,1)" title="Editar">✏️</button>
-        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',1,1)" title="Excluir">🗑</button>
-      </div>
-      <div class="row-arrow">›</div>
-    </div>
-    <div class="row-body" onclick="event.stopPropagation()">
-      <div id="view-geral-1-1">
-        <div class="presc-wrap">
-            <pre class="presc" id="rpresc-geral-1-1">- SINTOMÁTICOS PARA CASA
-- ORIENTO RETORNO SE PIORA E/OU PERSISTÊNCIA DOS SINTOMAS
-- ADVIRTO PROGNÓSTICO
-(PACIENTE COMPREENDE ORIENTAÇÕES FORNECIDAS)</pre>
-          </div>
-        <div class="row-footer">
-          <button class="btn-copy" onclick="copyItem('geral',1,1)">📋 Copiar</button>
-          
-        </div>
-      </div>
-      <div id="edit-geral-1-1" style="display:none">
-        <div style="padding:10px 14px 6px;background:#fffef0">
-          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
-          <input class="edit-title-input" id="etitle-geral-1-1" value="Conduta Geral" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
-          
-            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
-            <textarea class="field-edit" id="econtent-geral-1-1" style="margin-top:4px">- SINTOMÁTICOS PARA CASA
-- ORIENTO RETORNO SE PIORA E/OU PERSISTÊNCIA DOS SINTOMAS
-- ADVIRTO PROGNÓSTICO
-(PACIENTE COMPREENDE ORIENTAÇÕES FORNECIDAS)</textarea>
-          
-        </div>
-        <div class="edit-actions">
-          <button class="btn-save-edit" onclick="saveItemEdit('geral',1,1)">💾 Salvar</button>
-          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',1,1)">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row-item" id="row-geral-1-2" onclick="toggleRow('geral',1,2)">
-    <div class="row-top">
-      <div class="row-accent"></div>
-      <div class="row-info">
-        <span class="row-icon" id="rico-geral-1-2" onclick="event.stopPropagation();openEmojiPicker('geral',1,2,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">🚶</span>
-        <span class="row-title" id="rttl-geral-1-2">Modelo — Evasão do Paciente</span>
-        
-      </div>
-      <div class="row-controls" onclick="event.stopPropagation()">
-        <button class="rc cp" onclick="copyItem('geral',1,2)" title="Copiar">📋</button>
-        <button class="btn-edit-item" id="ebtn-geral-1-2" onclick="toggleItemEdit('geral',1,2)" title="Editar">✏️</button>
-        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',1,2)" title="Excluir">🗑</button>
-      </div>
-      <div class="row-arrow">›</div>
-    </div>
-    <div class="row-body" onclick="event.stopPropagation()">
-      <div id="view-geral-1-2">
-        <div class="presc-wrap">
-            <pre class="presc" id="rpresc-geral-1-2">EM TEMPO: CHAMO PACIENTE EM TELA 3 VEZES E EM VOZ NA RECEPÇÃO, SEM RESPOSTA.
-REALIZADA BUSCA ATIVA NA UNIDADE E CHAMADO VERBAL NO CORREDOR.
-PACIENTE NÃO RESPONDEU.
-ALTA POR EVASÃO.
-
-(Versão detalhada):
-PACIENTE, CIENTE DOS RISCOS, DECIDE EVADIR DA UNIDADE POR MEIOS PRÓPRIOS.
-MESMO SENDO DEVIDAMENTE ORIENTADO QUANTO AOS RISCOS ENVOLVIDOS COM ESTA DECISÃO E AS POTENCIAIS COMPLICAÇÕES INERENTES, DECIDE EVADIR DA UNIDADE, CIENTE DOS RISCOS.</pre>
-          </div>
-        <div class="row-footer">
-          <button class="btn-copy" onclick="copyItem('geral',1,2)">📋 Copiar</button>
-          
-        </div>
-      </div>
-      <div id="edit-geral-1-2" style="display:none">
-        <div style="padding:10px 14px 6px;background:#fffef0">
-          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
-          <input class="edit-title-input" id="etitle-geral-1-2" value="Modelo — Evasão do Paciente" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
-          
-            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
-            <textarea class="field-edit" id="econtent-geral-1-2" style="margin-top:4px">EM TEMPO: CHAMO PACIENTE EM TELA 3 VEZES E EM VOZ NA RECEPÇÃO, SEM RESPOSTA.
-REALIZADA BUSCA ATIVA NA UNIDADE E CHAMADO VERBAL NO CORREDOR.
-PACIENTE NÃO RESPONDEU.
-ALTA POR EVASÃO.
-
-(Versão detalhada):
-PACIENTE, CIENTE DOS RISCOS, DECIDE EVADIR DA UNIDADE POR MEIOS PRÓPRIOS.
-MESMO SENDO DEVIDAMENTE ORIENTADO QUANTO AOS RISCOS ENVOLVIDOS COM ESTA DECISÃO E AS POTENCIAIS COMPLICAÇÕES INERENTES, DECIDE EVADIR DA UNIDADE, CIENTE DOS RISCOS.</textarea>
-          
-        </div>
-        <div class="edit-actions">
-          <button class="btn-save-edit" onclick="saveItemEdit('geral',1,2)">💾 Salvar</button>
-          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',1,2)">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row-item" id="row-geral-1-3" onclick="toggleRow('geral',1,3)">
-    <div class="row-top">
-      <div class="row-accent"></div>
-      <div class="row-info">
-        <span class="row-icon" id="rico-geral-1-3" onclick="event.stopPropagation();openEmojiPicker('geral',1,3,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">👮</span>
-        <span class="row-title" id="rttl-geral-1-3">Paciente Acompanhado pela PM</span>
-        
-      </div>
-      <div class="row-controls" onclick="event.stopPropagation()">
-        <button class="rc cp" onclick="copyItem('geral',1,3)" title="Copiar">📋</button>
-        <button class="btn-edit-item" id="ebtn-geral-1-3" onclick="toggleItemEdit('geral',1,3)" title="Editar">✏️</button>
-        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',1,3)" title="Excluir">🗑</button>
-      </div>
-      <div class="row-arrow">›</div>
-    </div>
-    <div class="row-body" onclick="event.stopPropagation()">
-      <div id="view-geral-1-3">
-        <div class="presc-wrap">
-            <pre class="presc" id="rpresc-geral-1-3">PACIENTE COMPARECE ACOMPANHADO DE PM PARA REALIZAÇÃO DE EXAME FÍSICO.
-RELATA [QUEIXA].
-SEM QUEIXAS NO MOMENTO.
-CONDUZIDO POR MILITARES PARA DELEGACIA APÓS AVALIAÇÃO.</pre>
-          </div>
-        <div class="row-footer">
-          <button class="btn-copy" onclick="copyItem('geral',1,3)">📋 Copiar</button>
-          
-        </div>
-      </div>
-      <div id="edit-geral-1-3" style="display:none">
-        <div style="padding:10px 14px 6px;background:#fffef0">
-          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
-          <input class="edit-title-input" id="etitle-geral-1-3" value="Paciente Acompanhado pela PM" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
-          
-            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
-            <textarea class="field-edit" id="econtent-geral-1-3" style="margin-top:4px">PACIENTE COMPARECE ACOMPANHADO DE PM PARA REALIZAÇÃO DE EXAME FÍSICO.
-RELATA [QUEIXA].
-SEM QUEIXAS NO MOMENTO.
-CONDUZIDO POR MILITARES PARA DELEGACIA APÓS AVALIAÇÃO.</textarea>
-          
-        </div>
-        <div class="edit-actions">
-          <button class="btn-save-edit" onclick="saveItemEdit('geral',1,3)">💾 Salvar</button>
-          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',1,3)">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row-item" id="row-geral-1-4" onclick="toggleRow('geral',1,4)">
-    <div class="row-top">
-      <div class="row-accent"></div>
-      <div class="row-info">
-        <span class="row-icon" id="rico-geral-1-4" onclick="event.stopPropagation();openEmojiPicker('geral',1,4,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">💉</span>
-        <span class="row-title" id="rttl-geral-1-4">Administração de Medicação Externa</span>
-        
-      </div>
-      <div class="row-controls" onclick="event.stopPropagation()">
-        <button class="rc cp" onclick="copyItem('geral',1,4)" title="Copiar">📋</button>
-        <button class="btn-edit-item" id="ebtn-geral-1-4" onclick="toggleItemEdit('geral',1,4)" title="Editar">✏️</button>
-        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',1,4)" title="Excluir">🗑</button>
-      </div>
-      <div class="row-arrow">›</div>
-    </div>
-    <div class="row-body" onclick="event.stopPropagation()">
-      <div id="view-geral-1-4">
-        <div class="presc-wrap">
-            <pre class="presc" id="rpresc-geral-1-4">PACIENTE COMPARECE PARA ADMINISTRAÇÃO DE MEDICAÇÃO EXTERNA, PRESCRITA POR MÉDICO.
-VIDE RECEITUÁRIO.</pre>
-          </div>
-        <div class="row-footer">
-          <button class="btn-copy" onclick="copyItem('geral',1,4)">📋 Copiar</button>
-          
-        </div>
-      </div>
-      <div id="edit-geral-1-4" style="display:none">
-        <div style="padding:10px 14px 6px;background:#fffef0">
-          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
-          <input class="edit-title-input" id="etitle-geral-1-4" value="Administração de Medicação Externa" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
-          
-            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
-            <textarea class="field-edit" id="econtent-geral-1-4" style="margin-top:4px">PACIENTE COMPARECE PARA ADMINISTRAÇÃO DE MEDICAÇÃO EXTERNA, PRESCRITA POR MÉDICO.
-VIDE RECEITUÁRIO.</textarea>
-          
-        </div>
-        <div class="edit-actions">
-          <button class="btn-save-edit" onclick="saveItemEdit('geral',1,4)">💾 Salvar</button>
-          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',1,4)">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div></div></div>
-    <div class="section">
-      <div class="sec-header">
-        <span class="sec-title" id="sttl-geral-2">MODELOS DE SOLICITAÇÕES</span>
-        <div class="sec-actions">
-          <button class="sec-btn" onclick="openModalAddItemIn('geral',2)">+ item</button>
-          <button class="sec-btn danger" onclick="confirmDelSec('geral',2)">🗑 seção</button>
-        </div>
-      </div>
-      <div id="rows-geral-2">
-  <div class="row-item" id="row-geral-2-0" onclick="toggleRow('geral',2,0)">
-    <div class="row-top">
-      <div class="row-accent"></div>
-      <div class="row-info">
-        <span class="row-icon" id="rico-geral-2-0" onclick="event.stopPropagation();openEmojiPicker('geral',2,0,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">🔬</span>
-        <span class="row-title" id="rttl-geral-2-0">Exames Laboratoriais — Rotina Completa</span>
-        
-      </div>
-      <div class="row-controls" onclick="event.stopPropagation()">
-        <button class="rc cp" onclick="copyItem('geral',2,0)" title="Copiar">📋</button>
-        <button class="btn-edit-item" id="ebtn-geral-2-0" onclick="toggleItemEdit('geral',2,0)" title="Editar">✏️</button>
-        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',2,0)" title="Excluir">🗑</button>
-      </div>
-      <div class="row-arrow">›</div>
-    </div>
-    <div class="row-body" onclick="event.stopPropagation()">
-      <div id="view-geral-2-0">
-        <div class="presc-wrap">
-            <pre class="presc" id="rpresc-geral-2-0">SOLICITO:
-HEMOGRAMA COMPLETO
-GLICEMIA EM JEJUM / HBA1C
-COLESTEROL TOTAL E FRAÇÕES / TRIGLICERÍDEOS
-ÁCIDO ÚRICO / TGO / TGP / GGT / FA / AMILASE / LIPASE
-BILIRRUBINAS TOTAIS E FRAÇÕES
-TSH E T4 LIVRE
-VITAMINA D / VITAMINA B12 / VITAMINA C
-CÁLCIO SÉRICO / MAGNÉSIO / FERRO SÉRICO / FERRITINA / ÁCIDO FÓLICO
-SATURAÇÃO DE TRANSFERRINA
-UREIA / CREATININA / SÓDIO / POTÁSSIO
-PCR / VHS
-EAS (SUMÁRIO DE URINA)</pre>
-          </div>
-        <div class="row-footer">
-          <button class="btn-copy" onclick="copyItem('geral',2,0)">📋 Copiar</button>
-          
-        </div>
-      </div>
-      <div id="edit-geral-2-0" style="display:none">
-        <div style="padding:10px 14px 6px;background:#fffef0">
-          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
-          <input class="edit-title-input" id="etitle-geral-2-0" value="Exames Laboratoriais — Rotina Completa" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
-          
-            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
-            <textarea class="field-edit" id="econtent-geral-2-0" style="margin-top:4px">SOLICITO:
-HEMOGRAMA COMPLETO
-GLICEMIA EM JEJUM / HBA1C
-COLESTEROL TOTAL E FRAÇÕES / TRIGLICERÍDEOS
-ÁCIDO ÚRICO / TGO / TGP / GGT / FA / AMILASE / LIPASE
-BILIRRUBINAS TOTAIS E FRAÇÕES
-TSH E T4 LIVRE
-VITAMINA D / VITAMINA B12 / VITAMINA C
-CÁLCIO SÉRICO / MAGNÉSIO / FERRO SÉRICO / FERRITINA / ÁCIDO FÓLICO
-SATURAÇÃO DE TRANSFERRINA
-UREIA / CREATININA / SÓDIO / POTÁSSIO
-PCR / VHS
-EAS (SUMÁRIO DE URINA)</textarea>
-          
-        </div>
-        <div class="edit-actions">
-          <button class="btn-save-edit" onclick="saveItemEdit('geral',2,0)">💾 Salvar</button>
-          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',2,0)">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row-item" id="row-geral-2-1" onclick="toggleRow('geral',2,1)">
-    <div class="row-top">
-      <div class="row-accent"></div>
-      <div class="row-info">
-        <span class="row-icon" id="rico-geral-2-1" onclick="event.stopPropagation();openEmojiPicker('geral',2,1,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">🏥</span>
-        <span class="row-title" id="rttl-geral-2-1">Exames — PSF/Rotina Ambulatorial</span>
-        
-      </div>
-      <div class="row-controls" onclick="event.stopPropagation()">
-        <button class="rc cp" onclick="copyItem('geral',2,1)" title="Copiar">📋</button>
-        <button class="btn-edit-item" id="ebtn-geral-2-1" onclick="toggleItemEdit('geral',2,1)" title="Editar">✏️</button>
-        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',2,1)" title="Excluir">🗑</button>
-      </div>
-      <div class="row-arrow">›</div>
-    </div>
-    <div class="row-body" onclick="event.stopPropagation()">
-      <div id="view-geral-2-1">
-        <div class="presc-wrap">
-            <pre class="presc" id="rpresc-geral-2-1">SOLICITO:
-HEMOGRAMA COMPLETO
-FERRO SÉRICO / FERRITINA
-GLICEMIA DE JEJUM / HBA1C
-COLESTEROL TOTAL E FRAÇÕES / TRIGLICERÍDEOS
-TSH E T4 LIVRE
-NA / K / CA / MG
-UREIA / CREATININA
-TGO / TGP / GGT
-CPK
-MICROALBUMINÚRIA (AMOSTRA ISOLADA)
-25-HIDROXIVITAMINA D / VITAMINA B12
-SUMÁRIO DE URINA
-PARASITOLÓGICO DE FEZES</pre>
-          </div>
-        <div class="row-footer">
-          <button class="btn-copy" onclick="copyItem('geral',2,1)">📋 Copiar</button>
-          
-        </div>
-      </div>
-      <div id="edit-geral-2-1" style="display:none">
-        <div style="padding:10px 14px 6px;background:#fffef0">
-          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
-          <input class="edit-title-input" id="etitle-geral-2-1" value="Exames — PSF/Rotina Ambulatorial" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
-          
-            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
-            <textarea class="field-edit" id="econtent-geral-2-1" style="margin-top:4px">SOLICITO:
-HEMOGRAMA COMPLETO
-FERRO SÉRICO / FERRITINA
-GLICEMIA DE JEJUM / HBA1C
-COLESTEROL TOTAL E FRAÇÕES / TRIGLICERÍDEOS
-TSH E T4 LIVRE
-NA / K / CA / MG
-UREIA / CREATININA
-TGO / TGP / GGT
-CPK
-MICROALBUMINÚRIA (AMOSTRA ISOLADA)
-25-HIDROXIVITAMINA D / VITAMINA B12
-SUMÁRIO DE URINA
-PARASITOLÓGICO DE FEZES</textarea>
-          
-        </div>
-        <div class="edit-actions">
-          <button class="btn-save-edit" onclick="saveItemEdit('geral',2,1)">💾 Salvar</button>
-          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',2,1)">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row-item" id="row-geral-2-2" onclick="toggleRow('geral',2,2)">
-    <div class="row-top">
-      <div class="row-accent"></div>
-      <div class="row-info">
-        <span class="row-icon" id="rico-geral-2-2" onclick="event.stopPropagation();openEmojiPicker('geral',2,2,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">📡</span>
-        <span class="row-title" id="rttl-geral-2-2">Solicitações de Imagem — USG</span>
-        
-      </div>
-      <div class="row-controls" onclick="event.stopPropagation()">
-        <button class="rc cp" onclick="copyItem('geral',2,2)" title="Copiar">📋</button>
-        <button class="btn-edit-item" id="ebtn-geral-2-2" onclick="toggleItemEdit('geral',2,2)" title="Editar">✏️</button>
-        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',2,2)" title="Excluir">🗑</button>
-      </div>
-      <div class="row-arrow">›</div>
-    </div>
-    <div class="row-body" onclick="event.stopPropagation()">
-      <div id="view-geral-2-2">
-        <div class="presc-wrap">
-            <pre class="presc" id="rpresc-geral-2-2">SOLICITO:
-□ USG ABDOMINAL TOTAL
-□ USG DE RINS E VIAS URINÁRIAS — INDICAÇÃO: LITÍASE?
-□ USG TRANSVAGINAL — INDICAÇÃO: SOP / MIOMA / DIP?
-□ USG DE MAMAS E AXILAS
-□ USG DE TIREOIDE COM DOPPLER
-□ USG OBSTÉTRICA MORFOLÓGICA (1º TRIMESTRE: 11s até 13s 6d)
-□ USG MORFOLÓGICA 2º TRIMESTRE (20–24 semanas)
-□ ECG DE REPOUSO
-□ MAPA 24H
-□ DENSITOMETRIA ÓSSEA (FÊMUR PROXIMAL E COLUNA)</pre>
-          </div>
-        <div class="row-footer">
-          <button class="btn-copy" onclick="copyItem('geral',2,2)">📋 Copiar</button>
-          
-        </div>
-      </div>
-      <div id="edit-geral-2-2" style="display:none">
-        <div style="padding:10px 14px 6px;background:#fffef0">
-          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
-          <input class="edit-title-input" id="etitle-geral-2-2" value="Solicitações de Imagem — USG" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
-          
-            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
-            <textarea class="field-edit" id="econtent-geral-2-2" style="margin-top:4px">SOLICITO:
-□ USG ABDOMINAL TOTAL
-□ USG DE RINS E VIAS URINÁRIAS — INDICAÇÃO: LITÍASE?
-□ USG TRANSVAGINAL — INDICAÇÃO: SOP / MIOMA / DIP?
-□ USG DE MAMAS E AXILAS
-□ USG DE TIREOIDE COM DOPPLER
-□ USG OBSTÉTRICA MORFOLÓGICA (1º TRIMESTRE: 11s até 13s 6d)
-□ USG MORFOLÓGICA 2º TRIMESTRE (20–24 semanas)
-□ ECG DE REPOUSO
-□ MAPA 24H
-□ DENSITOMETRIA ÓSSEA (FÊMUR PROXIMAL E COLUNA)</textarea>
-          
-        </div>
-        <div class="edit-actions">
-          <button class="btn-save-edit" onclick="saveItemEdit('geral',2,2)">💾 Salvar</button>
-          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',2,2)">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  </div></div></div></div>
+    <div id="content"></div>
   </div>
 </div>
 
 <!-- ═══ BANNER: ALTERAÇÕES NÃO SINCRONIZADAS ═══ -->
-<div id="unsyncedBanner" style="display: flex; position: fixed; top: 0px; left: 0px; right: 0px; z-index: 3000; background: rgb(59, 130, 246); color: rgb(28, 25, 23); padding: 9px 16px; font-size: 13px; font-weight: 600; align-items: center; justify-content: space-between; gap: 12px; box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 12px;">
+<div id="unsyncedBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:3000;
+  background:#f59e0b;color:#1c1917;padding:9px 16px;font-size:13px;font-weight:600;
+  align-items:center;justify-content:space-between;gap:12px;box-shadow:0 3px 12px rgba(0,0,0,0.25)">
   <div style="display:flex;align-items:center;gap:10px;min-width:0">
-    <span id="bannerIcon" style="font-size:18px;flex-shrink:0">🔄</span>
-    <span id="bannerMsg">Enviando para o GitHub...</span>
+    <span id="bannerIcon" style="font-size:18px;flex-shrink:0">⚠️</span>
+    <span id="bannerMsg">Alterações não sincronizadas — outros dispositivos não verão essas mudanças</span>
   </div>
   <div style="display:flex;gap:8px;flex-shrink:0">
-    <button id="bannerSyncBtn" onclick="bannerSync()" style="background: rgb(28, 25, 23); color: rgb(254, 243, 199); border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: not-allowed; font-weight: 700; white-space: nowrap; transition: 0.15s; opacity: 0.7;" disabled="">Enviando...</button>
-    <button onclick="openGithubModal()" title="Configurar credenciais GitHub" style="background:transparent;border:1.5px solid #1c191766;color:#1c1917;padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap">
+    <button id="bannerSyncBtn" onclick="bannerSync()" 
+      style="background:#1c1917;color:#fef3c7;border:none;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:700;white-space:nowrap;transition:.15s">
+      🚀 Sincronizar agora
+    </button>
+    <button onclick="openGithubModal()" title="Configurar credenciais GitHub"
+      style="background:transparent;border:1.5px solid #1c191766;color:#1c1917;padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap">
       ⚙️ Config
     </button>
-    <button onclick="dismissBanner()" style="background:transparent;border:none;color:#1c191799;font-size:18px;cursor:pointer;padding:0 2px;line-height:1">
+    <button onclick="dismissBanner()"
+      style="background:transparent;border:none;color:#1c191799;font-size:18px;cursor:pointer;padding:0 2px;line-height:1">
       ×
     </button>
   </div>
 </div>
 
 <!-- ═══ MODAL: GITHUB CONFIG ═══ -->
-<div class="modal show" id="modalGithub">
+<div class="modal" id="modalGithub">
   <div class="modal-overlay" onclick="closeModal('modalGithub')"></div>
   <div class="modal-box" style="max-width:500px">
     <div class="modal-head">
@@ -1269,7 +634,7 @@ PARASITOLÓGICO DE FEZES</textarea>
       <input id="gh_path" class="field" placeholder="index.html" value="index.html">
       <div style="font-size:11px;color:var(--gray500);margin-top:4px">Normalmente <b>index.html</b> na raiz do repositório</div>
 
-      <div id="gh_status" style="display: block; margin-top: 12px; padding: 10px; border-radius: 6px; font-size: 12px; line-height: 1.5; background: rgb(239, 246, 255); border: 1px solid rgb(191, 219, 254); color: rgb(29, 78, 216);">🔄 Enviando...</div>
+      <div id="gh_status" style="display:none;margin-top:12px;padding:10px;border-radius:6px;font-size:12px;line-height:1.5"></div>
 
       <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--gray200)">
         <div style="font-size:11px;color:var(--gray600);margin-bottom:8px">Sem GitHub? Baixe o HTML e envie manualmente:</div>
@@ -1304,7 +669,11 @@ PARASITOLÓGICO DE FEZES</textarea>
       </select>
 
       <label style="margin-top:12px">Arquivo de prescrições</label>
-      <div style="border:2px dashed var(--gray300);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:.15s" onclick="document.getElementById('rxUploadFile').click()" ondragover="event.preventDefault();this.style.borderColor='#2563eb'" ondragleave="this.style.borderColor='var(--gray300)'" ondrop="handleRxDrop(event)">
+      <div style="border:2px dashed var(--gray300);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:.15s"
+        onclick="document.getElementById('rxUploadFile').click()"
+        ondragover="event.preventDefault();this.style.borderColor='#2563eb'"
+        ondragleave="this.style.borderColor='var(--gray300)'"
+        ondrop="handleRxDrop(event)">
         <div style="font-size:28px;margin-bottom:8px">📎</div>
         <div style="font-size:13px;color:var(--gray600)">Clique para selecionar ou arraste o arquivo aqui</div>
         <div style="font-size:11px;color:var(--gray400);margin-top:4px">Suporta .txt, .html, .json</div>
@@ -1319,7 +688,7 @@ PARASITOLÓGICO DE FEZES</textarea>
     </div>
     <div class="modal-foot">
       <button class="btn-cancel" onclick="closeModal('modalImportRx')">Cancelar</button>
-      <button class="btn-ok" id="importRxBtn" disabled="" onclick="confirmImportRx()">✅ Adicionar Prescrições</button>
+      <button class="btn-ok" id="importRxBtn" disabled onclick="confirmImportRx()">✅ Adicionar Prescrições</button>
     </div>
   </div>
 </div>
@@ -1442,7 +811,7 @@ PARASITOLÓGICO DE FEZES</textarea>
   </div>
 </div>
 
-<div id="toast" class="">🗑 Item excluído</div>
+<div id="toast"></div>
 <!-- EMOJI PICKER -->
 <div id="emojiPicker" class="emoji-picker" style="display:none">
   <div class="emoji-picker-title">Trocar Ícone</div>
@@ -1462,13 +831,15 @@ PARASITOLÓGICO DE FEZES</textarea>
     </div>
     <div class="modal-body">
       <label>Nome do Paciente</label>
-      <input id="wrd_nome" class="field" placeholder="Digite o nome completo do paciente" autofocus="">
+      <input id="wrd_nome" class="field" placeholder="Digite o nome completo do paciente" autofocus>
 
       <label style="margin-top:12px;display:flex;align-items:center;gap:8px">
         📝 Prescrição
         <span style="font-size:11px;color:var(--gray600);font-weight:400">(edite antes de imprimir — alterações não são salvas)</span>
       </label>
-      <textarea id="wrd_content" class="field" rows="10" style="font-family:var(--mono);font-size:12px;line-height:1.8;resize:vertical;white-space:pre;overflow-x:auto" placeholder="Conteúdo da prescrição..."></textarea>
+      <textarea id="wrd_content" class="field" rows="10"
+        style="font-family:var(--mono);font-size:12px;line-height:1.8;resize:vertical;white-space:pre;overflow-x:auto"
+        placeholder="Conteúdo da prescrição..."></textarea>
 
       <label style="margin-top:8px">Observações adicionais (opcional)</label>
       <input id="wrd_obs" class="field" placeholder="Ex: Retorno em 7 dias, evitar esforço físico...">
@@ -2846,18 +2217,12 @@ function setBannerState(state, msg) {
 
 // ── Botão do banner: sincroniza diretamente se configurado ──
 async function bannerSync() {
-  const token = localStorage.getItem('gh_token');
-  const user  = localStorage.getItem('gh_user');
-  const repo  = localStorage.getItem('gh_repo');
-
-  // Se não configurado, abrir modal de config
-  if (!token || !user || !repo) {
-    openGithubModal();
-    return;
-  }
-
-  // Sincronizar direto
-  await pushToGithubDirect(token, user, repo, localStorage.getItem('gh_path') || 'index.html');
+  const token = ghGet('token');
+  const user  = ghGet('user');
+  const repo  = ghGet('repo');
+  const path  = ghGet('path') || 'index.html';
+  // Sempre tem credenciais (fixas no código), vai direto
+  await pushToGithubDirect(token, user, repo, path);
 }
 window.bannerSync = bannerSync;
 
@@ -2922,25 +2287,52 @@ async function pushToGithubDirect(token, user, repo, path) {
   }
 }
 
-// ── Serializa o HTML com dados atuais embutidos ──
+// ── Serializa HTML com TODOS os dados atuais embutidos ──
 function buildExportHtml() {
-  // Atualiza o JSON embutido na variável ORIGINAL para refletir o estado salvo
-  // O HTML já tem o localStorage embutido via a variável D (dados em memória)
-  return document.documentElement.outerHTML;
+  // Pega o HTML atual
+  let html = document.documentElement.outerHTML;
+
+  // Coleta todos os dados que precisam ser preservados
+  const snapshot = {
+    mg_data:     localStorage.getItem('mg_data')     || '',
+    mg_groups:   localStorage.getItem('mg_groups')   || '',
+    mg_icons:    localStorage.getItem('mg_icons')    || '',
+    mg_logos:    localStorage.getItem('mg_logos')    || '',
+    mg_profiles: localStorage.getItem('mg_profiles') || '',
+    mg_medico:   localStorage.getItem('mg_medico')   || '',
+    mg_crm:      localStorage.getItem('mg_crm')      || '',
+  };
+
+  // Injeta um script que restaura os dados no localStorage ao abrir em novo dispositivo
+  const restoreScript = `<script id="__mg_restore__">
+(function(){
+  var snap = ${JSON.stringify(snapshot)};
+  Object.entries(snap).forEach(function(e){ if(e[1]) try{ localStorage.setItem(e[0], e[1]); }catch(x){} });
+  var el = document.getElementById('__mg_restore__');
+  if(el) el.parentNode.removeChild(el);
+})();
+<\/script>`;
+
+  // Remove script de restore antigo se existir (para não duplicar)
+  html = html.replace(/<script id="__mg_restore__">[\s\S]*?<\/script>/g, '');
+
+  // Injeta antes do </head>
+  html = html.replace('</head>', restoreScript + '</head>');
+
+  return html;
 }
 
-// ── Credenciais GitHub pré-configuradas ──
-(function seedGithubCreds() {
-  const defaults = {
-    gh_token: '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',
-    gh_user:  'cosendeythais-stack',
-    gh_repo:  'PRATICAMEDICA',
-    gh_path:  'index.html'
-  };
-  Object.entries(defaults).forEach(([k, v]) => {
-    if (!localStorage.getItem(k)) localStorage.setItem(k, v);
-  });
-})();
+// ── Credenciais GitHub — fixas no código (não dependem de localStorage) ──
+const GH_CONFIG = {
+  token: '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',
+  user:  'cosendeythais-stack',
+  repo:  'PRATICAMEDICA',
+  path:  'index.html'
+};
+// Permite override via localStorage (se o médico quiser configurar outro repo)
+function ghGet(key) {
+  return localStorage.getItem('gh_' + key) || GH_CONFIG[key] || '';
+}
 
 // ── Hook no save() para detectar alterações ──
 const _origSave = save;
@@ -2953,10 +2345,10 @@ window.save = function() {
 
 // ── Modal de configuração (só para configurar credenciais) ──
 function openGithubModal() {
-  document.getElementById('gh_token').value = localStorage.getItem('gh_token') || '';
-  document.getElementById('gh_user').value  = localStorage.getItem('gh_user')  || '';
-  document.getElementById('gh_repo').value  = localStorage.getItem('gh_repo')  || '';
-  document.getElementById('gh_path').value  = localStorage.getItem('gh_path')  || 'index.html';
+  document.getElementById('gh_token').value = ghGet('token');
+  document.getElementById('gh_user').value  = ghGet('user');
+  document.getElementById('gh_repo').value  = ghGet('repo');
+  document.getElementById('gh_path').value  = ghGet('path') || 'index.html';
   document.getElementById('gh_status').style.display = 'none';
   openModal('modalGithub');
 }
@@ -2985,10 +2377,11 @@ async function pushToGithub() {
     showGhStatus('⚠️ Preencha token, usuário e repositório.', 'error'); return;
   }
 
-  localStorage.setItem('gh_token', token);
-  localStorage.setItem('gh_user',  user);
-  localStorage.setItem('gh_repo',  repo);
-  localStorage.setItem('gh_path',  path);
+  // Salva override no localStorage somente se diferente do padrão
+  if (token !== GH_CONFIG.token) localStorage.setItem('gh_token', token); else localStorage.removeItem('gh_token');
+  if (user  !== GH_CONFIG.user)  localStorage.setItem('gh_user',  user);  else localStorage.removeItem('gh_user');
+  if (repo  !== GH_CONFIG.repo)  localStorage.setItem('gh_repo',  repo);  else localStorage.removeItem('gh_repo');
+  if (path  !== GH_CONFIG.path)  localStorage.setItem('gh_path',  path);  else localStorage.removeItem('gh_path');
 
   showGhStatus('🔄 Enviando...', 'info');
 
@@ -3363,6 +2756,5 @@ function pickEmoji(emoji) {
 window.pickEmoji = pickEmoji;
 
 </script>
-
-
-</body></html>
+</body>
+</html>
