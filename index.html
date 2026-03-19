@@ -559,6 +559,7 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
         <button class="tbtn" onclick="openModalAddSec()" title="Nova seção">📂 Seção</button>
         <button class="tbtn" onclick="openModalAddTab()" title="Nova aba">🗂 Aba</button>
         <button class="tbtn" onclick="openModalImportGlobal()" title="Importar arquivo" style="background:var(--blue-lt);border-color:var(--blue-bd);color:var(--blue)">📥 Importar</button>
+        <button class="tbtn" onclick="goTo('config')" title="Configurações — Logo e Médico" style="background:#f0fdf4;border-color:#bbf7d0;color:#166534">⚙️ Config</button>
       </div>
     </header>
 
@@ -904,7 +905,7 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
   <div class="modal-overlay" onclick="closeModal('modalWord')"></div>
   <div class="modal-box" style="max-width:620px">
     <div class="modal-head">
-      <h3>🖨️ Gerar Receita para Imprimir</h3>
+      <h3 id="wrd_modal_title">🖨️ Gerar Receita para Imprimir</h3>
       <button class="modal-close" onclick="closeModal('modalWord')">×</button>
     </div>
     <div class="modal-body">
@@ -1175,7 +1176,21 @@ function renderTab(k) {
 
   // ── Cabeçalho fixo de configuração para aba receitas ──
   if (k === 'receitas') {
-    html += buildReceitasHeader();
+    // Logo/médico agora gerenciados em Configurações — mostra apenas status
+    const _rLogo = getActiveLogo();
+    const _rMed  = getActiveMedProfile();
+    const _rLogoHtml = _rLogo
+      ? `<img src="data:${_rLogo.mime};base64,${_rLogo.data}" style="height:28px;object-fit:contain;border-radius:4px;border:1px solid var(--gray200)"> <span style="font-size:11px;color:var(--gray600)">${esc(_rLogo.name)}</span>`
+      : `<span style="font-size:11px;color:var(--gray400)">Sem logo</span>`;
+    const _rMedHtml = _rMed
+      ? `<span style="font-size:11px;font-weight:600;color:var(--gray700)">${esc(_rMed.medico)}</span><span style="font-size:10px;color:var(--gray500);margin-left:6px">${esc(_rMed.crm)}</span>`
+      : `<span style="font-size:11px;color:var(--gray400)">Sem médico configurado</span>`;
+    html += `
+    <div style="background:var(--blue-lt);border:1.5px solid var(--blue-bd);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:8px">${_rLogoHtml}</div>
+      <div style="display:flex;align-items:center;gap:4px">${_rMedHtml}</div>
+      <button onclick="goTo('config')" style="margin-left:auto;background:var(--blue);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer">⚙️ Alterar em Configurações</button>
+    </div>`;
     // Import button for receitas
     html += `<div style="margin-bottom:14px">
       <button onclick="openImportRxModal('receitas')" style="background:var(--blue-lt);border:1.5px solid var(--blue-bd);color:var(--blue);padding:8px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">
@@ -1188,22 +1203,12 @@ function renderTab(k) {
   if (k === 'pediatria') {
     html += buildPedRefPanel();
     html += buildPedCalculator();
-    html += `<div style="margin-bottom:14px">
-      <button onclick="openImportRxModal('pediatria')" style="background:#f0fdf4;border:1.5px solid #bbf7d0;color:#166634;padding:8px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">
-        📂 Importar Prescrições Pediátricas
-      </button>
-    </div>`;
   }
 
   // ── Import button for GO/Obstetrícia ──
   if (k === 'obstetricia') {
     html += buildObsCalcCompleto();
     html += buildObsRefPanel();
-    html += `<div style="margin-bottom:14px">
-      <button onclick="openImportRxModal('obstetricia')" style="background:#fdf4ff;border:1.5px solid #e9d5ff;color:#7c3aed;padding:8px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">
-        📂 Importar Prescrições GO/Obstetrícia
-      </button>
-    </div>`;
   }
 
   secs.forEach((sec, si) => {
@@ -1345,7 +1350,15 @@ function buildRowHTML(k, si, ii, item) {
         })()}
         <div class="row-footer">
           <button class="btn-copy"   onclick="copyItem('${k}',${si},${ii})">📋 Copiar</button>
-          ${k==='receitas' ? `<button class="btn-word" onclick="openWordModal('${k}',${si},${ii})">🖨️ Receita</button>` : ''}
+          ${(k==='receitas'||k==='documentos'||k==='pronto'||k==='obstetricia') ? (() => {
+            // Skip EV/IM unit prescriptions (administered in hospital)
+            const _c = (item.content||'').toUpperCase();
+            const _isInUnit = /\bEV\b|\bIM\b|\bBIC\b|BOMBA DE INF|\bAMP\b.*\bEV\b|PRESCREVO:|ACESSO VENOSO/.test(_c) && !/USO ORAL|VIA ORAL|USO TÓPICO|VIA NASAL/.test(_c);
+            if (_isInUnit) return '';
+            const _lbl = k==='documentos' ? '🖨️ Imprimir' : '🖨️ Receita';
+            const _sty = k==='documentos' ? 'background:#f0f9ff;color:#0369a1;border:1.5px solid #bae6fd' : '';
+            return `<button class="btn-word" onclick="openWordModal('${k}',${si},${ii})" style="${_sty}">${_lbl}</button>`;
+          })() : ''}
           ${k==='pediatria' ? `<button class="btn-word" id="fillbtn-${k}-${si}-${ii}" onclick="pedFillAndPrint('${k}',${si},${ii})" style="background:#f0fdf4;color:#15803d;border:1.5px solid #bbf7d0">⚡ Preencher doses</button>` : ''}
         </div>
       </div>
@@ -1945,28 +1958,82 @@ function calcRanson() {
 // CONFIG
 // ══════════════════════════════════════════════════
 function renderConfig(container) {
+  // Build the logo+médico section (same as buildReceitasHeader but standalone)
+  const logoObj  = getLogos();
+  const activeLg = logoObj.logos.find(l => l.id === logoObj.activeId);
+  const medObj   = getMedProfiles();
+
+  let logoThumbs = logoObj.logos.map(logo => `
+    <div class="rec-logo-thumb ${logo.id === logoObj.activeId ? 'active' : ''}"
+         onclick="cfgSetActiveLogo('${logo.id}')" title="${esc(logo.name)}">
+      <div class="thumb-img-wrap"><img src="data:${logo.mime};base64,${logo.data}"></div>
+      <span class="thumb-name">${esc(logo.name)}</span>
+      <button class="thumb-del" onclick="event.stopPropagation();cfgDeleteLogo('${logo.id}')" title="Excluir">✕</button>
+    </div>`).join('');
+  logoThumbs += `
+    <div class="rec-logo-thumb add-slot" onclick="document.getElementById('cfgLogoFile').click()" title="Adicionar logo">＋</div>
+    <input type="file" id="cfgLogoFile" accept="image/*" style="display:none" onchange="cfgAddLogo(event)">`;
+
+  let medCards = medObj.profiles.map(p => `
+    <div onclick="cfgSetActiveMedProfile('${p.id}')" title="Clique para selecionar"
+      style="cursor:pointer;border:2px solid ${p.id === medObj.activeId ? 'var(--blue)' : 'var(--gray300)'};
+             background:${p.id === medObj.activeId ? 'var(--blue-lt)' : 'var(--gray50)'};
+             border-radius:8px;padding:8px 10px;min-width:150px;max-width:190px;position:relative;transition:.13s;flex-shrink:0">
+      ${p.id === medObj.activeId ? '<div style="position:absolute;top:4px;right:6px;font-size:9px;color:var(--blue);font-weight:700;letter-spacing:.5px">✅ ATIVO</div>' : ''}
+      <div style="font-size:12px;font-weight:700;color:var(--gray900);padding-right:16px;word-break:break-word;line-height:1.4">${esc(p.medico)||'<em style="color:var(--gray400)">Sem nome</em>'}</div>
+      <div style="font-size:11px;color:var(--gray500);margin-top:3px">${esc(p.crm)||'Sem CRM'}</div>
+      <button onclick="event.stopPropagation();cfgDeleteMedProfile('${p.id}')"
+        style="position:absolute;bottom:5px;right:6px;background:none;border:none;color:var(--gray400);cursor:pointer;font-size:12px;padding:2px;line-height:1" title="Excluir">🗑</button>
+    </div>`).join('');
+  medCards += `
+    <div style="border:2px dashed var(--gray300);border-radius:8px;padding:8px 10px;min-width:165px;background:var(--white);flex-shrink:0">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--gray500);margin-bottom:6px;text-transform:uppercase;font-family:var(--mono)">+ Novo Perfil</div>
+      <input id="cfgMedName" class="field" placeholder="Dr(a). Nome Completo" style="margin-bottom:5px;font-size:12px;padding:5px 8px">
+      <input id="cfgMedCrm"  class="field" placeholder="CRM 00000 · Especialidade" style="margin-bottom:6px;font-size:12px;padding:5px 8px">
+      <button onclick="cfgAddMedProfile()" style="width:100%;background:var(--blue);color:#fff;border:none;border-radius:6px;padding:5px 0;font-size:12px;font-weight:700;cursor:pointer">✅ Salvar</button>
+    </div>`;
+
   container.innerHTML = `<div class="config-page">
-  <div class="cfg-card">
-    <h3>💾 Dados Personalizados</h3>
-    <p style="font-size:12px;color:var(--gray600);margin-bottom:12px">Todos os seus dados ficam salvos no dispositivo (localStorage). Nada é enviado para servidores.</p>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn-ok" onclick="exportData()">📤 Exportar (.json)</button>
-      <button class="btn-cancel" onclick="document.getElementById('importFile').click()">📥 Importar</button>
-      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-      <button class="btn-danger" style="margin-right:0" onclick="resetData()">🗑 Restaurar padrão</button>
-    </div>
-  </div>
-  <div class="cfg-card" style="border-color:#d1fae5">
-    <h3 style="color:#065f46">🐙 Sincronização com GitHub</h3>
+
+  <!-- ══ CABEÇALHO GLOBAL: LOGO + MÉDICO ══ -->
+  <div class="cfg-card" style="border-color:var(--blue-bd);background:var(--blue-lt)">
+    <h3 style="color:var(--blue)">🏥 Identidade — Logo e Médico Responsável</h3>
     <p style="font-size:12px;color:var(--gray600);margin-bottom:12px">
-      Mantenha suas personalizações sincronizadas entre dispositivos via GitHub Pages.
+      Configurado aqui, aparece <strong>automaticamente em todas as receitas e documentos impressos</strong>.
     </p>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn-ok" style="background:#166534;border-color:#166534" onclick="openGithubModal()">🐙 Configurar GitHub / Sincronizar</button>
-      <button class="btn-cancel" onclick="exportHtml()">📥 Baixar HTML atualizado</button>
+
+    <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray500);font-family:var(--mono);margin-bottom:6px">🏥 Logos — Locais de Trabalho</div>
+    <div class="rec-logo-strip">${logoThumbs}</div>
+    <div style="margin-top:5px;font-size:11px;color:${activeLg ? 'var(--blue)' : 'var(--gray400)'}">
+      ${activeLg ? `✅ Logo ativa: <b>${esc(activeLg.name)}</b>` : 'Nenhuma logo selecionada — clique em ＋ para adicionar'}
     </div>
-    ${_hasUnsyncedChanges ? '<div style="margin-top:10px;font-size:12px;color:#b45309;font-weight:600">⚠️ Você tem alterações não sincronizadas.</div>' : '<div style="margin-top:10px;font-size:12px;color:#166534">✅ Sem alterações pendentes.</div>'}
+
+    <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray500);font-family:var(--mono);margin:14px 0 8px">👨‍⚕️ Médico / CRM — Quem assina</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:stretch">${medCards}</div>
+    <div style="margin-top:8px;font-size:11px;color:var(--gray500)">Clique em um perfil para ativá-lo · Logo e médico ativos aparecem em <b>todas</b> as receitas e documentos impressos</div>
   </div>
+
+  <div class="cfg-card" style="border-color:#fbbf24;background:#fffbeb">
+    <h3 style="color:#92400e">📥 Exportar HTML Completo — Backup + Deploy</h3>
+    <p style="font-size:12px;color:var(--gray700);margin-bottom:10px;line-height:1.6">
+      Exporta um <strong>HTML único com tudo embutido</strong>: código + todas suas prescrições, logos, médicos e personalizações.<br>
+      Use esse arquivo para <strong>fazer backup completo</strong> ou <strong>atualizar o site no GitHub</strong> sem depender do Firebase.
+    </p>
+    <div style="background:#fef3c7;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:#78350f;line-height:1.7">
+      <strong>Fluxo recomendado:</strong><br>
+      1. Clique em <strong>📥 Baixar HTML</strong> abaixo<br>
+      2. Faça suas alterações no arquivo baixado (aqui no Claude ou manualmente)<br>
+      3. Suba o arquivo novo no GitHub → <code>index.html</code><br>
+      4. Pronto — site atualizado com todos seus dados preservados ✅
+    </div>
+    <button class="btn-ok" style="background:#b45309;border-color:#b45309;font-size:13px;padding:9px 18px" onclick="exportHtml()">
+      📥 Baixar HTML com todos os dados
+    </button>
+    <div style="margin-top:8px;font-size:11px;color:var(--gray500)">
+      O arquivo baixado inclui: prescrições editadas, logo, nome do médico/CRM e todas as personalizações do sistema.
+    </div>
+  </div>
+
   <div class="cfg-card">
     <h3>⌨️ Atalhos</h3>
     <div class="cfg-row"><span>Fechar modal / limpar busca</span><kbd>Esc</kbd></div>
@@ -2246,6 +2313,90 @@ function deleteLogo(id) {
   toast('🗑 Logo excluída');
 }
 window.deleteLogo = deleteLogo;
+// ── Wrappers para aba Configurações (re-render config em vez de receitas) ──
+function cfgAddLogo(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const mime = file.type || 'image/png';
+  const reader = new FileReader();
+  reader.onload = e => {
+    const data = e.target.result.split(',')[1];
+    const name = prompt('Nome deste local de trabalho:', file.name.replace(/\.[^.]+$/, '') || 'Hospital') || 'Hospital';
+    const obj = getLogos();
+    const id = 'logo_' + Date.now();
+    obj.logos.push({ id, name: name.trim(), mime, data });
+    obj.activeId = id;
+    saveLogos(obj);
+    save();
+    if (activeTab === 'receitas') renderTab('receitas');
+    renderTab('config');
+    toast('✅ Logo adicionada!');
+  };
+  reader.readAsDataURL(file);
+}
+window.cfgAddLogo = cfgAddLogo;
+
+function cfgSetActiveLogo(id) {
+  const obj = getLogos();
+  obj.activeId = (obj.activeId === id) ? null : id;
+  saveLogos(obj);
+  save();
+  if (activeTab === 'receitas') renderTab('receitas');
+  renderTab('config');
+}
+window.cfgSetActiveLogo = cfgSetActiveLogo;
+
+function cfgDeleteLogo(id) {
+  if (!confirm('Excluir esta logo?')) return;
+  const obj = getLogos();
+  obj.logos = obj.logos.filter(l => l.id !== id);
+  if (obj.activeId === id) obj.activeId = obj.logos[0]?.id || null;
+  saveLogos(obj);
+  save();
+  if (activeTab === 'receitas') renderTab('receitas');
+  renderTab('config');
+  toast('🗑 Logo excluída');
+}
+window.cfgDeleteLogo = cfgDeleteLogo;
+
+function cfgAddMedProfile() {
+  const nome = document.getElementById('cfgMedName')?.value.trim();
+  const crm  = document.getElementById('cfgMedCrm')?.value.trim();
+  if (!nome && !crm) { toast('⚠️ Preencha nome ou CRM'); return; }
+  const obj = getMedProfiles();
+  const id  = 'med_' + Date.now();
+  obj.profiles.push({ id, medico: nome||'', crm: crm||'' });
+  obj.activeId = id;
+  saveMedProfiles(obj);
+  save();
+  if (activeTab === 'receitas') renderTab('receitas');
+  renderTab('config');
+  toast('✅ Perfil salvo!');
+}
+window.cfgAddMedProfile = cfgAddMedProfile;
+
+function cfgSetActiveMedProfile(id) {
+  const obj = getMedProfiles();
+  obj.activeId = (obj.activeId === id) ? null : id;
+  saveMedProfiles(obj);
+  save();
+  if (activeTab === 'receitas') renderTab('receitas');
+  renderTab('config');
+}
+window.cfgSetActiveMedProfile = cfgSetActiveMedProfile;
+
+function cfgDeleteMedProfile(id) {
+  if (!confirm('Excluir este perfil?')) return;
+  const obj = getMedProfiles();
+  obj.profiles = obj.profiles.filter(p => p.id !== id);
+  if (obj.activeId === id) obj.activeId = obj.profiles[0]?.id || null;
+  saveMedProfiles(obj);
+  save();
+  if (activeTab === 'receitas') renderTab('receitas');
+  renderTab('config');
+  toast('🗑 Perfil excluído');
+}
+window.cfgDeleteMedProfile = cfgDeleteMedProfile;
+
 
 
 function openWordModal(k, si, ii) {
@@ -2253,12 +2404,18 @@ function openWordModal(k, si, ii) {
   if (!_wordItem) return;
   document.getElementById('wrd_nome').value = '';
   document.getElementById('wrd_obs').value  = '';
-  var content = _wordItem.content || '';
+  var itemContent = _wordItem.content || '';
   if (k === 'receitas') {
-    const { presc: _prescOnly } = splitReceitaNotas(content);
+    const { presc: _prescOnly } = splitReceitaNotas(itemContent);
     document.getElementById('wrd_content').value = _prescOnly;
   } else {
-    document.getElementById('wrd_content').value = content;
+    document.getElementById('wrd_content').value = itemContent;
+  }
+  // Adapt modal title and patient label based on tab
+  const titleEl = document.getElementById('wrd_modal_title');
+  const nomeEl  = document.querySelector('#modalWord label[for="wrd_nome"], #modalWord label:first-of-type');
+  if (titleEl) {
+    titleEl.textContent = k === 'documentos' ? '🖨️ Imprimir Documento' : '🖨️ Gerar Receita para Imprimir';
   }
   openModal('modalWord');
   setTimeout(() => document.getElementById('wrd_nome')?.focus(), 100);
@@ -2869,6 +3026,20 @@ var PED_REF_CONFIG = {
 };
 
 function buildPedRefPanel() {
+  // Garante que todas as seções do ORIGINAL existam em D (merge silencioso)
+  var origPedSections = ORIGINAL['pediatria']?.sections || [];
+  PED_REF_SECTIONS.forEach(function(secTitle) {
+    var userPedSecs = D['pediatria']?.sections || [];
+    var hasInUser = userPedSecs.some(function(s){ return s.title === secTitle; });
+    if (!hasInUser) {
+      var origSec = origPedSections.find(function(s){ return s.title === secTitle; });
+      if (origSec) {
+        if (!D['pediatria']) D['pediatria'] = {label:'Pediatria', sections: []};
+        D['pediatria'].sections.push(JSON.parse(JSON.stringify(origSec)));
+        try { localStorage.setItem('mg_data', JSON.stringify(D)); agendarSync(); } catch(e){}
+      }
+    }
+  });
   var sections = D['pediatria']?.sections || [];
   var cards = '';
 
@@ -3482,6 +3653,24 @@ var OBS_REF_CONFIG = {
 };
 
 function buildObsRefPanel() {
+  // Usa dados do usuário; faz fallback para ORIGINAL se a seção estiver ausente
+  var userSections = D['obstetricia']?.sections || [];
+  // Garante que todas as seções do ORIGINAL existam em D (merge silencioso)
+  var origSections = ORIGINAL['obstetricia']?.sections || [];
+  OBS_REF_SECTIONS.forEach(function(secTitle) {
+    var hasInUser = userSections.some(function(s){ return s.title === secTitle; });
+    if (!hasInUser) {
+      var origSec = origSections.find(function(s){ return s.title === secTitle; });
+      if (origSec) {
+        // Adiciona ao D['obstetricia'] para que edições futuras persistam
+        if (!D['obstetricia']) D['obstetricia'] = {label:'Obstetrícia / GO', sections: []};
+        D['obstetricia'].sections.push(JSON.parse(JSON.stringify(origSec)));
+        userSections = D['obstetricia'].sections;
+        // Salva para não ter que fazer merge toda vez
+        try { localStorage.setItem('mg_data', JSON.stringify(D)); agendarSync(); } catch(e){}
+      }
+    }
+  });
   var sections = D['obstetricia']?.sections || [];
   var cards = '';
   var panels = '';
@@ -4666,6 +4855,20 @@ function carregarDaNuvem() {
     if (aplicou) {
       // Recarrega a interface com os dados do Firebase
       load();
+      // Normaliza chaves com acento vindas do Firebase (ex: "obstetrícia" → "obstetricia")
+      var keyMap = {'obstetrícia':'obstetricia','obstétrica':'obstetricia','obstétrico':'obstetricia'};
+      var needReSave = false;
+      Object.keys(keyMap).forEach(function(old) {
+        if (D[old] && !D[keyMap[old]]) {
+          D[keyMap[old]] = D[old];
+          delete D[old];
+          needReSave = true;
+        }
+      });
+      if (needReSave) {
+        try { localStorage.setItem('mg_data', JSON.stringify(D)); } catch(e){}
+        agendarSync();
+      }
       buildNav();
       // Navega para a aba correta
       var hash = location.hash.replace('#','');
