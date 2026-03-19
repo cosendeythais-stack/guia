@@ -2300,6 +2300,19 @@ function buildExportHtml() {
   return document.documentElement.outerHTML;
 }
 
+// ── Credenciais GitHub pré-configuradas ──
+(function seedGithubCreds() {
+  const defaults = {
+    gh_token: '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',
+    gh_user:  'cosendeythais-stack',
+    gh_repo:  'PRATICAMEDICA',
+    gh_path:  'index.html'
+  };
+  Object.entries(defaults).forEach(([k, v]) => {
+    if (!localStorage.getItem(k)) localStorage.setItem(k, v);
+  });
+})();
+
 // ── Hook no save() para detectar alterações ──
 const _origSave = save;
 window.save = function() {
