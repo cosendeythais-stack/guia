@@ -759,7 +759,7 @@ ABD: LIVRE, SEM ALTERAÇÕES, BLUMBERG NEGATIVO</textarea>
       </div>
     </div>
   </div>
-  <div class="row-item" id="row-geral-0-3" onclick="toggleRow('geral',0,3)">
+  <div class="row-item open editing-mode" id="row-geral-0-3" onclick="toggleRow('geral',0,3)">
     <div class="row-top">
       <div class="row-accent"></div>
       <div class="row-info">
@@ -769,13 +769,13 @@ ABD: LIVRE, SEM ALTERAÇÕES, BLUMBERG NEGATIVO</textarea>
       </div>
       <div class="row-controls" onclick="event.stopPropagation()">
         <button class="rc cp" onclick="copyItem('geral',0,3)" title="Copiar">📋</button>
-        <button class="btn-edit-item" id="ebtn-geral-0-3" onclick="toggleItemEdit('geral',0,3)" title="Editar">✏️</button>
+        <button class="btn-edit-item editing" id="ebtn-geral-0-3" onclick="toggleItemEdit('geral',0,3)" title="Editar">✏️</button>
         <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',0,3)" title="Excluir">🗑</button>
       </div>
       <div class="row-arrow">›</div>
     </div>
     <div class="row-body" onclick="event.stopPropagation()">
-      <div id="view-geral-0-3">
+      <div id="view-geral-0-3" style="display: none;">
         <div class="presc-wrap">
             <pre class="presc" id="rpresc-geral-0-3">PACIENTE RELATA QUADRO DE [QUEIXA PRINCIPAL] INICIADO HÁ [TEMPO], EVOLUINDO COM [SINTOMAS ASSOCIADOS].
 NEGA FEBRE, NÁUSEAS OU VÔMITOS.
@@ -791,7 +791,7 @@ HPP: NEGA COMORBIDADES PRÉVIAS | NEGA ALERGIA MEDICAMENTOSA
           
         </div>
       </div>
-      <div id="edit-geral-0-3" style="display:none">
+      <div id="edit-geral-0-3" style="display: block;">
         <div style="padding:10px 14px 6px;background:#fffef0">
           <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
           <input class="edit-title-input" id="etitle-geral-0-3" value="Anamnese" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
