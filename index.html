@@ -495,7 +495,22 @@ textarea.field { resize: vertical; font-family: var(--mono); line-height: 1.65; 
 ───────────────────────────────────── */
 .calc-page { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
 .calc-card { background: var(--white); border: 1.5px solid var(--gray300); border-radius: 10px; overflow: hidden; }
-.calc-card-head { padding: 11px 14px; background: var(--gray50); border-bottom: 1.5px solid var(--gray200); font-size: 13px; font-weight: 700; color: var(--gray800); }
+.calc-card-head { padding: 11px 14px; background: var(--gray50); border-bottom: 1.5px solid var(--gray200); font-size: 13px; font-weight: 700; color: var(--gray800); display:flex; align-items:center; justify-content:space-between; }
+.calc-edit-btn { background:none; border:1.5px solid transparent; color:var(--gray400); padding:3px 8px; border-radius:5px; cursor:pointer; font-size:12px; font-weight:600; transition:.12s; font-family:var(--sans); white-space:nowrap; }
+.calc-edit-btn:hover { background:#fffbeb; border-color:#fcd34d; color:#92400e; }
+.calc-edit-btn.active { background:#fffbeb; border-color:#fbbf24; color:#92400e; }
+.calc-edit-overlay { background:#fffef0; border:2px dashed #fbbf24; border-radius:8px; padding:12px; margin:10px 14px 14px; display:none; flex-direction:column; gap:8px; }
+.calc-edit-overlay.show { display:flex; }
+.calc-edit-row { display:flex; flex-direction:column; gap:3px; }
+.calc-edit-row label { font-size:9px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#92400e; font-family:var(--mono); }
+.calc-edit-input { background:#fff; border:1.5px solid #fde68a; color:var(--gray900); padding:6px 9px; border-radius:6px; font-family:var(--mono); font-size:12px; outline:none; transition:.13s; width:100%; }
+.calc-edit-input:focus { border-color:#f59e0b; }
+.calc-edit-actions { display:flex; gap:6px; margin-top:4px; flex-wrap:wrap; }
+.calc-save-btn { background:#16a34a; color:#fff; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:700; font-family:var(--sans); }
+.calc-save-btn:hover { background:#15803d; }
+.calc-cancel-btn { background:var(--gray100); color:var(--gray600); border:1.5px solid var(--gray300); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; font-family:var(--sans); }
+.calc-reset-btn { background:var(--red-lt); color:var(--red); border:1.5px solid var(--red-bd); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; font-family:var(--sans); margin-left:auto; }
+.calc-reset-btn:hover { background:var(--red-bd); }
 .calc-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
 .cf label { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--gray500); display: block; margin-bottom: 3px; text-transform: uppercase; }
 .ci { background: var(--gray50); border: 1.5px solid var(--gray300); color: var(--gray900); padding: 7px 10px; border-radius: 6px; font-family: var(--mono); font-size: 13px; outline: none; width: 100%; transition: .13s; }
@@ -558,6 +573,7 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
         <button class="tbtn" onclick="openModalAddItem()" title="Novo item">➕ Item</button>
         <button class="tbtn" onclick="openModalAddSec()" title="Nova seção">📂 Seção</button>
         <button class="tbtn" onclick="openModalAddTab()" title="Nova aba">🗂 Aba</button>
+        <button class="tbtn" onclick="openBackupModal()" title="Backup & Restauração" style="background:#ecfdf5;border-color:#6ee7b7;color:#065f46">📦 Backup</button>
         <button class="tbtn" onclick="goTo('config')" title="Configurações — Logo e Médico" style="background:#f0fdf4;border-color:#bbf7d0;color:#166534">⚙️ Config</button>
       </div>
     </header>
@@ -648,7 +664,112 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
   </div>
 </div>
 
-<!-- ═══ MODAL: IMPORTAR PRESCRIÇÕES (IA) ═══ -->
+<!-- ═══ MODAL: BACKUP & RESTAURAÇÃO ═══ -->
+<div class="modal" id="modalBackup">
+  <div class="modal-overlay" onclick="closeModal('modalBackup')"></div>
+  <div class="modal-box" style="max-width:560px">
+    <div class="modal-head" style="background:linear-gradient(135deg,#059669,#0d9488);border-radius:11px 11px 0 0">
+      <h3 style="color:#fff;display:flex;align-items:center;gap:8px">📦 Backup & Restauração de Dados</h3>
+      <button class="modal-close" onclick="closeModal('modalBackup')" style="color:rgba(255,255,255,.8)">×</button>
+    </div>
+    <div class="modal-body" style="padding:0">
+
+      <!-- STATUS ATUAL -->
+      <div style="padding:14px 18px;background:#f0fdf4;border-bottom:1.5px solid #d1fae5">
+        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#065f46;font-family:var(--mono);margin-bottom:10px">📊 Dados Atuais no Sistema</div>
+        <div id="backup_resumo"></div>
+      </div>
+
+      <!-- EXPORTAR -->
+      <div style="padding:16px 18px;border-bottom:1.5px solid var(--gray200)">
+        <div style="font-size:12px;font-weight:800;color:var(--gray800);margin-bottom:6px;display:flex;align-items:center;gap:6px">
+          📥 Exportar Backup JSON
+        </div>
+        <p style="font-size:12px;color:var(--gray600);line-height:1.6;margin-bottom:10px">
+          Gera um arquivo <code>.json</code> com <strong>todos os dados</strong>: prescrições, logos, médicos e calculadoras personalizadas. Salve em lugar seguro.
+        </p>
+        <button onclick="exportData()" style="background:#059669;color:#fff;border:none;border-radius:7px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.13s" onmouseover="this.style.opacity='.87'" onmouseout="this.style.opacity='1'">
+          📥 Baixar backup .json
+        </button>
+      </div>
+
+      <!-- IMPORTAR -->
+      <div style="padding:16px 18px;border-bottom:1.5px solid var(--gray200)">
+        <div style="font-size:12px;font-weight:800;color:var(--gray800);margin-bottom:6px;display:flex;align-items:center;gap:6px">
+          📤 Restaurar de Backup JSON
+        </div>
+        <p style="font-size:12px;color:var(--gray600);line-height:1.6;margin-bottom:8px">
+          Selecione um arquivo de backup exportado anteriormente. Os dados serão restaurados, a interface será atualizada e <strong>os dados serão enviados automaticamente ao Firebase</strong>.
+        </p>
+        <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:7px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:#92400e;line-height:1.6">
+          ⚠️ <strong>Atenção:</strong> A importação <em>substituirá</em> os dados atuais pelos dados do arquivo. Faça um backup antes se tiver dúvidas.
+        </div>
+        <label style="display:inline-flex;align-items:center;gap:7px;background:#f59e0b;color:#fff;border:none;border-radius:7px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:.13s" onmouseover="this.style.opacity='.87'" onmouseout="this.style.opacity='1'">
+          📂 Selecionar arquivo .json
+          <input type="file" accept=".json,application/json" style="display:none" onchange="importData(event)">
+        </label>
+      </div>
+
+      <!-- FIREBASE STATUS -->
+      <div style="padding:14px 18px">
+        <div style="font-size:12px;font-weight:800;color:var(--gray800);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+          ☁️ Sincronização Firebase
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <div id="backupFirebaseStatus" style="font-size:12px;color:var(--gray600);flex:1">Verificando...</div>
+          <button onclick="sincronizarAgora();toast('☁️ Sincronizando...')" style="background:#6366f1;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+            🔄 Forçar sincronização
+          </button>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-foot" style="justify-content:space-between">
+      <button class="btn-danger" onclick="resetData();closeModal('modalBackup')">🗑️ Limpar todos os dados</button>
+      <button class="btn-cancel" onclick="closeModal('modalBackup')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Atualiza status do Firebase na Config e no modal de Backup ──
+function atualizarStatusFirebaseConfig() {
+  var ico = document.getElementById('cfgFirebaseIco');
+  var msg = document.getElementById('cfgFirebaseMsg');
+  var bkp = document.getElementById('backupFirebaseStatus');
+  var ind = document.getElementById('__syncindicator__');
+
+  // Tenta verificar conectividade básica via fetch ao Firebase
+  fetch("https://medguia-aa494-default-rtdb.firebaseio.com/.json?shallow=true", { method: 'GET' })
+    .then(function(r) {
+      var online = r.ok;
+      var txt = online ? '✅ Conectado ao Firebase' : '⚠️ Firebase inacessível';
+      var cor = online ? '#059669' : '#b45309';
+      if (ico) ico.textContent = online ? '✅' : '⚠️';
+      if (msg) { msg.textContent = txt; msg.style.color = cor; }
+      if (bkp) { bkp.textContent = txt; bkp.style.color = cor; }
+    })
+    .catch(function() {
+      if (ico) ico.textContent = '📶';
+      if (msg) { msg.textContent = '📶 Offline — dados salvos localmente'; msg.style.color = '#6b7280'; }
+      if (bkp) { bkp.textContent = '📶 Offline — dados salvos localmente'; bkp.style.color = '#6b7280'; }
+    });
+}
+
+// Sobrescreve openBackupModal para incluir status Firebase
+var _openBackupOrig = window.openBackupModal;
+window.openBackupModal = function() {
+  _openBackupOrig();
+  setTimeout(atualizarStatusFirebaseConfig, 200);
+};
+
+// Atualiza status quando a aba Config é visitada
+var _goToOrig = window.goTo;
+window.goTo = function(k) {
+  _goToOrig(k);
+  if (k === 'config') setTimeout(atualizarStatusFirebaseConfig, 300);
+};
+</script>
 
 
 <div class="modal" id="modalView">
@@ -1774,120 +1895,377 @@ function runSearch(q) {
 }
 
 // ══════════════════════════════════════════════════
-// CALCULADORAS
+// CALCULADORAS — DADOS EDITÁVEIS
 // ══════════════════════════════════════════════════
+
+// Dados padrão das calculadoras (podem ser sobrescritos pelo usuário)
+var CALC_DEFAULTS = {
+  imc: {
+    title: '⚖️ IMC e Peso Ideal',
+    fields: [
+      { label: 'Altura (m)', id: 'ih', placeholder: '1.70', step: '0.01' },
+      { label: 'Peso (kg)',  id: 'ip', placeholder: '75',   step: '0.1'  }
+    ]
+  },
+  glasgow: {
+    title: '🧠 Escala de Glasgow',
+    selects: [
+      { label: 'Abertura Ocular (O)', id: 'go', options: ['4 — Espontânea','3 — À voz','2 — À dor','1 — Nenhuma'] },
+      { label: 'Resposta Verbal (V)', id: 'gv', options: ['5 — Orientado','4 — Confuso','3 — Palavras inapropriadas','2 — Sons incompreensíveis','1 — Nenhuma / IOT'] },
+      { label: 'Resposta Motora (M)', id: 'gm', options: ['6 — Obedece comandos','5 — Localiza dor','4 — Retirada','3 — Flexão anormal','2 — Extensão anormal','1 — Nenhuma'] }
+    ]
+  },
+  curb: {
+    title: '🫁 CURB-65 — Pneumonia',
+    criteria: [
+      { id:'c1', text:'Confusão mental', score:1 },
+      { id:'c2', text:'Ureia > 50 mg/dL', score:1 },
+      { id:'c3', text:'FR ≥ 30 irpm', score:1 },
+      { id:'c4', text:'PAS < 90 ou PAD ≤ 60 mmHg', score:1 },
+      { id:'c5', text:'Idade ≥ 65 anos', score:1 }
+    ]
+  },
+  wells: {
+    title: '🦵 Wells — TVP',
+    criteria: [
+      { id:'w1', text:'Câncer ativo', score:1 },
+      { id:'w2', text:'Paralisia / imobilização MMII', score:1 },
+      { id:'w3', text:'Acamado >3d ou cirurgia <12sem', score:1 },
+      { id:'w4', text:'Dor ao longo do sistema venoso profundo', score:1 },
+      { id:'w5', text:'Edema em toda a perna', score:1 },
+      { id:'w6', text:'Edema assimétrico > 3cm', score:1 },
+      { id:'w7', text:'Circulação colateral superficial', score:1 },
+      { id:'w8', text:'TVP prévia documentada', score:1 },
+      { id:'w9', text:'Diagnóstico alternativo ≥ tão provável', score:-2, danger:true }
+    ]
+  },
+  alvarado: {
+    title: '🔴 Alvarado — Apendicite',
+    criteria: [
+      { id:'a1', text:'Migração da dor para FID', score:1 },
+      { id:'a2', text:'Anorexia', score:1 },
+      { id:'a3', text:'Náusea / vômito', score:1 },
+      { id:'a4', text:'Dor em FID', score:2 },
+      { id:'a5', text:'Sinal de Blumberg', score:1 },
+      { id:'a6', text:'Temperatura > 37,3°C', score:1 },
+      { id:'a7', text:'Leucocitose > 10.000', score:2 }
+    ]
+  },
+  ranson: {
+    title: '🟡 Ranson — Pancreatite Aguda',
+    criteria: [
+      { id:'r1',  text:'Idade > 55 anos', score:1, group:'admissao' },
+      { id:'r2',  text:'Leucócitos > 16.000/mm³', score:1, group:'admissao' },
+      { id:'r3',  text:'Glicose > 200 mg/dL', score:1, group:'admissao' },
+      { id:'r4',  text:'DHL > 350 UI/L', score:1, group:'admissao' },
+      { id:'r5',  text:'AST (TGO) > 250 UI/L', score:1, group:'admissao' },
+      { id:'r6',  text:'Queda do hematócrito > 10%', score:1, group:'48h' },
+      { id:'r7',  text:'Aumento da ureia > 5 mg/dL', score:1, group:'48h' },
+      { id:'r8',  text:'Cálcio sérico < 8 mg/dL', score:1, group:'48h' },
+      { id:'r9',  text:'PaO₂ < 60 mmHg', score:1, group:'48h' },
+      { id:'r10', text:'Déficit de base > 4 mEq/L', score:1, group:'48h' },
+      { id:'r11', text:'Sequestro de líquidos > 6L', score:1, group:'48h' }
+    ]
+  }
+};
+
+function loadCalcData() {
+  try { return JSON.parse(localStorage.getItem('mg_calc_data') || '{}'); } catch(e) { return {}; }
+}
+function saveCalcData(data) {
+  try { localStorage.setItem('mg_calc_data', JSON.stringify(data)); } catch(e) {}
+}
+function getCalc(key) {
+  var saved = loadCalcData()[key];
+  return saved ? Object.assign({}, CALC_DEFAULTS[key], saved) : CALC_DEFAULTS[key];
+}
+
+// ── Toggle painel de edição de uma calc card ──
+function calcToggleEdit(key) {
+  var overlay = document.getElementById('calc-edit-' + key);
+  var btn     = document.getElementById('calc-editbtn-' + key);
+  if (!overlay) return;
+  var isOpen = overlay.classList.contains('show');
+  // Fecha todos
+  document.querySelectorAll('.calc-edit-overlay').forEach(function(el) { el.classList.remove('show'); });
+  document.querySelectorAll('.calc-edit-btn').forEach(function(el) { el.classList.remove('active'); el.textContent = '✏️ Editar'; });
+  if (!isOpen) {
+    overlay.classList.add('show');
+    if (btn) { btn.classList.add('active'); btn.textContent = '✕ Fechar'; }
+    overlay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+window.calcToggleEdit = calcToggleEdit;
+
+// ── Salvar edição de uma card ──
+function calcSaveEdit(key) {
+  var data = loadCalcData();
+  data[key] = data[key] || {};
+  // Título
+  var titleInput = document.getElementById('cedit-title-' + key);
+  if (titleInput) data[key].title = titleInput.value.trim() || CALC_DEFAULTS[key].title;
+
+  // Critérios (checkboxes)
+  var def = CALC_DEFAULTS[key];
+  if (def.criteria) {
+    data[key].criteria = def.criteria.map(function(c) {
+      var textInput  = document.getElementById('cedit-text-'  + c.id);
+      var scoreInput = document.getElementById('cedit-score-' + c.id);
+      return Object.assign({}, c, {
+        text:  textInput  ? (textInput.value.trim()  || c.text)  : c.text,
+        score: scoreInput ? (parseInt(scoreInput.value) || c.score) : c.score
+      });
+    });
+  }
+
+  // Fields numéricos (IMC)
+  if (def.fields) {
+    data[key].fields = def.fields.map(function(f) {
+      var labelInput = document.getElementById('cedit-flabel-' + f.id);
+      return Object.assign({}, f, { label: labelInput ? (labelInput.value.trim() || f.label) : f.label });
+    });
+  }
+
+  // Selects (Glasgow)
+  if (def.selects) {
+    data[key].selects = def.selects.map(function(s) {
+      var labelInput   = document.getElementById('cedit-slabel-' + s.id);
+      var optionsInput = document.getElementById('cedit-sopts-'  + s.id);
+      var opts = s.options;
+      if (optionsInput) {
+        opts = optionsInput.value.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
+        if (!opts.length) opts = s.options;
+      }
+      return Object.assign({}, s, {
+        label:   labelInput ? (labelInput.value.trim() || s.label) : s.label,
+        options: opts
+      });
+    });
+  }
+
+  saveCalcData(data);
+  toast('✅ Calculadora atualizada!');
+  renderCalc(document.getElementById('content'));
+}
+window.calcSaveEdit = calcSaveEdit;
+
+// ── Resetar uma card para o padrão ──
+function calcResetEdit(key) {
+  if (!confirm('Restaurar "' + CALC_DEFAULTS[key].title + '" para os valores padrão?')) return;
+  var data = loadCalcData();
+  delete data[key];
+  saveCalcData(data);
+  toast('↩️ Restaurado para o padrão!');
+  renderCalc(document.getElementById('content'));
+}
+window.calcResetEdit = calcResetEdit;
+
+// ── Constrói overlay de edição para cards com critérios ──
+function buildCriteriaEditOverlay(key) {
+  var calc = getCalc(key);
+  var rows = (calc.criteria || []).map(function(c) {
+    return `<div style="display:grid;grid-template-columns:1fr 64px;gap:6px;align-items:end">
+      <div class="calc-edit-row">
+        <label>Critério</label>
+        <input class="calc-edit-input" id="cedit-text-${c.id}" value="${esc(c.text)}">
+      </div>
+      <div class="calc-edit-row">
+        <label>Pontos</label>
+        <input class="calc-edit-input" id="cedit-score-${c.id}" type="number" value="${c.score}" style="text-align:center">
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="calc-edit-overlay" id="calc-edit-${key}">
+    <div class="calc-edit-row">
+      <label>🏷️ Título do Card</label>
+      <input class="calc-edit-input" id="cedit-title-${key}" value="${esc(calc.title)}">
+    </div>
+    <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#92400e;font-family:var(--mono);margin-top:4px">📋 Critérios e Pontuações</div>
+    ${rows}
+    <div class="calc-edit-actions">
+      <button class="calc-save-btn" onclick="calcSaveEdit('${key}')">💾 Salvar</button>
+      <button class="calc-cancel-btn" onclick="calcToggleEdit('${key}')">Cancelar</button>
+      <button class="calc-reset-btn" onclick="calcResetEdit('${key}')">↩️ Restaurar padrão</button>
+    </div>
+  </div>`;
+}
+
+// ── Constrói overlay de edição para IMC ──
+function buildImcEditOverlay() {
+  var calc = getCalc('imc');
+  var rows = (calc.fields || []).map(function(f) {
+    return `<div class="calc-edit-row">
+      <label>Label — ${f.id.toUpperCase()}</label>
+      <input class="calc-edit-input" id="cedit-flabel-${f.id}" value="${esc(f.label)}">
+    </div>`;
+  }).join('');
+  return `<div class="calc-edit-overlay" id="calc-edit-imc">
+    <div class="calc-edit-row">
+      <label>🏷️ Título do Card</label>
+      <input class="calc-edit-input" id="cedit-title-imc" value="${esc(calc.title)}">
+    </div>
+    <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#92400e;font-family:var(--mono);margin-top:4px">📋 Labels dos Campos</div>
+    ${rows}
+    <div class="calc-edit-actions">
+      <button class="calc-save-btn" onclick="calcSaveEdit('imc')">💾 Salvar</button>
+      <button class="calc-cancel-btn" onclick="calcToggleEdit('imc')">Cancelar</button>
+      <button class="calc-reset-btn" onclick="calcResetEdit('imc')">↩️ Restaurar padrão</button>
+    </div>
+  </div>`;
+}
+
+// ── Constrói overlay de edição para Glasgow ──
+function buildGlasgowEditOverlay() {
+  var calc = getCalc('glasgow');
+  var rows = (calc.selects || []).map(function(s) {
+    return `<div class="calc-edit-row">
+      <label>Label — ${s.id.toUpperCase()}</label>
+      <input class="calc-edit-input" id="cedit-slabel-${s.id}" value="${esc(s.label)}">
+      <label style="margin-top:5px">Opções (uma por linha)</label>
+      <textarea class="calc-edit-input" id="cedit-sopts-${s.id}" rows="4" style="resize:vertical;line-height:1.6">${s.options.join('\n')}</textarea>
+    </div>`;
+  }).join('');
+  return `<div class="calc-edit-overlay" id="calc-edit-glasgow">
+    <div class="calc-edit-row">
+      <label>🏷️ Título do Card</label>
+      <input class="calc-edit-input" id="cedit-title-glasgow" value="${esc(calc.title)}">
+    </div>
+    <div style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#92400e;font-family:var(--mono);margin-top:4px">📋 Escalas e Opções</div>
+    ${rows}
+    <div class="calc-edit-actions">
+      <button class="calc-save-btn" onclick="calcSaveEdit('glasgow')">💾 Salvar</button>
+      <button class="calc-cancel-btn" onclick="calcToggleEdit('glasgow')">Cancelar</button>
+      <button class="calc-reset-btn" onclick="calcResetEdit('glasgow')">↩️ Restaurar padrão</button>
+    </div>
+  </div>`;
+}
+
 function renderCalc(container) {
+  // Carrega dados (com customizações salvas)
+  var imc      = getCalc('imc');
+  var glasgow  = getCalc('glasgow');
+  var curb     = getCalc('curb');
+  var wells    = getCalc('wells');
+  var alvarado = getCalc('alvarado');
+  var ranson   = getCalc('ranson');
+
+  // Helper: linha de checkbox
+  function chkLine(c) {
+    var color = c.danger ? 'color:var(--red)' : '';
+    var sign  = c.score > 0 ? '+' + c.score : c.score;
+    return `<label class="cc" style="${color}"><input type="checkbox" id="${c.id}"> ${esc(c.text)} (${sign})</label>`;
+  }
+
+  // IMC fields
+  var imcFields = (imc.fields || CALC_DEFAULTS.imc.fields).map(function(f) {
+    return `<div class="cf"><label>${esc(f.label)}</label><input type="number" id="${f.id}" class="ci" placeholder="${f.placeholder}" step="${f.step||'any'}"></div>`;
+  }).join('');
+
+  // Glasgow selects
+  function gOpts(s) {
+    return s.options.map(function(o, i) {
+      var val = s.options.length - i; // decrescente
+      // Tenta parsear valor do início: "4 — ..." → 4
+      var m = o.match(/^(\d+)/);
+      if (m) val = parseInt(m[1]);
+      return `<option value="${val}">${esc(o)}</option>`;
+    }).join('');
+  }
+  var glasgowSelects = (glasgow.selects || CALC_DEFAULTS.glasgow.selects).map(function(s) {
+    return `<div class="cf"><label>${esc(s.label)}</label><select id="${s.id}" class="ci">${gOpts(s)}</select></div>`;
+  }).join('');
+
+  // Ranson — separa grupos
+  var ransAdm = ranson.criteria.filter(function(c){ return c.group==='admissao'; });
+  var rans48  = ranson.criteria.filter(function(c){ return c.group==='48h'; });
+
   container.innerHTML = `<div class="calc-page">
 
+  <!-- IMC -->
   <div class="calc-card">
-    <div class="calc-card-head">🍼 Doses Pediátricas por Peso</div>
-    <div class="calc-body">
-      <div class="cf"><label>Peso (kg)</label><input type="number" id="pp" class="ci" placeholder="ex: 12" step="0.1" min="1"></div>
-      <button class="btn-ok" onclick="calcPedo()">Calcular</button>
-      <div id="r_pp" class="cresult"></div>
+    <div class="calc-card-head">
+      <span>${esc(imc.title)}</span>
+      <button class="calc-edit-btn" id="calc-editbtn-imc" onclick="calcToggleEdit('imc')" title="Editar calculadora">✏️ Editar</button>
     </div>
-  </div>
-
-  <div class="calc-card">
-    <div class="calc-card-head">💊 Doses por Peso — Adulto</div>
     <div class="calc-body">
-      <div class="cf"><label>Peso (kg)</label><input type="number" id="pa" class="ci" placeholder="ex: 70" min="30"></div>
-      <button class="btn-ok" onclick="calcAdulto()">Calcular</button>
-      <div id="r_pa" class="cresult"></div>
-    </div>
-  </div>
-
-  <div class="calc-card">
-    <div class="calc-card-head">⚖️ IMC e Peso Ideal</div>
-    <div class="calc-body">
-      <div class="cf"><label>Altura (m)</label><input type="number" id="ih" class="ci" placeholder="1.70" step="0.01"></div>
-      <div class="cf"><label>Peso (kg)</label><input type="number" id="ip" class="ci" placeholder="75"></div>
+      ${imcFields}
       <button class="btn-ok" onclick="calcIMC()">Calcular</button>
       <div id="r_imc" class="cresult"></div>
     </div>
+    ${buildImcEditOverlay()}
   </div>
 
+  <!-- Glasgow -->
   <div class="calc-card">
-    <div class="calc-card-head">🧠 Escala de Glasgow</div>
+    <div class="calc-card-head">
+      <span>${esc(glasgow.title)}</span>
+      <button class="calc-edit-btn" id="calc-editbtn-glasgow" onclick="calcToggleEdit('glasgow')" title="Editar calculadora">✏️ Editar</button>
+    </div>
     <div class="calc-body">
-      <div class="cf"><label>Abertura Ocular (O)</label>
-        <select id="go" class="ci"><option value="4">4 — Espontânea</option><option value="3">3 — À voz</option><option value="2">2 — À dor</option><option value="1">1 — Nenhuma</option></select>
-      </div>
-      <div class="cf"><label>Resposta Verbal (V)</label>
-        <select id="gv" class="ci"><option value="5">5 — Orientado</option><option value="4">4 — Confuso</option><option value="3">3 — Palavras inapropriadas</option><option value="2">2 — Sons incompreensíveis</option><option value="1">1 — Nenhuma / IOT</option></select>
-      </div>
-      <div class="cf"><label>Resposta Motora (M)</label>
-        <select id="gm" class="ci"><option value="6">6 — Obedece comandos</option><option value="5">5 — Localiza dor</option><option value="4">4 — Retirada</option><option value="3">3 — Flexão anormal</option><option value="2">2 — Extensão anormal</option><option value="1">1 — Nenhuma</option></select>
-      </div>
+      ${glasgowSelects}
       <button class="btn-ok" onclick="calcGlasgow()">Calcular</button>
       <div id="r_gcs" class="cresult"></div>
     </div>
+    ${buildGlasgowEditOverlay()}
   </div>
 
+  <!-- CURB-65 -->
   <div class="calc-card">
-    <div class="calc-card-head">🫁 CURB-65 — Pneumonia</div>
+    <div class="calc-card-head">
+      <span>${esc(curb.title)}</span>
+      <button class="calc-edit-btn" id="calc-editbtn-curb" onclick="calcToggleEdit('curb')" title="Editar calculadora">✏️ Editar</button>
+    </div>
     <div class="calc-body">
-      <label class="cc"><input type="checkbox" id="c1"> Confusão mental</label>
-      <label class="cc"><input type="checkbox" id="c2"> Ureia &gt; 50 mg/dL</label>
-      <label class="cc"><input type="checkbox" id="c3"> FR ≥ 30 irpm</label>
-      <label class="cc"><input type="checkbox" id="c4"> PAS &lt; 90 ou PAD ≤ 60 mmHg</label>
-      <label class="cc"><input type="checkbox" id="c5"> Idade ≥ 65 anos</label>
+      ${curb.criteria.map(chkLine).join('')}
       <button class="btn-ok" onclick="calcCURB()">Calcular</button>
       <div id="r_curb" class="cresult"></div>
     </div>
+    ${buildCriteriaEditOverlay('curb')}
   </div>
 
+  <!-- Wells -->
   <div class="calc-card">
-    <div class="calc-card-head">🦵 Wells — TVP</div>
+    <div class="calc-card-head">
+      <span>${esc(wells.title)}</span>
+      <button class="calc-edit-btn" id="calc-editbtn-wells" onclick="calcToggleEdit('wells')" title="Editar calculadora">✏️ Editar</button>
+    </div>
     <div class="calc-body">
-      <label class="cc"><input type="checkbox" id="w1"> Câncer ativo (+1)</label>
-      <label class="cc"><input type="checkbox" id="w2"> Paralisia / imobilização MMII (+1)</label>
-      <label class="cc"><input type="checkbox" id="w3"> Acamado &gt;3d ou cirurgia &lt;12sem (+1)</label>
-      <label class="cc"><input type="checkbox" id="w4"> Dor ao longo do sistema venoso profundo (+1)</label>
-      <label class="cc"><input type="checkbox" id="w5"> Edema em toda a perna (+1)</label>
-      <label class="cc"><input type="checkbox" id="w6"> Edema assimétrico &gt; 3cm (+1)</label>
-      <label class="cc"><input type="checkbox" id="w7"> Circulação colateral superficial (+1)</label>
-      <label class="cc"><input type="checkbox" id="w8"> TVP prévia documentada (+1)</label>
-      <label class="cc" style="color:var(--red)"><input type="checkbox" id="w9"> Diagnóstico alternativo ≥ tão provável (−2)</label>
+      ${wells.criteria.map(chkLine).join('')}
       <button class="btn-ok" onclick="calcWells()">Calcular</button>
       <div id="r_wells" class="cresult"></div>
     </div>
+    ${buildCriteriaEditOverlay('wells')}
   </div>
 
+  <!-- Alvarado -->
   <div class="calc-card">
-    <div class="calc-card-head">🔴 Alvarado — Apendicite</div>
+    <div class="calc-card-head">
+      <span>${esc(alvarado.title)}</span>
+      <button class="calc-edit-btn" id="calc-editbtn-alvarado" onclick="calcToggleEdit('alvarado')" title="Editar calculadora">✏️ Editar</button>
+    </div>
     <div class="calc-body">
-      <label class="cc"><input type="checkbox" id="a1"> Migração da dor para FID (+1)</label>
-      <label class="cc"><input type="checkbox" id="a2"> Anorexia (+1)</label>
-      <label class="cc"><input type="checkbox" id="a3"> Náusea / vômito (+1)</label>
-      <label class="cc"><input type="checkbox" id="a4"> Dor em FID (+2)</label>
-      <label class="cc"><input type="checkbox" id="a5"> Sinal de Blumberg (+1)</label>
-      <label class="cc"><input type="checkbox" id="a6"> Temperatura &gt; 37,3°C (+1)</label>
-      <label class="cc"><input type="checkbox" id="a7"> Leucocitose &gt; 10.000 (+2)</label>
+      ${alvarado.criteria.map(chkLine).join('')}
       <button class="btn-ok" onclick="calcAlvarado()">Calcular</button>
       <div id="r_alv" class="cresult"></div>
     </div>
+    ${buildCriteriaEditOverlay('alvarado')}
   </div>
 
+  <!-- Ranson -->
   <div class="calc-card">
-    <div class="calc-card-head">🟡 Ranson — Pancreatite Aguda</div>
+    <div class="calc-card-head">
+      <span>${esc(ranson.title)}</span>
+      <button class="calc-edit-btn" id="calc-editbtn-ranson" onclick="calcToggleEdit('ranson')" title="Editar calculadora">✏️ Editar</button>
+    </div>
     <div class="calc-body">
       <p style="font-size:11px;color:var(--gray500);margin-bottom:4px">Na admissão:</p>
-      <label class="cc"><input type="checkbox" id="r1"> Idade &gt; 55 anos</label>
-      <label class="cc"><input type="checkbox" id="r2"> Leucócitos &gt; 16.000/mm³</label>
-      <label class="cc"><input type="checkbox" id="r3"> Glicose &gt; 200 mg/dL</label>
-      <label class="cc"><input type="checkbox" id="r4"> DHL &gt; 350 UI/L</label>
-      <label class="cc"><input type="checkbox" id="r5"> AST (TGO) &gt; 250 UI/L</label>
+      ${ransAdm.map(chkLine).join('')}
       <p style="font-size:11px;color:var(--gray500);margin:6px 0 4px">Em 48 horas:</p>
-      <label class="cc"><input type="checkbox" id="r6"> Queda do hematócrito &gt; 10%</label>
-      <label class="cc"><input type="checkbox" id="r7"> Aumento da ureia &gt; 5 mg/dL</label>
-      <label class="cc"><input type="checkbox" id="r8"> Cálcio sérico &lt; 8 mg/dL</label>
-      <label class="cc"><input type="checkbox" id="r9"> PaO₂ &lt; 60 mmHg</label>
-      <label class="cc"><input type="checkbox" id="r10"> Déficit de base &gt; 4 mEq/L</label>
-      <label class="cc"><input type="checkbox" id="r11"> Sequestro de líquidos &gt; 6L</label>
+      ${rans48.map(chkLine).join('')}
       <button class="btn-ok" onclick="calcRanson()">Calcular</button>
       <div id="r_ran" class="cresult"></div>
     </div>
+    ${buildCriteriaEditOverlay('ranson')}
   </div>
 
   </div>`;
@@ -1949,31 +2327,37 @@ function calcGlasgow() {
 }
 
 function calcCURB() {
-  const s=['c1','c2','c3','c4','c5'].reduce((a,id)=>a+(document.getElementById(id)?.checked?1:0),0);
-  const m=['<1%','~2.7%','~6.8%','~14%','~27%','~27%+'][s]||'';
-  const r=s<=1?'🟢 Baixo risco — Ambulatorial':s===2?'🟡 Moderado — Considerar internação':'🔴 Alto risco — Internação / UTI';
-  showRes('r_curb',`<strong>CURB-65: ${s}/5</strong>\n${r}\nMortalidade estimada: ${m}`);
+  var criteria = getCalc('curb').criteria;
+  var max = criteria.reduce(function(a,c){ return a + Math.abs(c.score); }, 0);
+  var s = criteria.reduce(function(a,c){ return a + (document.getElementById(c.id)?.checked ? c.score : 0); }, 0);
+  var m=['<1%','~2.7%','~6.8%','~14%','~27%','~27%+'][s]||'';
+  var r=s<=1?'🟢 Baixo risco — Ambulatorial':s===2?'🟡 Moderado — Considerar internação':'🔴 Alto risco — Internação / UTI';
+  showRes('r_curb',`<strong>CURB-65: ${s}/${max}</strong>\n${r}${m?'\nMortalidade estimada: '+m:''}`);
 }
 
 function calcWells() {
-  let s=['w1','w2','w3','w4','w5','w6','w7','w8'].reduce((a,id)=>a+(document.getElementById(id)?.checked?1:0),0);
-  if(document.getElementById('w9')?.checked) s-=2;
-  const r=s<=1?'🟢 Baixa probabilidade — D-dímero':s<=2?'🟡 Moderada — Eco-Doppler':'🔴 Alta — Anticoagulação';
+  var criteria = getCalc('wells').criteria;
+  var max = criteria.filter(function(c){ return c.score > 0; }).reduce(function(a,c){ return a+c.score; }, 0);
+  var s = criteria.reduce(function(a,c){ return a + (document.getElementById(c.id)?.checked ? c.score : 0); }, 0);
+  var r=s<=1?'🟢 Baixa probabilidade — D-dímero':s<=2?'🟡 Moderada — Eco-Doppler':'🔴 Alta — Anticoagulação';
   showRes('r_wells',`<strong>Wells TVP: ${s}</strong>\n${r}`);
 }
 
 function calcAlvarado() {
-  const vals={a1:1,a2:1,a3:1,a4:2,a5:1,a6:1,a7:2};
-  const s=Object.entries(vals).reduce((a,[id,v])=>a+(document.getElementById(id)?.checked?v:0),0);
-  const r=s<=3?'🟢 Baixo risco':s<=6?'🟡 Risco moderado — Investigar':'🔴 Alto risco — Avaliação cirúrgica';
-  showRes('r_alv',`<strong>Alvarado: ${s}/10</strong>\n${r}`);
+  var criteria = getCalc('alvarado').criteria;
+  var max = criteria.reduce(function(a,c){ return a + Math.abs(c.score); }, 0);
+  var s = criteria.reduce(function(a,c){ return a + (document.getElementById(c.id)?.checked ? c.score : 0); }, 0);
+  var r=s<=3?'🟢 Baixo risco':s<=6?'🟡 Risco moderado — Investigar':'🔴 Alto risco — Avaliação cirúrgica';
+  showRes('r_alv',`<strong>Alvarado: ${s}/${max}</strong>\n${r}`);
 }
 
 function calcRanson() {
-  const s=Array.from({length:11},(_,i)=>`r${i+1}`).reduce((a,id)=>a+(document.getElementById(id)?.checked?1:0),0);
-  const m=s<=2?'<5%':s<=4?'~15%':s<=6?'~40%':'~100%';
-  const cor=s<=2?'🟢':s<=4?'🟡':s<=6?'🟠':'🔴';
-  showRes('r_ran',`<strong>${cor} Ranson: ${s}/11</strong>\nMortalidade estimada: ${m}${s>=3?'\n⚠️ Pancreatite grave — considerar UTI':''}`);
+  var criteria = getCalc('ranson').criteria;
+  var max = criteria.length;
+  var s = criteria.reduce(function(a,c){ return a + (document.getElementById(c.id)?.checked ? 1 : 0); }, 0);
+  var m=s<=2?'<5%':s<=4?'~15%':s<=6?'~40%':'~100%';
+  var cor=s<=2?'🟢':s<=4?'🟡':s<=6?'🟠':'🔴';
+  showRes('r_ran',`<strong>${cor} Ranson: ${s}/${max}</strong>\nMortalidade estimada: ${m}${s>=3?'\n⚠️ Pancreatite grave — considerar UTI':''}`);
 }
 
 // ══════════════════════════════════════════════════
@@ -2035,26 +2419,48 @@ function renderConfig(container) {
     <div style="margin-top:8px;font-size:11px;color:var(--gray500)">Clique em um perfil para ativá-lo · Logo e médico ativos aparecem em <b>todas</b> as receitas e documentos impressos</div>
   </div>
 
-  <div class="cfg-card" style="border-color:#fbbf24;background:#fffbeb">
-    <h3 style="color:#92400e">📥 Exportar HTML Completo — Backup + Deploy</h3>
-    <p style="font-size:12px;color:var(--gray700);margin-bottom:10px;line-height:1.6">
-      Exporta um <strong>HTML único com tudo embutido</strong>: código + todas suas prescrições, logos, médicos e personalizações.<br>
-      Use esse arquivo para <strong>fazer backup completo</strong> ou <strong>atualizar o site no GitHub</strong> sem depender do Firebase.
+  <div class="cfg-card" style="border-color:#6366f1;background:#eef2ff">
+    <h3 style="color:#4338ca">☁️ Dados & Sincronização — Firebase</h3>
+    <p style="font-size:12px;color:#374151;margin-bottom:12px;line-height:1.7">
+      Todos os dados (prescrições, logos, médicos) são salvos <strong>automaticamente no Firebase</strong> a cada alteração.
+      Ao abrir o site em qualquer dispositivo, os dados são carregados automaticamente da nuvem.
     </p>
-    <div style="background:#fef3c7;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:#78350f;line-height:1.7">
-      <strong>Fluxo recomendado:</strong><br>
-      1. Clique em <strong>📥 Baixar HTML</strong> abaixo<br>
-      2. Faça suas alterações no arquivo baixado (aqui no Claude ou manualmente)<br>
-      3. Suba o arquivo novo no GitHub → <code>index.html</code><br>
-      4. Pronto — site atualizado com todos seus dados preservados ✅
+    <div style="background:#e0e7ff;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div id="cfgFirebaseStatus" style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#3730a3">
+        <span id="cfgFirebaseIco">🔄</span>
+        <span id="cfgFirebaseMsg">Verificando conexão...</span>
+      </div>
+      <button onclick="sincronizarAgora()" style="margin-left:auto;background:#4338ca;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+        🔄 Sincronizar agora
+      </button>
     </div>
-    <button class="btn-ok" style="background:#b45309;border-color:#b45309;font-size:13px;padding:9px 18px" onclick="exportHtml()">
-      📥 Baixar HTML com todos os dados
-    </button>
-    <div style="margin-top:8px;font-size:11px;color:var(--gray500)">
-      O arquivo baixado inclui: prescrições editadas, logo, nome do médico/CRM e todas as personalizações do sistema.
+    <div style="font-size:11px;color:#6b7280;line-height:1.7;background:#fff;border-radius:6px;padding:8px 12px;border:1px solid #e0e7ff">
+      <strong>Como funciona:</strong><br>
+      • Cada alteração dispara um salvamento automático (3s após a última mudança)<br>
+      • Ao abrir o site, o Firebase é consultado e os dados locais são atualizados<br>
+      • Em caso de falha de rede, os dados ficam salvos localmente e sobem quando reconectar
     </div>
   </div>
+
+  <div class="cfg-card" style="border-color:#10b981;background:#ecfdf5">
+    <h3 style="color:#065f46">📦 Backup & Restauração — JSON</h3>
+    <p style="font-size:12px;color:#374151;margin-bottom:12px;line-height:1.7">
+      Exporte um arquivo <strong>.json com todos os seus dados</strong> como backup de segurança. Use para restaurar em caso de perda ou após atualização do código.
+    </p>
+    <div style="background:#d1fae5;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:#065f46;line-height:1.8;border:1.5px solid #6ee7b7">
+      <strong>📋 Fluxo recomendado antes de atualizar o código:</strong><br>
+      <span style="display:inline-flex;align-items:center;gap:5px">1️⃣ <strong>Exporte o backup JSON</strong> abaixo</span><br>
+      <span style="display:inline-flex;align-items:center;gap:5px">2️⃣ <strong>Altere o código</strong> (HTML/CSS/JS) e suba no GitHub</span><br>
+      <span style="display:inline-flex;align-items:center;gap:5px">3️⃣ <strong>Acesse a nova versão</strong> — dados carregam do Firebase automaticamente</span><br>
+      <span style="display:inline-flex;align-items:center;gap:5px">4️⃣ <em>Se não carregou:</em> <strong>Importe o JSON</strong> para restaurar tudo ✅</span>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button onclick="openBackupModal()" style="background:#059669;color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px">
+        📦 Abrir painel de Backup
+      </button>
+    </div>
+  </div>
+
 
 
   <div class="cfg-card" style="border-color:#fecaca;background:#fef2f2">
@@ -2087,35 +2493,169 @@ function renderConfig(container) {
   </div>`;
 }
 
-function exportData() {
-  const blob = new Blob([JSON.stringify({D,G,IC},null,2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'medguia_dados_' + new Date().toISOString().slice(0,10) + '.json';
-  a.click(); URL.revokeObjectURL(a.href);
-  toast('📤 Exportado!');
+// ══════════════════════════════════════════════════
+// BACKUP & RESTORE COMPLETO (JSON)
+// ══════════════════════════════════════════════════
+
+// Lista de todas as chaves que compõem o estado completo da aplicação
+var ALL_DATA_KEYS = ['mg_data','mg_groups','mg_icons','mg_logos','mg_profiles','mg_medico','mg_crm','mg_calc_data'];
+
+// Coleta TODOS os dados do localStorage em um objeto JSON exportável
+function coletarTodosOsDados() {
+  var payload = {
+    _versao: 'medguia_v3',
+    _exportado_em: new Date().toISOString(),
+    _descricao: 'Backup completo MedGuia Pro — prescrições, logos, médicos e calculadoras'
+  };
+  ALL_DATA_KEYS.forEach(function(chave) {
+    var val = localStorage.getItem(chave);
+    if (val) {
+      try { payload[chave] = JSON.parse(val); }
+      catch(e) { payload[chave] = val; }
+    }
+  });
+  return payload;
 }
 
-function importData(e) {
-  const file = e.target.files[0]; if(!file) return;
-  const r = new FileReader();
-  r.onload = ev => {
-    try {
-      const parsed = JSON.parse(ev.target.result);
-      if (parsed.D) Object.assign(D, parsed.D);
-      if (parsed.G) Object.assign(G, parsed.G);
-      if (parsed.IC) Object.assign(IC, parsed.IC);
-      save(); buildNav(); renderTab(activeTab); toast('📥 Importado!');
-    } catch { toast('⚠️ Arquivo inválido'); }
-  };
-  r.readAsText(file);
+// Exporta JSON completo como arquivo de backup
+function exportData() {
+  var payload = coletarTodosOsDados();
+  var json    = JSON.stringify(payload, null, 2);
+  var blob    = new Blob([json], { type: 'application/json' });
+  var a       = document.createElement('a');
+  var data    = new Date().toISOString().slice(0, 10);
+  a.href      = URL.createObjectURL(blob);
+  a.download  = 'medguia_backup_' + data + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('📥 Backup exportado com sucesso!');
 }
+window.exportData = exportData;
+
+// Aplica um objeto de backup no localStorage e recarrega a interface
+function aplicarBackup(parsed) {
+  var aplicou = 0;
+  ALL_DATA_KEYS.forEach(function(chave) {
+    if (parsed[chave] !== undefined) {
+      try {
+        var val = typeof parsed[chave] === 'string' ? parsed[chave] : JSON.stringify(parsed[chave]);
+        localStorage.setItem(chave, val);
+        aplicou++;
+      } catch(e) {}
+    }
+  });
+  if (!aplicou) { toast('⚠️ Backup sem dados reconhecidos'); return false; }
+  // Recarrega tudo
+  load();
+  buildNav();
+  var firstTab = Object.keys(D).filter(function(k){ return k!=='calculos'&&k!=='config'; })[0];
+  goTo(firstTab || 'geral');
+  // Sobe imediatamente para o Firebase
+  setTimeout(function() { if (typeof salvarNaNuvem === 'function') salvarNaNuvem(); }, 500);
+  return true;
+}
+
+// Importa arquivo JSON de backup
+function importData(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var parsed = JSON.parse(ev.target.result);
+      // Compatibilidade com formato antigo {D, G, IC}
+      if (parsed.D && !parsed.mg_data) {
+        // Converte formato legado
+        try { localStorage.setItem('mg_data',   JSON.stringify(parsed.D));  } catch(e) {}
+        try { localStorage.setItem('mg_groups',  JSON.stringify(parsed.G));  } catch(e) {}
+        try { localStorage.setItem('mg_icons',   JSON.stringify(parsed.IC)); } catch(e) {}
+        load(); buildNav(); renderTab(activeTab);
+        setTimeout(function() { if (typeof salvarNaNuvem === 'function') salvarNaNuvem(); }, 500);
+        toast('📥 Backup restaurado (formato legado)!');
+        closeModal('modalBackup');
+        return;
+      }
+      var ok = aplicarBackup(parsed);
+      if (ok) {
+        toast('✅ Backup restaurado e sincronizado com Firebase!');
+        closeModal('modalBackup');
+      }
+    } catch(err) {
+      toast('⚠️ Arquivo inválido — verifique o JSON');
+      console.error('Erro ao importar backup:', err);
+    }
+  };
+  reader.readAsText(file);
+  // Limpa o input para permitir re-importar o mesmo arquivo
+  e.target.value = '';
+}
+window.importData = importData;
+
+// Abre modal de backup
+function openBackupModal() {
+  // Preenche o resumo do backup atual
+  var payload = coletarTodosOsDados();
+  var totalItems = 0;
+  var totalSecs  = 0;
+  var totalAbas  = 0;
+  try {
+    var dados = typeof payload.mg_data === 'object' ? payload.mg_data : JSON.parse(payload.mg_data || '{}');
+    Object.keys(dados).forEach(function(k) {
+      if (k === 'calculos' || k === 'config') return;
+      totalAbas++;
+      (dados[k].sections || []).forEach(function(sec) {
+        totalSecs++;
+        totalItems += (sec.items || []).length;
+      });
+    });
+  } catch(e) {}
+  var logos = 0;
+  try { logos = (JSON.parse(payload.mg_logos || '{}').logos || []).length; } catch(e) {}
+  var medicos = 0;
+  try { medicos = (JSON.parse(payload.mg_profiles || '{}').profiles || []).length; } catch(e) {}
+
+  var resumo = document.getElementById('backup_resumo');
+  if (resumo) {
+    resumo.innerHTML =
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:2px">' +
+        mkStat('📋', totalAbas,   'Abas') +
+        mkStat('📂', totalSecs,   'Seções') +
+        mkStat('💊', totalItems,  'Itens') +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">' +
+        mkStat('🏥', logos,   'Logos') +
+        mkStat('👨‍⚕️', medicos, 'Médicos') +
+      '</div>';
+  }
+  openModal('modalBackup');
+}
+window.openBackupModal = openBackupModal;
+
+function mkStat(emoji, n, label) {
+  return '<div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:8px;padding:8px;text-align:center">' +
+    '<div style="font-size:18px">' + emoji + '</div>' +
+    '<div style="font-size:20px;font-weight:800;color:#166534;line-height:1.2">' + n + '</div>' +
+    '<div style="font-size:10px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.5px">' + label + '</div>' +
+  '</div>';
+}
+
+// Sincroniza manualmente com Firebase (botão na config)
+function sincronizarAgora() {
+  if (typeof salvarNaNuvem === 'function') {
+    salvarNaNuvem();
+    toast('☁️ Sincronizando com Firebase...');
+  } else {
+    toast('⚠️ Firebase não configurado');
+  }
+}
+window.sincronizarAgora = sincronizarAgora;
 
 function resetData() {
   if(!confirm('Restaurar todos os dados originais?\nTodas as suas edições e itens personalizados serão perdidos.')) return;
-  localStorage.removeItem('mg_data'); localStorage.removeItem('mg_groups'); localStorage.removeItem('mg_icons');
+  ALL_DATA_KEYS.forEach(function(k) { localStorage.removeItem(k); });
   load(); buildNav(); renderTab(activeTab); toast('✅ Dados restaurados');
 }
+window.resetData = resetData;
 
 // ══════════════════════════════════════════════════
 // MODALS
@@ -4740,15 +5280,11 @@ function agendarSync() {
 
 // ── Monta payload com todos os dados ──
 function montarPayload() {
-  return {
-    mg_data:     localStorage.getItem("mg_data")     || "",
-    mg_groups:   localStorage.getItem("mg_groups")   || "",
-    mg_icons:    localStorage.getItem("mg_icons")    || "",
-    mg_logos:    localStorage.getItem("mg_logos")    || "",
-    mg_profiles: localStorage.getItem("mg_profiles") || "",
-    mg_medico:   localStorage.getItem("mg_medico")   || "",
-    mg_crm:      localStorage.getItem("mg_crm")      || ""
-  };
+  var payload = {};
+  (window.ALL_DATA_KEYS || ['mg_data','mg_groups','mg_icons','mg_logos','mg_profiles','mg_medico','mg_crm','mg_calc_data']).forEach(function(chave) {
+    payload[chave] = localStorage.getItem(chave) || "";
+  });
+  return payload;
 }
 
 // ── Salva no Firebase ──
@@ -4795,7 +5331,7 @@ function carregarDaNuvem() {
 
     // Firebase tem dados — SEMPRE aplica no localStorage (Firebase é fonte verdade)
     // Isso garante que trocar o HTML no GitHub não perde os dados do Firebase
-    var chaves = ['mg_data','mg_groups','mg_icons','mg_logos','mg_profiles','mg_medico','mg_crm'];
+    var chaves = ['mg_data','mg_groups','mg_icons','mg_logos','mg_profiles','mg_medico','mg_crm','mg_calc_data'];
     var aplicou = false;
     chaves.forEach(function(chave) {
       var valor = dados[chave];
