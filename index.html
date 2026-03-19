@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
+<html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MedGuia Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
@@ -536,7 +534,7 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
         <div class="sb-logo-sub">URGÊNCIA · EMERGÊNCIA</div>
       </div>
     </div>
-    <div class="sb-nav" id="sidebarNav"></div>
+    <div class="sb-nav" id="sidebarNav"><div class="sg">PRINCIPAL</div><div class="si on" data-k="geral"><span class="si-ico" data-k="geral">📋</span><span class="sl">Geral / Anamnese</span></div><div class="si" data-k="documentos"><span class="si-ico" data-k="documentos">📄</span><span class="sl">Documentos</span></div><div class="sg">SETOR / ESPECIALIDADE</div><div class="si" data-k="pediatria"><span class="si-ico" data-k="pediatria">🍼</span><span class="sl">Pediatria</span></div><div class="si" data-k="obstetricia"><span class="si-ico" data-k="obstetricia">🤰</span><span class="sl">Obstetrícia / GO</span></div><div class="si" data-k="vermelho"><span class="si-ico" data-k="vermelho">🔴</span><span class="sl">Sala Vermelha</span></div><div class="si" data-k="laranja"><span class="si-ico" data-k="laranja">🟠</span><span class="sl">Sala Laranja</span></div><div class="si" data-k="pronto"><span class="si-ico" data-k="pronto">🟢</span><span class="sl">Pronto Atendimento (Verde/Azul)</span></div><div class="sg">FARMÁCIA</div><div class="si" data-k="receitas"><span class="si-ico" data-k="receitas">💊</span><span class="sl">Receitas para Casa</span></div><div class="si" data-k="diluicoes"><span class="si-ico" data-k="diluicoes">💉</span><span class="sl">Diluições / EV</span></div><div class="sg">REFERÊNCIA</div><div class="si" data-k="info"><span class="si-ico" data-k="info">🧠</span><span class="sl">Info Clínica / Escores</span></div><div class="si" data-k="esf"><span class="si-ico" data-k="esf">🏠</span><span class="sl">ESF / Ambulatório</span></div><div class="si" data-k="calculos"><span class="si-ico" data-k="calculos">🧮</span><span class="sl">Calculadoras</span></div><div class="sg">SISTEMA</div><div class="si" data-k="config"><span class="si-ico" data-k="config">⚙️</span><span class="sl">Configurações</span></div></div>
     <div class="sb-foot" id="sbFoot" onclick="toggleMini()">‹</div>
   </nav>
 
@@ -547,7 +545,7 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
     <header id="topbar">
       <div class="top-l">
         <button class="tbtn" id="btn-mob" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
-        <div id="breadcrumb">—</div>
+        <div id="breadcrumb">Geral / Anamnese</div>
       </div>
       <div class="top-r">
         <div class="searchbox">
@@ -568,11 +566,765 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
     </div>
 
     <!-- CONTENT -->
-    <div id="content"></div>
+    <div id="content">
+    <div class="section">
+      <div class="sec-header">
+        <span class="sec-title" id="sttl-geral-0">ANAMNESE — MODELOS</span>
+        <div class="sec-actions">
+          <button class="sec-btn" onclick="openModalAddItemIn('geral',0)">+ item</button>
+          <button class="sec-btn danger" onclick="confirmDelSec('geral',0)">🗑 seção</button>
+        </div>
+      </div>
+      <div id="rows-geral-0">
+  <div class="row-item" id="row-geral-0-0" onclick="toggleRow('geral',0,0)">
+    <div class="row-top">
+      <div class="row-accent"></div>
+      <div class="row-info">
+        <span class="row-icon" id="rico-geral-0-0" onclick="event.stopPropagation();openEmojiPicker('geral',0,0,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">👨</span>
+        <span class="row-title" id="rttl-geral-0-0">Exame Físico — Adulto Masculino</span>
+        
+      </div>
+      <div class="row-controls" onclick="event.stopPropagation()">
+        <button class="rc cp" onclick="copyItem('geral',0,0)" title="Copiar">📋</button>
+        <button class="btn-edit-item" id="ebtn-geral-0-0" onclick="toggleItemEdit('geral',0,0)" title="Editar">✏️</button>
+        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',0,0)" title="Excluir">🗑</button>
+      </div>
+      <div class="row-arrow">›</div>
+    </div>
+    <div class="row-body" onclick="event.stopPropagation()">
+      <div id="view-geral-0-0">
+        <div class="presc-wrap">
+            <pre class="presc" id="rpresc-geral-0-0">PACIENTE RELATA QUADRO DE [QUEIXA PRINCIPAL] INICIADO HÁ [TEMPO], EVOLUINDO COM [SINTOMAS ASSOCIADOS].
+NEGA FEBRE, NÁUSEAS OU VÔMITOS.
+HPP: NEGA COMORBIDADES PRÉVIAS | ALERGIA MEDICAMENTOSA: NEGA
+
+AO EXAME FÍSICO:
+BEG, LOTE, EUPEICO, CORADO, HIDRATADO, AFEBRIL, ANICTÉRICO, ACIANÓTICO
+NEURO: GLASGOW 15, SEM DÉFICITS MOTORES, PUPILAS ISOCORICAS E FOTORREATIVAS, SEM DÉFICITS FOCAIS, SEM SINAIS DE IRRITAÇÃO MENÍNGEA
+AR: MVUA S/RA, EXPANSIBILIDADE PRESERVADA SIMÉTRICA
+ACV: RCR 2T BNF S/S
+OROSCOPIA: SEM ALTERAÇÕES
+ABD: NORMOTENSO, RHA+, INDOLOR À PALPAÇÃO, BLUMBERG NEGATIVO, GIORDANO NEGATIVO
+MMII: PANTURRILHAS LIVRES, SEM EDEMA, FLOGISMOS OU SINAIS DE TVP</pre>
+          </div>
+        <div class="row-footer">
+          <button class="btn-copy" onclick="copyItem('geral',0,0)">📋 Copiar</button>
+          
+        </div>
+      </div>
+      <div id="edit-geral-0-0" style="display:none">
+        <div style="padding:10px 14px 6px;background:#fffef0">
+          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
+          <input class="edit-title-input" id="etitle-geral-0-0" value="Exame Físico — Adulto Masculino" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
+          
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
+            <textarea class="field-edit" id="econtent-geral-0-0" style="margin-top:4px">PACIENTE RELATA QUADRO DE [QUEIXA PRINCIPAL] INICIADO HÁ [TEMPO], EVOLUINDO COM [SINTOMAS ASSOCIADOS].
+NEGA FEBRE, NÁUSEAS OU VÔMITOS.
+HPP: NEGA COMORBIDADES PRÉVIAS | ALERGIA MEDICAMENTOSA: NEGA
+
+AO EXAME FÍSICO:
+BEG, LOTE, EUPEICO, CORADO, HIDRATADO, AFEBRIL, ANICTÉRICO, ACIANÓTICO
+NEURO: GLASGOW 15, SEM DÉFICITS MOTORES, PUPILAS ISOCORICAS E FOTORREATIVAS, SEM DÉFICITS FOCAIS, SEM SINAIS DE IRRITAÇÃO MENÍNGEA
+AR: MVUA S/RA, EXPANSIBILIDADE PRESERVADA SIMÉTRICA
+ACV: RCR 2T BNF S/S
+OROSCOPIA: SEM ALTERAÇÕES
+ABD: NORMOTENSO, RHA+, INDOLOR À PALPAÇÃO, BLUMBERG NEGATIVO, GIORDANO NEGATIVO
+MMII: PANTURRILHAS LIVRES, SEM EDEMA, FLOGISMOS OU SINAIS DE TVP</textarea>
+          
+        </div>
+        <div class="edit-actions">
+          <button class="btn-save-edit" onclick="saveItemEdit('geral',0,0)">💾 Salvar</button>
+          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',0,0)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row-item" id="row-geral-0-1" onclick="toggleRow('geral',0,1)">
+    <div class="row-top">
+      <div class="row-accent"></div>
+      <div class="row-info">
+        <span class="row-icon" id="rico-geral-0-1" onclick="event.stopPropagation();openEmojiPicker('geral',0,1,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">👩</span>
+        <span class="row-title" id="rttl-geral-0-1">Exame Físico — Adulto Feminino</span>
+        
+      </div>
+      <div class="row-controls" onclick="event.stopPropagation()">
+        <button class="rc cp" onclick="copyItem('geral',0,1)" title="Copiar">📋</button>
+        <button class="btn-edit-item" id="ebtn-geral-0-1" onclick="toggleItemEdit('geral',0,1)" title="Editar">✏️</button>
+        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',0,1)" title="Excluir">🗑</button>
+      </div>
+      <div class="row-arrow">›</div>
+    </div>
+    <div class="row-body" onclick="event.stopPropagation()">
+      <div id="view-geral-0-1">
+        <div class="presc-wrap">
+            <pre class="presc" id="rpresc-geral-0-1">PACIENTE RELATA QUADRO DE [QUEIXA PRINCIPAL] INICIADO HÁ [TEMPO], EVOLUINDO COM [SINTOMAS ASSOCIADOS].
+NEGA FEBRE, NÁUSEAS OU VÔMITOS. NEGA GRAVIDEZ.
+HPP: NEGA COMORBIDADES PRÉVIAS | ALERGIA MEDICAMENTOSA: NEGA
+
+AO EXAME FÍSICO:
+BEG, LOTE, EUPNEICA, CORADA, HIDRATADA, AFEBRIL, ANICTÉRICA, ACIANÓTICA
+NEURO: GLASGOW 15, SEM DÉFICITS MOTORES, PUPILAS ISOCORICAS E FOTORREATIVAS, SEM DÉFICITS FOCAIS, SEM SINAIS DE IRRITAÇÃO MENÍNGEA
+AR: MVUA S/RA, EXPANSIBILIDADE PRESERVADA SIMÉTRICA
+ACV: RCR 2T BNF S/S
+OROSCOPIA: SEM ALTERAÇÕES
+ABD: NORMOTENSO, RHA+, INDOLOR À PALPAÇÃO, BLUMBERG NEGATIVO, GIORDANO NEGATIVO, MURPHY NEGATIVO
+MMII: PANTURRILHAS LIVRES, SEM EDEMA, FLOGISMOS OU SINAIS DE TVP</pre>
+          </div>
+        <div class="row-footer">
+          <button class="btn-copy" onclick="copyItem('geral',0,1)">📋 Copiar</button>
+          
+        </div>
+      </div>
+      <div id="edit-geral-0-1" style="display:none">
+        <div style="padding:10px 14px 6px;background:#fffef0">
+          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
+          <input class="edit-title-input" id="etitle-geral-0-1" value="Exame Físico — Adulto Feminino" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
+          
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
+            <textarea class="field-edit" id="econtent-geral-0-1" style="margin-top:4px">PACIENTE RELATA QUADRO DE [QUEIXA PRINCIPAL] INICIADO HÁ [TEMPO], EVOLUINDO COM [SINTOMAS ASSOCIADOS].
+NEGA FEBRE, NÁUSEAS OU VÔMITOS. NEGA GRAVIDEZ.
+HPP: NEGA COMORBIDADES PRÉVIAS | ALERGIA MEDICAMENTOSA: NEGA
+
+AO EXAME FÍSICO:
+BEG, LOTE, EUPNEICA, CORADA, HIDRATADA, AFEBRIL, ANICTÉRICA, ACIANÓTICA
+NEURO: GLASGOW 15, SEM DÉFICITS MOTORES, PUPILAS ISOCORICAS E FOTORREATIVAS, SEM DÉFICITS FOCAIS, SEM SINAIS DE IRRITAÇÃO MENÍNGEA
+AR: MVUA S/RA, EXPANSIBILIDADE PRESERVADA SIMÉTRICA
+ACV: RCR 2T BNF S/S
+OROSCOPIA: SEM ALTERAÇÕES
+ABD: NORMOTENSO, RHA+, INDOLOR À PALPAÇÃO, BLUMBERG NEGATIVO, GIORDANO NEGATIVO, MURPHY NEGATIVO
+MMII: PANTURRILHAS LIVRES, SEM EDEMA, FLOGISMOS OU SINAIS DE TVP</textarea>
+          
+        </div>
+        <div class="edit-actions">
+          <button class="btn-save-edit" onclick="saveItemEdit('geral',0,1)">💾 Salvar</button>
+          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',0,1)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row-item" id="row-geral-0-2" onclick="toggleRow('geral',0,2)">
+    <div class="row-top">
+      <div class="row-accent"></div>
+      <div class="row-info">
+        <span class="row-icon" id="rico-geral-0-2" onclick="event.stopPropagation();openEmojiPicker('geral',0,2,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">👶</span>
+        <span class="row-title" id="rttl-geral-0-2">Exame Físico — Criança</span>
+        
+      </div>
+      <div class="row-controls" onclick="event.stopPropagation()">
+        <button class="rc cp" onclick="copyItem('geral',0,2)" title="Copiar">📋</button>
+        <button class="btn-edit-item" id="ebtn-geral-0-2" onclick="toggleItemEdit('geral',0,2)" title="Editar">✏️</button>
+        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',0,2)" title="Excluir">🗑</button>
+      </div>
+      <div class="row-arrow">›</div>
+    </div>
+    <div class="row-body" onclick="event.stopPropagation()">
+      <div id="view-geral-0-2">
+        <div class="presc-wrap">
+            <pre class="presc" id="rpresc-geral-0-2">BEG, CORADO, HIDRATADO, ACIANÓTICO, AFEBRIL
+CRIANÇA ATIVA E REATIVA, SEM SINAIS DE MENINGISMO, SEM DÉFICITS
+OROSCOPIA: SEM ALTERAÇÕES
+OTOSCOPIA: SEM ALTERAÇÕES
+AR: MVUA S/RA
+ACV: RCR 2T BNF S/S
+ABD: LIVRE, SEM ALTERAÇÕES, BLUMBERG NEGATIVO</pre>
+          </div>
+        <div class="row-footer">
+          <button class="btn-copy" onclick="copyItem('geral',0,2)">📋 Copiar</button>
+          
+        </div>
+      </div>
+      <div id="edit-geral-0-2" style="display:none">
+        <div style="padding:10px 14px 6px;background:#fffef0">
+          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
+          <input class="edit-title-input" id="etitle-geral-0-2" value="Exame Físico — Criança" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
+          
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
+            <textarea class="field-edit" id="econtent-geral-0-2" style="margin-top:4px">BEG, CORADO, HIDRATADO, ACIANÓTICO, AFEBRIL
+CRIANÇA ATIVA E REATIVA, SEM SINAIS DE MENINGISMO, SEM DÉFICITS
+OROSCOPIA: SEM ALTERAÇÕES
+OTOSCOPIA: SEM ALTERAÇÕES
+AR: MVUA S/RA
+ACV: RCR 2T BNF S/S
+ABD: LIVRE, SEM ALTERAÇÕES, BLUMBERG NEGATIVO</textarea>
+          
+        </div>
+        <div class="edit-actions">
+          <button class="btn-save-edit" onclick="saveItemEdit('geral',0,2)">💾 Salvar</button>
+          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',0,2)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div></div></div>
+    <div class="section">
+      <div class="sec-header">
+        <span class="sec-title" id="sttl-geral-1">CONDUTAS E EVOLUÇÕES</span>
+        <div class="sec-actions">
+          <button class="sec-btn" onclick="openModalAddItemIn('geral',1)">+ item</button>
+          <button class="sec-btn danger" onclick="confirmDelSec('geral',1)">🗑 seção</button>
+        </div>
+      </div>
+      <div id="rows-geral-1">
+  <div class="row-item" id="row-geral-1-0" onclick="toggleRow('geral',1,0)">
+    <div class="row-top">
+      <div class="row-accent"></div>
+      <div class="row-info">
+        <span class="row-icon" id="rico-geral-1-0" onclick="event.stopPropagation();openEmojiPicker('geral',1,0,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">✅</span>
+        <span class="row-title" id="rttl-geral-1-0">Conduta — Alta com Sintomáticos</span>
+        
+      </div>
+      <div class="row-controls" onclick="event.stopPropagation()">
+        <button class="rc cp" onclick="copyItem('geral',1,0)" title="Copiar">📋</button>
+        <button class="btn-edit-item" id="ebtn-geral-1-0" onclick="toggleItemEdit('geral',1,0)" title="Editar">✏️</button>
+        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',1,0)" title="Excluir">🗑</button>
+      </div>
+      <div class="row-arrow">›</div>
+    </div>
+    <div class="row-body" onclick="event.stopPropagation()">
+      <div id="view-geral-1-0">
+        <div class="presc-wrap">
+            <pre class="presc" id="rpresc-geral-1-0">PACIENTE RELATA MELHORA CLÍNICA APÓS MEDICAÇÕES REALIZADAS NA UNIDADE.
+NO MOMENTO ASSINTOMÁTICO, ESTÁVEL CLÍNICA E HEMODINAMICAMENTE.
+PRESCREVO SINTOMÁTICOS PARA CASA.
+ORIENTAÇÕES QUANTO AOS SINAIS DE ALARME.
+ORIENTO RETORNO SE PIORA OU PERSISTÊNCIA DOS SINTOMAS EM 72 HORAS.
+ORIENTO ACOMPANHAMENTO NO PSF.
+ALTA EM BOM ESTADO GERAL.</pre>
+          </div>
+        <div class="row-footer">
+          <button class="btn-copy" onclick="copyItem('geral',1,0)">📋 Copiar</button>
+          
+        </div>
+      </div>
+      <div id="edit-geral-1-0" style="display:none">
+        <div style="padding:10px 14px 6px;background:#fffef0">
+          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
+          <input class="edit-title-input" id="etitle-geral-1-0" value="Conduta — Alta com Sintomáticos" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
+          
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
+            <textarea class="field-edit" id="econtent-geral-1-0" style="margin-top:4px">PACIENTE RELATA MELHORA CLÍNICA APÓS MEDICAÇÕES REALIZADAS NA UNIDADE.
+NO MOMENTO ASSINTOMÁTICO, ESTÁVEL CLÍNICA E HEMODINAMICAMENTE.
+PRESCREVO SINTOMÁTICOS PARA CASA.
+ORIENTAÇÕES QUANTO AOS SINAIS DE ALARME.
+ORIENTO RETORNO SE PIORA OU PERSISTÊNCIA DOS SINTOMAS EM 72 HORAS.
+ORIENTO ACOMPANHAMENTO NO PSF.
+ALTA EM BOM ESTADO GERAL.</textarea>
+          
+        </div>
+        <div class="edit-actions">
+          <button class="btn-save-edit" onclick="saveItemEdit('geral',1,0)">💾 Salvar</button>
+          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',1,0)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row-item" id="row-geral-1-1" onclick="toggleRow('geral',1,1)">
+    <div class="row-top">
+      <div class="row-accent"></div>
+      <div class="row-info">
+        <span class="row-icon" id="rico-geral-1-1" onclick="event.stopPropagation();openEmojiPicker('geral',1,1,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">📋</span>
+        <span class="row-title" id="rttl-geral-1-1">Conduta Geral</span>
+        
+      </div>
+      <div class="row-controls" onclick="event.stopPropagation()">
+        <button class="rc cp" onclick="copyItem('geral',1,1)" title="Copiar">📋</button>
+        <button class="btn-edit-item" id="ebtn-geral-1-1" onclick="toggleItemEdit('geral',1,1)" title="Editar">✏️</button>
+        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',1,1)" title="Excluir">🗑</button>
+      </div>
+      <div class="row-arrow">›</div>
+    </div>
+    <div class="row-body" onclick="event.stopPropagation()">
+      <div id="view-geral-1-1">
+        <div class="presc-wrap">
+            <pre class="presc" id="rpresc-geral-1-1">- SINTOMÁTICOS PARA CASA
+- ORIENTO RETORNO SE PIORA E/OU PERSISTÊNCIA DOS SINTOMAS
+- ADVIRTO PROGNÓSTICO
+(PACIENTE COMPREENDE ORIENTAÇÕES FORNECIDAS)</pre>
+          </div>
+        <div class="row-footer">
+          <button class="btn-copy" onclick="copyItem('geral',1,1)">📋 Copiar</button>
+          
+        </div>
+      </div>
+      <div id="edit-geral-1-1" style="display:none">
+        <div style="padding:10px 14px 6px;background:#fffef0">
+          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
+          <input class="edit-title-input" id="etitle-geral-1-1" value="Conduta Geral" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
+          
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
+            <textarea class="field-edit" id="econtent-geral-1-1" style="margin-top:4px">- SINTOMÁTICOS PARA CASA
+- ORIENTO RETORNO SE PIORA E/OU PERSISTÊNCIA DOS SINTOMAS
+- ADVIRTO PROGNÓSTICO
+(PACIENTE COMPREENDE ORIENTAÇÕES FORNECIDAS)</textarea>
+          
+        </div>
+        <div class="edit-actions">
+          <button class="btn-save-edit" onclick="saveItemEdit('geral',1,1)">💾 Salvar</button>
+          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',1,1)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row-item" id="row-geral-1-2" onclick="toggleRow('geral',1,2)">
+    <div class="row-top">
+      <div class="row-accent"></div>
+      <div class="row-info">
+        <span class="row-icon" id="rico-geral-1-2" onclick="event.stopPropagation();openEmojiPicker('geral',1,2,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">🚶</span>
+        <span class="row-title" id="rttl-geral-1-2">Modelo — Evasão do Paciente</span>
+        
+      </div>
+      <div class="row-controls" onclick="event.stopPropagation()">
+        <button class="rc cp" onclick="copyItem('geral',1,2)" title="Copiar">📋</button>
+        <button class="btn-edit-item" id="ebtn-geral-1-2" onclick="toggleItemEdit('geral',1,2)" title="Editar">✏️</button>
+        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',1,2)" title="Excluir">🗑</button>
+      </div>
+      <div class="row-arrow">›</div>
+    </div>
+    <div class="row-body" onclick="event.stopPropagation()">
+      <div id="view-geral-1-2">
+        <div class="presc-wrap">
+            <pre class="presc" id="rpresc-geral-1-2">EM TEMPO: CHAMO PACIENTE EM TELA 3 VEZES E EM VOZ NA RECEPÇÃO, SEM RESPOSTA.
+REALIZADA BUSCA ATIVA NA UNIDADE E CHAMADO VERBAL NO CORREDOR.
+PACIENTE NÃO RESPONDEU.
+ALTA POR EVASÃO.
+
+(Versão detalhada):
+PACIENTE, CIENTE DOS RISCOS, DECIDE EVADIR DA UNIDADE POR MEIOS PRÓPRIOS.
+MESMO SENDO DEVIDAMENTE ORIENTADO QUANTO AOS RISCOS ENVOLVIDOS COM ESTA DECISÃO E AS POTENCIAIS COMPLICAÇÕES INERENTES, DECIDE EVADIR DA UNIDADE, CIENTE DOS RISCOS.</pre>
+          </div>
+        <div class="row-footer">
+          <button class="btn-copy" onclick="copyItem('geral',1,2)">📋 Copiar</button>
+          
+        </div>
+      </div>
+      <div id="edit-geral-1-2" style="display:none">
+        <div style="padding:10px 14px 6px;background:#fffef0">
+          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
+          <input class="edit-title-input" id="etitle-geral-1-2" value="Modelo — Evasão do Paciente" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
+          
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
+            <textarea class="field-edit" id="econtent-geral-1-2" style="margin-top:4px">EM TEMPO: CHAMO PACIENTE EM TELA 3 VEZES E EM VOZ NA RECEPÇÃO, SEM RESPOSTA.
+REALIZADA BUSCA ATIVA NA UNIDADE E CHAMADO VERBAL NO CORREDOR.
+PACIENTE NÃO RESPONDEU.
+ALTA POR EVASÃO.
+
+(Versão detalhada):
+PACIENTE, CIENTE DOS RISCOS, DECIDE EVADIR DA UNIDADE POR MEIOS PRÓPRIOS.
+MESMO SENDO DEVIDAMENTE ORIENTADO QUANTO AOS RISCOS ENVOLVIDOS COM ESTA DECISÃO E AS POTENCIAIS COMPLICAÇÕES INERENTES, DECIDE EVADIR DA UNIDADE, CIENTE DOS RISCOS.</textarea>
+          
+        </div>
+        <div class="edit-actions">
+          <button class="btn-save-edit" onclick="saveItemEdit('geral',1,2)">💾 Salvar</button>
+          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',1,2)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row-item" id="row-geral-1-3" onclick="toggleRow('geral',1,3)">
+    <div class="row-top">
+      <div class="row-accent"></div>
+      <div class="row-info">
+        <span class="row-icon" id="rico-geral-1-3" onclick="event.stopPropagation();openEmojiPicker('geral',1,3,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">👮</span>
+        <span class="row-title" id="rttl-geral-1-3">Paciente Acompanhado pela PM</span>
+        
+      </div>
+      <div class="row-controls" onclick="event.stopPropagation()">
+        <button class="rc cp" onclick="copyItem('geral',1,3)" title="Copiar">📋</button>
+        <button class="btn-edit-item" id="ebtn-geral-1-3" onclick="toggleItemEdit('geral',1,3)" title="Editar">✏️</button>
+        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',1,3)" title="Excluir">🗑</button>
+      </div>
+      <div class="row-arrow">›</div>
+    </div>
+    <div class="row-body" onclick="event.stopPropagation()">
+      <div id="view-geral-1-3">
+        <div class="presc-wrap">
+            <pre class="presc" id="rpresc-geral-1-3">PACIENTE COMPARECE ACOMPANHADO DE PM PARA REALIZAÇÃO DE EXAME FÍSICO.
+RELATA [QUEIXA].
+SEM QUEIXAS NO MOMENTO.
+CONDUZIDO POR MILITARES PARA DELEGACIA APÓS AVALIAÇÃO.</pre>
+          </div>
+        <div class="row-footer">
+          <button class="btn-copy" onclick="copyItem('geral',1,3)">📋 Copiar</button>
+          
+        </div>
+      </div>
+      <div id="edit-geral-1-3" style="display:none">
+        <div style="padding:10px 14px 6px;background:#fffef0">
+          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
+          <input class="edit-title-input" id="etitle-geral-1-3" value="Paciente Acompanhado pela PM" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
+          
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
+            <textarea class="field-edit" id="econtent-geral-1-3" style="margin-top:4px">PACIENTE COMPARECE ACOMPANHADO DE PM PARA REALIZAÇÃO DE EXAME FÍSICO.
+RELATA [QUEIXA].
+SEM QUEIXAS NO MOMENTO.
+CONDUZIDO POR MILITARES PARA DELEGACIA APÓS AVALIAÇÃO.</textarea>
+          
+        </div>
+        <div class="edit-actions">
+          <button class="btn-save-edit" onclick="saveItemEdit('geral',1,3)">💾 Salvar</button>
+          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',1,3)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row-item" id="row-geral-1-4" onclick="toggleRow('geral',1,4)">
+    <div class="row-top">
+      <div class="row-accent"></div>
+      <div class="row-info">
+        <span class="row-icon" id="rico-geral-1-4" onclick="event.stopPropagation();openEmojiPicker('geral',1,4,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">💉</span>
+        <span class="row-title" id="rttl-geral-1-4">Administração de Medicação Externa</span>
+        
+      </div>
+      <div class="row-controls" onclick="event.stopPropagation()">
+        <button class="rc cp" onclick="copyItem('geral',1,4)" title="Copiar">📋</button>
+        <button class="btn-edit-item" id="ebtn-geral-1-4" onclick="toggleItemEdit('geral',1,4)" title="Editar">✏️</button>
+        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',1,4)" title="Excluir">🗑</button>
+      </div>
+      <div class="row-arrow">›</div>
+    </div>
+    <div class="row-body" onclick="event.stopPropagation()">
+      <div id="view-geral-1-4">
+        <div class="presc-wrap">
+            <pre class="presc" id="rpresc-geral-1-4">PACIENTE COMPARECE PARA ADMINISTRAÇÃO DE MEDICAÇÃO EXTERNA, PRESCRITA POR MÉDICO.
+VIDE RECEITUÁRIO.</pre>
+          </div>
+        <div class="row-footer">
+          <button class="btn-copy" onclick="copyItem('geral',1,4)">📋 Copiar</button>
+          
+        </div>
+      </div>
+      <div id="edit-geral-1-4" style="display:none">
+        <div style="padding:10px 14px 6px;background:#fffef0">
+          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
+          <input class="edit-title-input" id="etitle-geral-1-4" value="Administração de Medicação Externa" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
+          
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
+            <textarea class="field-edit" id="econtent-geral-1-4" style="margin-top:4px">PACIENTE COMPARECE PARA ADMINISTRAÇÃO DE MEDICAÇÃO EXTERNA, PRESCRITA POR MÉDICO.
+VIDE RECEITUÁRIO.</textarea>
+          
+        </div>
+        <div class="edit-actions">
+          <button class="btn-save-edit" onclick="saveItemEdit('geral',1,4)">💾 Salvar</button>
+          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',1,4)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div></div></div>
+    <div class="section">
+      <div class="sec-header">
+        <span class="sec-title" id="sttl-geral-2">MODELOS DE SOLICITAÇÕES</span>
+        <div class="sec-actions">
+          <button class="sec-btn" onclick="openModalAddItemIn('geral',2)">+ item</button>
+          <button class="sec-btn danger" onclick="confirmDelSec('geral',2)">🗑 seção</button>
+        </div>
+      </div>
+      <div id="rows-geral-2">
+  <div class="row-item" id="row-geral-2-0" onclick="toggleRow('geral',2,0)">
+    <div class="row-top">
+      <div class="row-accent"></div>
+      <div class="row-info">
+        <span class="row-icon" id="rico-geral-2-0" onclick="event.stopPropagation();openEmojiPicker('geral',2,0,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">🔬</span>
+        <span class="row-title" id="rttl-geral-2-0">Exames Laboratoriais — Rotina Completa</span>
+        
+      </div>
+      <div class="row-controls" onclick="event.stopPropagation()">
+        <button class="rc cp" onclick="copyItem('geral',2,0)" title="Copiar">📋</button>
+        <button class="btn-edit-item" id="ebtn-geral-2-0" onclick="toggleItemEdit('geral',2,0)" title="Editar">✏️</button>
+        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',2,0)" title="Excluir">🗑</button>
+      </div>
+      <div class="row-arrow">›</div>
+    </div>
+    <div class="row-body" onclick="event.stopPropagation()">
+      <div id="view-geral-2-0">
+        <div class="presc-wrap">
+            <pre class="presc" id="rpresc-geral-2-0">SOLICITO:
+HEMOGRAMA COMPLETO
+GLICEMIA EM JEJUM / HBA1C
+COLESTEROL TOTAL E FRAÇÕES / TRIGLICERÍDEOS
+ÁCIDO ÚRICO / TGO / TGP / GGT / FA / AMILASE / LIPASE
+BILIRRUBINAS TOTAIS E FRAÇÕES
+TSH E T4 LIVRE
+VITAMINA D / VITAMINA B12 / VITAMINA C
+CÁLCIO SÉRICO / MAGNÉSIO / FERRO SÉRICO / FERRITINA / ÁCIDO FÓLICO
+SATURAÇÃO DE TRANSFERRINA
+UREIA / CREATININA / SÓDIO / POTÁSSIO
+PCR / VHS
+EAS (SUMÁRIO DE URINA)</pre>
+          </div>
+        <div class="row-footer">
+          <button class="btn-copy" onclick="copyItem('geral',2,0)">📋 Copiar</button>
+          
+        </div>
+      </div>
+      <div id="edit-geral-2-0" style="display:none">
+        <div style="padding:10px 14px 6px;background:#fffef0">
+          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
+          <input class="edit-title-input" id="etitle-geral-2-0" value="Exames Laboratoriais — Rotina Completa" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
+          
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
+            <textarea class="field-edit" id="econtent-geral-2-0" style="margin-top:4px">SOLICITO:
+HEMOGRAMA COMPLETO
+GLICEMIA EM JEJUM / HBA1C
+COLESTEROL TOTAL E FRAÇÕES / TRIGLICERÍDEOS
+ÁCIDO ÚRICO / TGO / TGP / GGT / FA / AMILASE / LIPASE
+BILIRRUBINAS TOTAIS E FRAÇÕES
+TSH E T4 LIVRE
+VITAMINA D / VITAMINA B12 / VITAMINA C
+CÁLCIO SÉRICO / MAGNÉSIO / FERRO SÉRICO / FERRITINA / ÁCIDO FÓLICO
+SATURAÇÃO DE TRANSFERRINA
+UREIA / CREATININA / SÓDIO / POTÁSSIO
+PCR / VHS
+EAS (SUMÁRIO DE URINA)</textarea>
+          
+        </div>
+        <div class="edit-actions">
+          <button class="btn-save-edit" onclick="saveItemEdit('geral',2,0)">💾 Salvar</button>
+          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',2,0)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row-item" id="row-geral-2-1" onclick="toggleRow('geral',2,1)">
+    <div class="row-top">
+      <div class="row-accent"></div>
+      <div class="row-info">
+        <span class="row-icon" id="rico-geral-2-1" onclick="event.stopPropagation();openEmojiPicker('geral',2,1,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">🏥</span>
+        <span class="row-title" id="rttl-geral-2-1">Exames — PSF/Rotina Ambulatorial</span>
+        
+      </div>
+      <div class="row-controls" onclick="event.stopPropagation()">
+        <button class="rc cp" onclick="copyItem('geral',2,1)" title="Copiar">📋</button>
+        <button class="btn-edit-item" id="ebtn-geral-2-1" onclick="toggleItemEdit('geral',2,1)" title="Editar">✏️</button>
+        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',2,1)" title="Excluir">🗑</button>
+      </div>
+      <div class="row-arrow">›</div>
+    </div>
+    <div class="row-body" onclick="event.stopPropagation()">
+      <div id="view-geral-2-1">
+        <div class="presc-wrap">
+            <pre class="presc" id="rpresc-geral-2-1">SOLICITO:
+HEMOGRAMA COMPLETO
+FERRO SÉRICO / FERRITINA
+GLICEMIA DE JEJUM / HBA1C
+COLESTEROL TOTAL E FRAÇÕES / TRIGLICERÍDEOS
+TSH E T4 LIVRE
+NA / K / CA / MG
+UREIA / CREATININA
+TGO / TGP / GGT
+CPK
+MICROALBUMINÚRIA (AMOSTRA ISOLADA)
+25-HIDROXIVITAMINA D / VITAMINA B12
+SUMÁRIO DE URINA
+PARASITOLÓGICO DE FEZES</pre>
+          </div>
+        <div class="row-footer">
+          <button class="btn-copy" onclick="copyItem('geral',2,1)">📋 Copiar</button>
+          
+        </div>
+      </div>
+      <div id="edit-geral-2-1" style="display:none">
+        <div style="padding:10px 14px 6px;background:#fffef0">
+          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
+          <input class="edit-title-input" id="etitle-geral-2-1" value="Exames — PSF/Rotina Ambulatorial" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
+          
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
+            <textarea class="field-edit" id="econtent-geral-2-1" style="margin-top:4px">SOLICITO:
+HEMOGRAMA COMPLETO
+FERRO SÉRICO / FERRITINA
+GLICEMIA DE JEJUM / HBA1C
+COLESTEROL TOTAL E FRAÇÕES / TRIGLICERÍDEOS
+TSH E T4 LIVRE
+NA / K / CA / MG
+UREIA / CREATININA
+TGO / TGP / GGT
+CPK
+MICROALBUMINÚRIA (AMOSTRA ISOLADA)
+25-HIDROXIVITAMINA D / VITAMINA B12
+SUMÁRIO DE URINA
+PARASITOLÓGICO DE FEZES</textarea>
+          
+        </div>
+        <div class="edit-actions">
+          <button class="btn-save-edit" onclick="saveItemEdit('geral',2,1)">💾 Salvar</button>
+          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',2,1)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row-item" id="row-geral-2-2" onclick="toggleRow('geral',2,2)">
+    <div class="row-top">
+      <div class="row-accent"></div>
+      <div class="row-info">
+        <span class="row-icon" id="rico-geral-2-2" onclick="event.stopPropagation();openEmojiPicker('geral',2,2,this)" title="Trocar ícone" style="cursor:pointer;border-radius:4px;padding:1px 2px;transition:background .12s" onmouseover="this.style.background='var(--gray100)'" onmouseout="this.style.background=''">📡</span>
+        <span class="row-title" id="rttl-geral-2-2">Solicitações de Imagem — USG</span>
+        
+      </div>
+      <div class="row-controls" onclick="event.stopPropagation()">
+        <button class="rc cp" onclick="copyItem('geral',2,2)" title="Copiar">📋</button>
+        <button class="btn-edit-item" id="ebtn-geral-2-2" onclick="toggleItemEdit('geral',2,2)" title="Editar">✏️</button>
+        <button class="rc dl" onclick="event.stopPropagation();confirmDelItem('geral',2,2)" title="Excluir">🗑</button>
+      </div>
+      <div class="row-arrow">›</div>
+    </div>
+    <div class="row-body" onclick="event.stopPropagation()">
+      <div id="view-geral-2-2">
+        <div class="presc-wrap">
+            <pre class="presc" id="rpresc-geral-2-2">SOLICITO:
+□ USG ABDOMINAL TOTAL
+□ USG DE RINS E VIAS URINÁRIAS — INDICAÇÃO: LITÍASE?
+□ USG TRANSVAGINAL — INDICAÇÃO: SOP / MIOMA / DIP?
+□ USG DE MAMAS E AXILAS
+□ USG DE TIREOIDE COM DOPPLER
+□ USG OBSTÉTRICA MORFOLÓGICA (1º TRIMESTRE: 11s até 13s 6d)
+□ USG MORFOLÓGICA 2º TRIMESTRE (20–24 semanas)
+□ ECG DE REPOUSO
+□ MAPA 24H
+□ DENSITOMETRIA ÓSSEA (FÊMUR PROXIMAL E COLUNA)</pre>
+          </div>
+        <div class="row-footer">
+          <button class="btn-copy" onclick="copyItem('geral',2,2)">📋 Copiar</button>
+          
+        </div>
+      </div>
+      <div id="edit-geral-2-2" style="display:none">
+        <div style="padding:10px 14px 6px;background:#fffef0">
+          <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
+          <input class="edit-title-input" id="etitle-geral-2-2" value="Solicitações de Imagem — USG" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
+          
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
+            <textarea class="field-edit" id="econtent-geral-2-2" style="margin-top:4px">SOLICITO:
+□ USG ABDOMINAL TOTAL
+□ USG DE RINS E VIAS URINÁRIAS — INDICAÇÃO: LITÍASE?
+□ USG TRANSVAGINAL — INDICAÇÃO: SOP / MIOMA / DIP?
+□ USG DE MAMAS E AXILAS
+□ USG DE TIREOIDE COM DOPPLER
+□ USG OBSTÉTRICA MORFOLÓGICA (1º TRIMESTRE: 11s até 13s 6d)
+□ USG MORFOLÓGICA 2º TRIMESTRE (20–24 semanas)
+□ ECG DE REPOUSO
+□ MAPA 24H
+□ DENSITOMETRIA ÓSSEA (FÊMUR PROXIMAL E COLUNA)</textarea>
+          
+        </div>
+        <div class="edit-actions">
+          <button class="btn-save-edit" onclick="saveItemEdit('geral',2,2)">💾 Salvar</button>
+          <button class="btn-cancel-edit" onclick="cancelItemEdit('geral',2,2)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div></div></div></div>
   </div>
 </div>
 
-<!-- ═══ MODAL: VER PRESCRIÇÃO ═══ -->
+<!-- ═══ BANNER: ALTERAÇÕES NÃO SINCRONIZADAS ═══ -->
+<div id="unsyncedBanner" style="display: flex; position: fixed; top: 0px; left: 0px; right: 0px; z-index: 3000; background: rgb(59, 130, 246); color: rgb(28, 25, 23); padding: 9px 16px; font-size: 13px; font-weight: 600; align-items: center; justify-content: space-between; gap: 12px; box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 12px;">
+  <div style="display:flex;align-items:center;gap:10px;min-width:0">
+    <span id="bannerIcon" style="font-size:18px;flex-shrink:0">🔄</span>
+    <span id="bannerMsg">Enviando para o GitHub...</span>
+  </div>
+  <div style="display:flex;gap:8px;flex-shrink:0">
+    <button id="bannerSyncBtn" onclick="bannerSync()" style="background: rgb(28, 25, 23); color: rgb(254, 243, 199); border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: not-allowed; font-weight: 700; white-space: nowrap; transition: 0.15s; opacity: 0.7;" disabled="">Enviando...</button>
+    <button onclick="openGithubModal()" title="Configurar credenciais GitHub" style="background:transparent;border:1.5px solid #1c191766;color:#1c1917;padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap">
+      ⚙️ Config
+    </button>
+    <button onclick="dismissBanner()" style="background:transparent;border:none;color:#1c191799;font-size:18px;cursor:pointer;padding:0 2px;line-height:1">
+      ×
+    </button>
+  </div>
+</div>
+
+<!-- ═══ MODAL: GITHUB CONFIG ═══ -->
+<div class="modal show" id="modalGithub">
+  <div class="modal-overlay" onclick="closeModal('modalGithub')"></div>
+  <div class="modal-box" style="max-width:500px">
+    <div class="modal-head">
+      <h3>🐙 Configurar Sincronização com GitHub</h3>
+      <button class="modal-close" onclick="closeModal('modalGithub')">×</button>
+    </div>
+    <div class="modal-body">
+
+      <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:#1e40af;line-height:1.8">
+        <strong>⚡ Configure uma vez — sincroniza sempre.</strong><br>
+        Depois de salvar, toda alteração no app mostrará um banner e você clica <b>Sincronizar agora</b>.<br>
+        Funciona de qualquer internet, em qualquer dispositivo.
+      </div>
+
+      <label>🔑 Token de Acesso Pessoal (GitHub PAT)</label>
+      <input id="gh_token" class="field" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+      <div style="font-size:11px;color:var(--gray500);margin-top:5px;line-height:1.6">
+        Gere em: <b>github.com → Settings → Developer settings → Personal access tokens → Fine-grained</b><br>
+        Permissão necessária: <b>Contents: Read and write</b> no repositório do MedGuia
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+        <div>
+          <label>👤 Usuário GitHub</label>
+          <input id="gh_user" class="field" placeholder="seu-usuario">
+        </div>
+        <div>
+          <label>📁 Repositório</label>
+          <input id="gh_repo" class="field" placeholder="medguia-pro">
+        </div>
+      </div>
+
+      <label style="margin-top:10px">📄 Caminho do arquivo</label>
+      <input id="gh_path" class="field" placeholder="index.html" value="index.html">
+      <div style="font-size:11px;color:var(--gray500);margin-top:4px">Normalmente <b>index.html</b> na raiz do repositório</div>
+
+      <div id="gh_status" style="display: block; margin-top: 12px; padding: 10px; border-radius: 6px; font-size: 12px; line-height: 1.5; background: rgb(239, 246, 255); border: 1px solid rgb(191, 219, 254); color: rgb(29, 78, 216);">🔄 Enviando...</div>
+
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--gray200)">
+        <div style="font-size:11px;color:var(--gray600);margin-bottom:8px">Sem GitHub? Baixe o HTML e envie manualmente:</div>
+        <button onclick="exportHtml()" style="background:var(--gray100);border:1.5px solid var(--gray300);color:var(--gray700);padding:7px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600">
+          📥 Baixar HTML atualizado
+        </button>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeModal('modalGithub')">Cancelar</button>
+      <button class="btn-ok" onclick="pushToGithub()">💾 Salvar e Sincronizar agora</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: IMPORTAR PRESCRIÇÕES (IA) ═══ -->
+<div class="modal" id="modalImportRx">
+  <div class="modal-overlay" onclick="closeModal('modalImportRx')"></div>
+  <div class="modal-box" style="max-width:560px">
+    <div class="modal-head">
+      <h3 id="importRxTitle">📂 Importar Prescrições</h3>
+      <button class="modal-close" onclick="closeModal('modalImportRx')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--blue-lt);border:1.5px solid var(--blue-bd);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--gray700);line-height:1.7">
+        📋 Faça upload de um arquivo <strong>.txt</strong>, <strong>.html</strong> ou <strong>.json</strong> com prescrições. O sistema irá processar e adicionar automaticamente como novos itens na seção indicada.
+      </div>
+
+      <label>Seção de destino</label>
+      <select id="importRxSection" class="field" style="width:100%;padding:8px;border-radius:6px;border:1px solid var(--gray300)">
+        <!-- populado dinamicamente -->
+      </select>
+
+      <label style="margin-top:12px">Arquivo de prescrições</label>
+      <div style="border:2px dashed var(--gray300);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:.15s" onclick="document.getElementById('rxUploadFile').click()" ondragover="event.preventDefault();this.style.borderColor='#2563eb'" ondragleave="this.style.borderColor='var(--gray300)'" ondrop="handleRxDrop(event)">
+        <div style="font-size:28px;margin-bottom:8px">📎</div>
+        <div style="font-size:13px;color:var(--gray600)">Clique para selecionar ou arraste o arquivo aqui</div>
+        <div style="font-size:11px;color:var(--gray400);margin-top:4px">Suporta .txt, .html, .json</div>
+      </div>
+      <input type="file" id="rxUploadFile" accept=".txt,.html,.json" style="display:none" onchange="handleRxUpload(event)">
+
+      <div id="importRxPreview" style="display:none;margin-top:12px">
+        <label>Prévia dos itens detectados</label>
+        <div id="importRxPreviewContent" style="background:var(--gray50);border:1px solid var(--gray200);border-radius:6px;padding:10px;max-height:180px;overflow-y:auto;font-size:12px;font-family:var(--mono);line-height:1.7"></div>
+        <div id="importRxCount" style="font-size:12px;color:var(--green);margin-top:6px;font-weight:600"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeModal('modalImportRx')">Cancelar</button>
+      <button class="btn-ok" id="importRxBtn" disabled="" onclick="confirmImportRx()">✅ Adicionar Prescrições</button>
+    </div>
+  </div>
+</div>
+
+
 <div class="modal" id="modalView">
   <div class="modal-overlay" onclick="closeModal('modalView')"></div>
   <div class="modal-box">
@@ -690,7 +1442,7 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
   </div>
 </div>
 
-<div id="toast"></div>
+<div id="toast" class="">🗑 Item excluído</div>
 <!-- EMOJI PICKER -->
 <div id="emojiPicker" class="emoji-picker" style="display:none">
   <div class="emoji-picker-title">Trocar Ícone</div>
@@ -703,21 +1455,26 @@ mark { background: #fef9c3; color: #713f12; border-radius: 2px; padding: 0 1px; 
 <!-- MODAL: GERAR RECEITA WORD -->
 <div class="modal" id="modalWord">
   <div class="modal-overlay" onclick="closeModal('modalWord')"></div>
-  <div class="modal-box" style="max-width:500px">
+  <div class="modal-box" style="max-width:620px">
     <div class="modal-head">
       <h3>🖨️ Gerar Receita para Imprimir</h3>
       <button class="modal-close" onclick="closeModal('modalWord')">×</button>
     </div>
     <div class="modal-body">
       <label>Nome do Paciente</label>
-      <input id="wrd_nome" class="field" placeholder="Digite o nome completo do paciente" autofocus>
+      <input id="wrd_nome" class="field" placeholder="Digite o nome completo do paciente" autofocus="">
 
-      <label>Observações adicionais (opcional)</label>
+      <label style="margin-top:12px;display:flex;align-items:center;gap:8px">
+        📝 Prescrição
+        <span style="font-size:11px;color:var(--gray600);font-weight:400">(edite antes de imprimir — alterações não são salvas)</span>
+      </label>
+      <textarea id="wrd_content" class="field" rows="10" style="font-family:var(--mono);font-size:12px;line-height:1.8;resize:vertical;white-space:pre;overflow-x:auto" placeholder="Conteúdo da prescrição..."></textarea>
+
+      <label style="margin-top:8px">Observações adicionais (opcional)</label>
       <input id="wrd_obs" class="field" placeholder="Ex: Retorno em 7 dias, evitar esforço físico...">
 
       <div style="background:var(--blue-lt);border:1.5px solid var(--blue-bd);border-radius:6px;padding:10px 12px;margin-top:10px;font-size:12px;color:var(--gray700);line-height:1.6">
-        📅 Data de hoje inserida automaticamente.<br>
-        🏥 Logo e nome do médico já configurados no cabeçalho da aba.
+        📅 Data de hoje inserida automaticamente. &nbsp;🏥 Logo e nome do médico já configurados.
       </div>
     </div>
     <div class="modal-foot">
@@ -860,6 +1617,32 @@ function renderTab(k) {
   // ── Cabeçalho fixo de configuração para aba receitas ──
   if (k === 'receitas') {
     html += buildReceitasHeader();
+    // Import button for receitas
+    html += `<div style="margin-bottom:14px">
+      <button onclick="openImportRxModal('receitas')" style="background:var(--blue-lt);border:1.5px solid var(--blue-bd);color:var(--blue);padding:8px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">
+        📂 Importar Prescrições de Arquivo
+      </button>
+    </div>`;
+  }
+
+  // ── Calculadora pediátrica no topo da aba Pediatria ──
+  if (k === 'pediatria') {
+    html += buildPedCalculator();
+    // Import button for pediatria
+    html += `<div style="margin-bottom:14px">
+      <button onclick="openImportRxModal('pediatria')" style="background:#f0fdf4;border:1.5px solid #bbf7d0;color:#166534;padding:8px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">
+        📂 Importar Prescrições Pediátricas
+      </button>
+    </div>`;
+  }
+
+  // ── Import button for GO/Obstetrícia ──
+  if (k === 'obstetricia') {
+    html += `<div style="margin-bottom:14px">
+      <button onclick="openImportRxModal('obstetricia')" style="background:#fdf4ff;border:1.5px solid #e9d5ff;color:#7c3aed;padding:8px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">
+        📂 Importar Prescrições GO/Obstetrícia
+      </button>
+    </div>`;
   }
 
   secs.forEach((sec, si) => {
@@ -1602,6 +2385,17 @@ function renderConfig(container) {
       <button class="btn-danger" style="margin-right:0" onclick="resetData()">🗑 Restaurar padrão</button>
     </div>
   </div>
+  <div class="cfg-card" style="border-color:#d1fae5">
+    <h3 style="color:#065f46">🐙 Sincronização com GitHub</h3>
+    <p style="font-size:12px;color:var(--gray600);margin-bottom:12px">
+      Mantenha suas personalizações sincronizadas entre dispositivos via GitHub Pages.
+    </p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-ok" style="background:#166534;border-color:#166534" onclick="openGithubModal()">🐙 Configurar GitHub / Sincronizar</button>
+      <button class="btn-cancel" onclick="exportHtml()">📥 Baixar HTML atualizado</button>
+    </div>
+    ${_hasUnsyncedChanges ? '<div style="margin-top:10px;font-size:12px;color:#b45309;font-weight:600">⚠️ Você tem alterações não sincronizadas.</div>' : '<div style="margin-top:10px;font-size:12px;color:#166534">✅ Sem alterações pendentes.</div>'}
+  </div>
   <div class="cfg-card">
     <h3>⌨️ Atalhos</h3>
     <div class="cfg-row"><span>Fechar modal / limpar busca</span><kbd>Esc</kbd></div>
@@ -1612,7 +2406,7 @@ function renderConfig(container) {
   </div>
   <div class="cfg-card">
     <h3>ℹ️ Sobre</h3>
-    <div class="cfg-row"><span>Versão</span><span>MedGuia Pro v3.0</span></div>
+    <div class="cfg-row"><span>Versão</span><span>MedGuia Pro v3.1</span></div>
     <div class="cfg-row"><span>Offline</span><span>✅ Funciona sem internet</span></div>
     <div class="cfg-row"><span>Dados locais</span><span>✅ Privacidade total</span></div>
     <p style="font-size:11px;color:var(--red);margin-top:12px">⚠️ Uso exclusivo como apoio clínico. Confirme sempre doses e indicações antes de prescrever.</p>
@@ -1714,54 +2508,133 @@ function getActiveLogo() {
   } catch {}
 })();
 
+// ── SISTEMA DE PERFIS DE MÉDICO (multi-perfil) ──
+function getMedProfiles() {
+  try { return JSON.parse(localStorage.getItem('mg_profiles') || '{"profiles":[],"activeId":null}'); } catch { return {profiles:[], activeId:null}; }
+}
+function saveMedProfiles(obj) {
+  try { localStorage.setItem('mg_profiles', JSON.stringify(obj)); } catch {}
+}
+function getActiveMedProfile() {
+  const obj = getMedProfiles();
+  return obj.profiles.find(p => p.id === obj.activeId) || null;
+}
+
+// Migração do perfil único antigo
+(function migrateLegacyMedico() {
+  try {
+    const oldMedico = localStorage.getItem('mg_medico');
+    const oldCrm    = localStorage.getItem('mg_crm');
+    if (oldMedico || oldCrm) {
+      const obj = getMedProfiles();
+      if (!obj.profiles.length) {
+        const id = 'med_' + Date.now();
+        obj.profiles.push({ id, medico: oldMedico || '', crm: oldCrm || '' });
+        obj.activeId = id;
+        saveMedProfiles(obj);
+      }
+      localStorage.removeItem('mg_medico');
+      localStorage.removeItem('mg_crm');
+    }
+  } catch {}
+})();
+
 // ── Cabeçalho da aba Receitas ──
 function buildReceitasHeader() {
-  const medico = localStorage.getItem('mg_medico') || '';
-  const crm    = localStorage.getItem('mg_crm')    || '';
-  const obj    = getLogos();
-  const active = obj.logos.find(l => l.id === obj.activeId);
+  const logoObj  = getLogos();
+  const activeLg = logoObj.logos.find(l => l.id === logoObj.activeId);
+  const medObj   = getMedProfiles();
 
-  let thumbsHtml = obj.logos.map(logo => `
-    <div class="rec-logo-thumb ${logo.id === obj.activeId ? 'active' : ''}"
-         onclick="setActiveLogo('${logo.id}')" title="Clique para selecionar: ${esc(logo.name)}">
+  // ── Logo thumbnails ──
+  let logoThumbs = logoObj.logos.map(logo => `
+    <div class="rec-logo-thumb ${logo.id === logoObj.activeId ? 'active' : ''}"
+         onclick="setActiveLogo('${logo.id}')" title="${esc(logo.name)}">
       <div class="thumb-img-wrap"><img src="data:${logo.mime};base64,${logo.data}"></div>
       <span class="thumb-name">${esc(logo.name)}</span>
       <button class="thumb-del" onclick="event.stopPropagation();deleteLogo('${logo.id}')" title="Excluir">✕</button>
     </div>`).join('');
-
-  thumbsHtml += `
-    <div class="rec-logo-thumb add-slot" onclick="document.getElementById('recLogoFile').click()" title="Adicionar logo">
-      ＋
-    </div>
+  logoThumbs += `
+    <div class="rec-logo-thumb add-slot" onclick="document.getElementById('recLogoFile').click()" title="Adicionar logo">＋</div>
     <input type="file" id="recLogoFile" accept="image/*" style="display:none" onchange="recAddLogo(event)">`;
 
-  const activeLabel = active
-    ? `<span class="rec-logo-active-label">✅ USANDO: ${esc(active.name)}</span>`
-    : `<span style="font-size:11px;color:var(--gray500)">Nenhuma logo selecionada</span>`;
+  // ── Médico profile cards ──
+  let medCards = medObj.profiles.map(p => `
+    <div onclick="setActiveMedProfile('${p.id}')" title="Clique para selecionar"
+      style="cursor:pointer;border:2px solid ${p.id === medObj.activeId ? 'var(--blue)' : 'var(--gray300)'};
+             background:${p.id === medObj.activeId ? 'var(--blue-lt)' : 'var(--gray50)'};
+             border-radius:8px;padding:8px 10px;min-width:150px;max-width:190px;position:relative;transition:.13s;flex-shrink:0">
+      ${p.id === medObj.activeId ? '<div style="position:absolute;top:4px;right:6px;font-size:9px;color:var(--blue);font-weight:700;letter-spacing:.5px">✅ ATIVO</div>' : ''}
+      <div style="font-size:12px;font-weight:700;color:var(--gray900);padding-right:16px;word-break:break-word;line-height:1.4">${esc(p.medico)||'<em style="color:var(--gray400)">Sem nome</em>'}</div>
+      <div style="font-size:11px;color:var(--gray500);margin-top:3px">${esc(p.crm)||'Sem CRM'}</div>
+      <button onclick="event.stopPropagation();deleteMedProfile('${p.id}')"
+        style="position:absolute;bottom:5px;right:6px;background:none;border:none;color:var(--gray400);cursor:pointer;font-size:12px;padding:2px;line-height:1" title="Excluir">🗑</button>
+    </div>`).join('');
+
+  // ── Add new profile mini-form ──
+  medCards += `
+    <div style="border:2px dashed var(--gray300);border-radius:8px;padding:8px 10px;min-width:165px;background:var(--white);flex-shrink:0">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--gray500);margin-bottom:6px;text-transform:uppercase;font-family:var(--mono)">+ Novo Perfil</div>
+      <input id="newMedName" class="field" placeholder="Dr(a). Nome Completo" style="margin-bottom:5px;font-size:12px;padding:5px 8px">
+      <input id="newMedCrm"  class="field" placeholder="CRM 00000 · Especialidade" style="margin-bottom:6px;font-size:12px;padding:5px 8px">
+      <button onclick="addMedProfile()" style="width:100%;background:var(--blue);color:#fff;border:none;border-radius:6px;padding:5px 0;font-size:12px;font-weight:700;cursor:pointer">✅ Salvar</button>
+    </div>`;
 
   return `
   <div class="rec-header">
-    <div class="rec-header-inner">
-      <div class="rec-logo-block">
-        <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray500);font-family:var(--mono)">Logos — Locais de Trabalho</div>
-        <div class="rec-logo-strip" id="recLogoStrip">${thumbsHtml}</div>
-        ${activeLabel}
-      </div>
-      <div class="rec-fields">
-        <div class="rec-field-row">
-          <label>Nome do Médico</label>
-          <input id="recMedico" value="${esc(medico)}" placeholder="Dr(a). Nome Completo" oninput="recSaveField('mg_medico','recMedico')">
+    <div class="rec-header-inner" style="flex-direction:column;gap:14px">
+
+      <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+        <div class="rec-logo-block">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray500);font-family:var(--mono);margin-bottom:6px">🏥 Logos — Locais de Trabalho</div>
+          <div class="rec-logo-strip">${logoThumbs}</div>
+          <div style="margin-top:5px;font-size:10px;color:${activeLg ? 'var(--blue)' : 'var(--gray400)'}">
+            ${activeLg ? `✅ Logo ativa: <b>${esc(activeLg.name)}</b>` : 'Nenhuma logo selecionada — clique em ＋ para adicionar'}
+          </div>
         </div>
-        <div class="rec-field-row">
-          <label>CRM / Especialidade</label>
-          <input id="recCRM" value="${esc(crm)}" placeholder="CRM 00000 — Clínico Geral" oninput="recSaveField('mg_crm','recCRM')">
-        </div>
-        <div class="rec-tip">✅ Configurado aqui uma vez — aparece em <b>todos</b> os Words. Clique em uma logo para selecionar.</div>
       </div>
+
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray500);font-family:var(--mono);margin-bottom:8px">👨‍⚕️ Médico / CRM — Selecione quem vai assinar</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:stretch">${medCards}</div>
+        <div class="rec-tip" style="margin-top:8px">Clique em um perfil para selecioná-lo · A logo ativa e o médico ativo aparecem em <b>todas</b> as receitas impressas</div>
+      </div>
+
     </div>
   </div>`;
 }
 
+function addMedProfile() {
+  const nome = document.getElementById('newMedName')?.value.trim();
+  const crm  = document.getElementById('newMedCrm')?.value.trim();
+  if (!nome && !crm) { toast('⚠️ Preencha nome ou CRM'); return; }
+  const obj = getMedProfiles();
+  const id  = 'med_' + Date.now();
+  obj.profiles.push({ id, medico: nome||'', crm: crm||'' });
+  obj.activeId = id;
+  saveMedProfiles(obj);
+  renderTab('receitas');
+  toast('✅ Perfil salvo e selecionado!');
+}
+window.addMedProfile = addMedProfile;
+
+function setActiveMedProfile(id) {
+  const obj = getMedProfiles();
+  obj.activeId = (obj.activeId === id) ? null : id;
+  saveMedProfiles(obj);
+  renderTab('receitas');
+}
+window.setActiveMedProfile = setActiveMedProfile;
+
+function deleteMedProfile(id) {
+  if (!confirm('Excluir este perfil de médico?')) return;
+  const obj = getMedProfiles();
+  obj.profiles = obj.profiles.filter(p => p.id !== id);
+  if (obj.activeId === id) obj.activeId = obj.profiles[0]?.id || null;
+  saveMedProfiles(obj);
+  renderTab('receitas');
+  toast('🗑 Perfil excluído');
+}
+window.deleteMedProfile = deleteMedProfile;
 function recAddLogo(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -1803,19 +2676,16 @@ function deleteLogo(id) {
 }
 window.deleteLogo = deleteLogo;
 
-function recSaveField(key, inputId) {
-  const val = document.getElementById(inputId)?.value || '';
-  try { localStorage.setItem(key, val); } catch {}
-}
-window.recSaveField = recSaveField;
 
 function openWordModal(k, si, ii) {
   _wordItem = D[k]?.sections?.[si]?.items?.[ii];
   if (!_wordItem) return;
   document.getElementById('wrd_nome').value = '';
   document.getElementById('wrd_obs').value  = '';
+  // Pre-fill the editable prescription content (only the prescription part)
+  const { presc: _prescOnly } = splitReceitaNotas(_wordItem.content || '');
+  document.getElementById('wrd_content').value = _prescOnly;
   openModal('modalWord');
-  // Focus nome field
   setTimeout(() => document.getElementById('wrd_nome')?.focus(), 100);
 }
 window.openWordModal = openWordModal;
@@ -1832,8 +2702,8 @@ function gerarWord() {
 
   const nome       = document.getElementById('wrd_nome').value.trim() || 'Paciente não informado';
   const obs        = document.getElementById('wrd_obs').value.trim();
-  const medico     = localStorage.getItem('mg_medico') || '';
-  const crm        = localStorage.getItem('mg_crm')    || '';
+  const medico     = (() => { const p = getActiveMedProfile(); return p ? p.medico : (localStorage.getItem('mg_medico')||''); })();
+  const crm        = (() => { const p = getActiveMedProfile(); return p ? p.crm    : (localStorage.getItem('mg_crm')||'');    })();
   const medicoLine = [medico, crm].filter(Boolean).join('   |   ');
   const now        = new Date();
   const hoje       = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
@@ -1852,8 +2722,8 @@ function gerarWord() {
        </div>`
     : '';
 
-  // Só imprime a parte da prescrição (sem notas clínicas)
-  const { presc: _prescOnly } = splitReceitaNotas(_wordItem.content || '');
+  // Usa o conteúdo editado pelo usuário no textarea
+  const _prescOnly = (document.getElementById('wrd_content')?.value ?? '');
   const prescLines = _prescOnly
     .split('\n')
     .map(l => `<p style="font-family:'Courier New',monospace;font-size:11pt;line-height:1.8;margin:0;white-space:pre-wrap">${he(l)||'&nbsp;'}</p>`)
@@ -1919,11 +2789,469 @@ ${obsBlock}
 }
 window.gerarWord = gerarWord;
 
+// ══════════════════════════════════════════════════
+// CHANGE DETECTION & GITHUB SYNC — AUTO
+// ══════════════════════════════════════════════════
 
+let _hasUnsyncedChanges = false;
+let _bannerDismissed    = false;
+let _syncDebounceTimer  = null;
+
+// ── Detectar mudanças ──
+function markUnsyncedChanges() {
+  _hasUnsyncedChanges = true;
+  _bannerDismissed    = false;
+  setBannerState('pending');
+  showUnsyncedBanner();
+}
+
+function showUnsyncedBanner() {
+  const b = document.getElementById('unsyncedBanner');
+  if (b && !_bannerDismissed) b.style.display = 'flex';
+}
+function hideBanner() {
+  const b = document.getElementById('unsyncedBanner');
+  if (b) b.style.display = 'none';
+}
+function dismissBanner() {
+  _bannerDismissed = true;
+  hideBanner();
+}
+window.dismissBanner = dismissBanner;
+
+function setBannerState(state, msg) {
+  const icon = document.getElementById('bannerIcon');
+  const txt  = document.getElementById('bannerMsg');
+  const btn  = document.getElementById('bannerSyncBtn');
+  if (!icon || !txt || !btn) return;
+
+  const states = {
+    pending: { icon:'⚠️', msg: msg||'Alterações não sincronizadas — outros dispositivos não verão essas mudanças', btn:'🚀 Sincronizar agora', bg:'#f59e0b', disabled:false },
+    syncing: { icon:'🔄', msg: msg||'Enviando para o GitHub...', btn:'Enviando...', bg:'#3b82f6', disabled:true },
+    success: { icon:'✅', msg: msg||'Sincronizado com sucesso! GitHub Pages pode demorar ~1 min.', btn:'✅ Sincronizado', bg:'#16a34a', disabled:true },
+    error:   { icon:'❌', msg: msg||'Erro ao sincronizar. Verifique as configurações.', btn:'🔁 Tentar novamente', bg:'#dc2626', disabled:false },
+    nocreds: { icon:'🔑', msg:'Configure suas credenciais do GitHub para sincronizar', btn:'⚙️ Configurar agora', bg:'#7c3aed', disabled:false },
+  };
+
+  const s = states[state] || states.pending;
+  const banner = document.getElementById('unsyncedBanner');
+  if (banner) banner.style.background = s.bg;
+  icon.textContent   = s.icon;
+  txt.textContent    = s.msg;
+  btn.textContent    = s.btn;
+  btn.disabled       = s.disabled;
+  btn.style.opacity  = s.disabled ? '0.7' : '1';
+  btn.style.cursor   = s.disabled ? 'not-allowed' : 'pointer';
+}
+
+// ── Botão do banner: sincroniza diretamente se configurado ──
+async function bannerSync() {
+  const token = localStorage.getItem('gh_token');
+  const user  = localStorage.getItem('gh_user');
+  const repo  = localStorage.getItem('gh_repo');
+
+  // Se não configurado, abrir modal de config
+  if (!token || !user || !repo) {
+    openGithubModal();
+    return;
+  }
+
+  // Sincronizar direto
+  await pushToGithubDirect(token, user, repo, localStorage.getItem('gh_path') || 'index.html');
+}
+window.bannerSync = bannerSync;
+
+// ── Push direto (sem precisar de modal) ──
+async function pushToGithubDirect(token, user, repo, path) {
+  setBannerState('syncing');
+  showUnsyncedBanner();
+
+  try {
+    // 1. Buscar SHA atual
+    const getResp = await fetch(
+      `https://api.github.com/repos/${user}/${repo}/contents/${path}`,
+      { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } }
+    );
+
+    let sha = null;
+    if (getResp.ok) {
+      sha = (await getResp.json()).sha;
+    } else if (getResp.status === 401) {
+      setBannerState('error', '❌ Token inválido ou expirado. Reconfigure em ⚙️ Config.');
+      return;
+    } else if (getResp.status !== 404) {
+      setBannerState('error', `❌ Erro ${getResp.status} ao buscar arquivo. Verifique repositório.`);
+      return;
+    }
+
+    // 2. Serializar HTML com dados atuais embutidos
+    const htmlContent = buildExportHtml();
+    const encoded = btoa(unescape(encodeURIComponent(htmlContent)));
+
+    // 3. Enviar
+    const now = new Date();
+    const ts  = `${now.toLocaleDateString('pt-BR')} ${now.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'})}`;
+    const putResp = await fetch(
+      `https://api.github.com/repos/${user}/${repo}/contents/${path}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `MedGuia sync ${ts}`,
+          content: encoded,
+          ...(sha ? { sha } : {})
+        })
+      }
+    );
+
+    if (putResp.ok) {
+      setBannerState('success', `✅ Sincronizado às ${ts} — GitHub Pages atualiza em ~1 min`);
+      _hasUnsyncedChanges = false;
+      // Sumir banner após 5 segundos
+      setTimeout(() => { if (!_hasUnsyncedChanges) hideBanner(); }, 5000);
+    } else {
+      const err = await putResp.json().catch(() => ({}));
+      setBannerState('error', `❌ Erro: ${err.message || putResp.status}. Verifique permissões do token.`);
+    }
+  } catch(e) {
+    setBannerState('error', `❌ Falha de rede: ${e.message}`);
+  }
+}
+
+// ── Serializa o HTML com dados atuais embutidos ──
+function buildExportHtml() {
+  // Atualiza o JSON embutido na variável ORIGINAL para refletir o estado salvo
+  // O HTML já tem o localStorage embutido via a variável D (dados em memória)
+  return document.documentElement.outerHTML;
+}
+
+// ── Hook no save() para detectar alterações ──
+const _origSave = save;
+window.save = function() {
+  _origSave();
+  // Debounce: esperar 500ms antes de marcar (evita spam em edições rápidas)
+  clearTimeout(_syncDebounceTimer);
+  _syncDebounceTimer = setTimeout(() => markUnsyncedChanges(), 500);
+};
+
+// ── Modal de configuração (só para configurar credenciais) ──
+function openGithubModal() {
+  document.getElementById('gh_token').value = localStorage.getItem('gh_token') || '';
+  document.getElementById('gh_user').value  = localStorage.getItem('gh_user')  || '';
+  document.getElementById('gh_repo').value  = localStorage.getItem('gh_repo')  || '';
+  document.getElementById('gh_path').value  = localStorage.getItem('gh_path')  || 'index.html';
+  document.getElementById('gh_status').style.display = 'none';
+  openModal('modalGithub');
+}
+window.openGithubModal = openGithubModal;
+
+// ── Export HTML local ──
+function exportHtml() {
+  const blob = new Blob([buildExportHtml()], {type: 'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'medguia_' + new Date().toISOString().slice(0,10) + '.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('📥 HTML exportado!');
+}
+window.exportHtml = exportHtml;
+
+// ── Push via modal (salva config e envia) ──
+async function pushToGithub() {
+  const token = document.getElementById('gh_token').value.trim();
+  const user  = document.getElementById('gh_user').value.trim();
+  const repo  = document.getElementById('gh_repo').value.trim();
+  const path  = document.getElementById('gh_path').value.trim() || 'index.html';
+
+  if (!token || !user || !repo) {
+    showGhStatus('⚠️ Preencha token, usuário e repositório.', 'error'); return;
+  }
+
+  localStorage.setItem('gh_token', token);
+  localStorage.setItem('gh_user',  user);
+  localStorage.setItem('gh_repo',  repo);
+  localStorage.setItem('gh_path',  path);
+
+  showGhStatus('🔄 Enviando...', 'info');
+
+  await pushToGithubDirect(token, user, repo, path);
+
+  // Refletir resultado no modal também
+  if (!_hasUnsyncedChanges) {
+    showGhStatus('✅ Enviado com sucesso!', 'success');
+    setTimeout(() => closeModal('modalGithub'), 2000);
+  }
+}
+window.pushToGithub = pushToGithub;
+
+function showGhStatus(msg, type) {
+  const el = document.getElementById('gh_status');
+  if (!el) return;
+  el.style.display = 'block';
+  el.style.background = type === 'error' ? '#fef2f2' : type === 'success' ? '#f0fdf4' : '#eff6ff';
+  el.style.border = '1px solid ' + (type === 'error' ? '#fecaca' : type === 'success' ? '#bbf7d0' : '#bfdbfe');
+  el.style.color = type === 'error' ? '#dc2626' : type === 'success' ? '#166534' : '#1d4ed8';
+  el.textContent = msg;
+}
+// ══════════════════════════════════════════════════
+// IMPORT PRESCRIPTIONS FROM FILE
+// ══════════════════════════════════════════════════
+
+let _importRxTab = 'receitas';
+let _importRxParsed = [];
+
+function openImportRxModal(tabKey) {
+  _importRxTab = tabKey || 'receitas';
+  _importRxParsed = [];
+
+  // Populate section selector
+  const tab = D[_importRxTab];
+  const sel = document.getElementById('importRxSection');
+  if (sel && tab) {
+    sel.innerHTML = tab.sections.map((s, i) =>
+      `<option value="${i}">${s.title}</option>`
+    ).join('');
+    // add "Nova seção" option
+    sel.innerHTML += `<option value="new">➕ Criar nova seção...</option>`;
+  }
+
+  // Reset state
+  document.getElementById('rxUploadFile').value = '';
+  document.getElementById('importRxPreview').style.display = 'none';
+  document.getElementById('importRxBtn').disabled = true;
+
+  const titleMap = { receitas:'Receitas para Casa', pediatria:'Pediatria', obstetricia:'GO/Obstetrícia' };
+  document.getElementById('importRxTitle').textContent =
+    `📂 Importar Prescrições — ${titleMap[_importRxTab] || _importRxTab}`;
+
+  openModal('modalImportRx');
+}
+window.openImportRxModal = openImportRxModal;
+
+function handleRxDrop(e) {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) processRxFile(file);
+}
+window.handleRxDrop = handleRxDrop;
+
+function handleRxUpload(e) {
+  const file = e.target.files[0];
+  if (file) processRxFile(file);
+}
+window.handleRxUpload = handleRxUpload;
+
+function processRxFile(file) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const text = ev.target.result;
+    let parsed = [];
+
+    if (file.name.endsWith('.json')) {
+      // JSON: expect array of {title, content, icon} or similar
+      try {
+        const json = JSON.parse(text);
+        const items = Array.isArray(json) ? json : json.items || json.prescricoes || [];
+        parsed = items.map((it, i) => ({
+          id: 'imported_' + Date.now() + '_' + i,
+          icon: it.icon || '💊',
+          title: it.title || it.titulo || it.name || `Importado ${i+1}`,
+          content: it.content || it.conteudo || it.prescricao || String(it)
+        }));
+      } catch { toast('⚠️ JSON inválido'); return; }
+    } else {
+      // TXT or HTML: split by common delimiters
+      // Try to detect blocks separated by === or ---  or double newlines with UPPERCASE title
+      const raw = file.name.endsWith('.html')
+        ? text.replace(/<[^>]+>/g, '\n').replace(/&[a-z]+;/gi, ' ')
+        : text;
+
+      // Split by lines starting with uppercase title patterns
+      const blocks = raw.split(/\n(?=[A-ZÁÉÍÓÚÃÕÂÊÎÔÛÇÜÀÈÌÒÙÑÄËÏÖÜ]{3,}[\s\S]*?\n)/m);
+      if (blocks.length > 1) {
+        blocks.forEach((block, i) => {
+          const lines = block.trim().split('\n').filter(l => l.trim());
+          if (!lines.length) return;
+          const title = lines[0].trim();
+          const content = lines.slice(1).join('\n').trim();
+          if (title && content) {
+            parsed.push({
+              id: 'imported_' + Date.now() + '_' + i,
+              icon: '💊',
+              title,
+              content
+            });
+          }
+        });
+      }
+
+      // Fallback: treat whole file as one item
+      if (!parsed.length) {
+        parsed = [{
+          id: 'imported_' + Date.now(),
+          icon: '💊',
+          title: file.name.replace(/\.[^.]+$/, ''),
+          content: raw.trim()
+        }];
+      }
+    }
+
+    _importRxParsed = parsed;
+    const preview = document.getElementById('importRxPreview');
+    const previewContent = document.getElementById('importRxPreviewContent');
+    const count = document.getElementById('importRxCount');
+    if (preview && previewContent) {
+      preview.style.display = 'block';
+      previewContent.innerHTML = parsed.map(p =>
+        `<div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--gray200)">
+          <strong>${p.icon} ${p.title}</strong>
+          <div style="color:var(--gray500);margin-top:2px;font-size:11px">${(p.content||'').slice(0,120)}${p.content?.length>120?'...':''}</div>
+        </div>`
+      ).join('');
+      count.textContent = `✅ ${parsed.length} prescrição(ões) detectada(s)`;
+    }
+    document.getElementById('importRxBtn').disabled = false;
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function confirmImportRx() {
+  if (!_importRxParsed.length) return;
+
+  const sel = document.getElementById('importRxSection');
+  const secIdx = sel.value;
+  const tab = D[_importRxTab];
+  if (!tab) return;
+
+  if (secIdx === 'new') {
+    const sectionName = prompt('Nome da nova seção:');
+    if (!sectionName) return;
+    tab.sections.push({ title: sectionName.toUpperCase(), items: [..._importRxParsed] });
+  } else {
+    const si = parseInt(secIdx);
+    if (!tab.sections[si]) return;
+    tab.sections[si].items.push(..._importRxParsed);
+  }
+
+  save();
+  renderTab(_importRxTab);
+  closeModal('modalImportRx');
+  toast(`✅ ${_importRxParsed.length} prescrição(ões) importada(s)!`);
+}
+window.confirmImportRx = confirmImportRx;
 
 // ══════════════════════════════════════════════════
-// EMOJI PICKER
+// CALCULADORA PEDIÁTRICA (integrada à aba Pediatria)
 // ══════════════════════════════════════════════════
+
+function getPedDosesRef() {
+  // Pega o conteúdo do item de referência pediátrica (calc_ped_doses)
+  const pedSections = D['pediatria']?.sections || [];
+  for (const sec of pedSections) {
+    for (const item of (sec.items || [])) {
+      if (item.id === 'calc_ped_doses') return item.content || '';
+    }
+  }
+  return '';
+}
+
+function buildPedCalculator() {
+  // Parses the dose reference section to build dynamic formulas
+  const ref = getPedDosesRef();
+
+  // Known formulas (hardcoded + parsed from reference)
+  const drugs = [
+    { name: 'Dipirona Gotas (500mg/ml)',    fn: w => +(w * 0.03).toFixed(2), unit: 'ml' },
+    { name: 'Paracetamol Gotas (200mg/ml)', fn: w => +(w * 0.05).toFixed(2), unit: 'ml' },
+    { name: 'Ibuprofeno Gotas (100mg/ml)',  fn: w => +(w * 0.10).toFixed(2), unit: 'ml', note:'8/8h' },
+    { name: 'Ibuprofeno Gotas (50mg/ml)',   fn: w => +(w * 0.10).toFixed(2), unit: 'ml', note:'8/8h' },
+    { name: 'Bromoprida (4mg/ml)',          fn: w => +(w * 0.04).toFixed(2), unit: 'ml' },
+    { name: 'Ondansetrona',                fn: w => +(w * 0.04).toFixed(2), unit: 'ml' },
+    { name: 'Prednisolona (3mg/ml)',        fn: w => +(w * 0.10).toFixed(2), unit: 'ml', note:'1mg/kg/dia' },
+    { name: 'Diazepam Retal (5mg/ml)',      fn: w => +(w * 0.06).toFixed(2), unit: 'ml' },
+    { name: 'Midazolam',                   fn: w => +(w * 0.04).toFixed(2), unit: 'ml' },
+    { name: 'Prometazina',                 fn: w => +(w / 50).toFixed(2),   unit: 'ml' },
+    { name: 'Adrenalina IM (1mg/ml)',       fn: w => +(w / 100).toFixed(2),  unit: 'ml' },
+    { name: 'Amoxicilina 250mg/5ml',        fn: w => +(w * 0.10).toFixed(2), unit: 'ml', note:'8/8h' },
+    { name: 'Clavulin 250+62,5/5ml',        fn: w => +(w / 3).toFixed(1),    unit: 'ml', note:'8/8h (peso÷3)' },
+    { name: 'Cefalexina 250mg/5ml',         fn: w => +(w * 0.05).toFixed(1), unit: 'ml', note:'6/6h (÷4%)' },
+    { name: 'Hidroxizina (2mg/ml)',          fn: w => +(w / 3).toFixed(1),    unit: 'ml', note:'8/8h (peso÷3)' },
+  ];
+
+  return `
+<div style="background:var(--white);border:1.5px solid var(--blue-bd);border-radius:12px;padding:18px;margin-bottom:20px">
+  <h3 style="font-size:14px;font-weight:700;color:var(--blue);margin-bottom:14px">🧮 Calculadora Pediátrica por Peso</h3>
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+    <label style="font-weight:600;font-size:13px">Peso (kg):</label>
+    <input id="pedCalcWeight" type="number" min="1" max="80" step="0.1" placeholder="Ex: 15"
+      style="width:100px;padding:8px 10px;border:1.5px solid var(--gray300);border-radius:7px;font-size:14px;font-weight:600"
+      oninput="calcPedDoses()">
+    <span style="font-size:12px;color:var(--gray500)">Digite o peso da criança para calcular as doses automaticamente</span>
+  </div>
+  <div id="pedCalcResults" style="display:none">
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+        <thead>
+          <tr style="background:var(--blue-lt)">
+            <th style="text-align:left;padding:8px 10px;border-bottom:2px solid var(--blue-bd);font-weight:700">Medicação</th>
+            <th style="text-align:center;padding:8px 10px;border-bottom:2px solid var(--blue-bd);font-weight:700">Dose</th>
+            <th style="text-align:center;padding:8px 10px;border-bottom:2px solid var(--blue-bd);font-weight:700">Obs</th>
+          </tr>
+        </thead>
+        <tbody id="pedCalcBody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:var(--gray500)">
+      ⚠️ Conferir sempre doses máximas e indicações clínicas antes de prescrever.
+    </div>
+  </div>
+</div>`;
+}
+
+window._pedDrugs = [
+  { name: 'Dipirona Gotas (500mg/ml)',    fn: w => +(w * 0.03).toFixed(2), unit: 'ml' },
+  { name: 'Paracetamol Gotas (200mg/ml)', fn: w => +(w * 0.05).toFixed(2), unit: 'ml' },
+  { name: 'Ibuprofeno (100mg/ml)',        fn: w => +(w * 0.10).toFixed(2), unit: 'ml', note:'8/8h' },
+  { name: 'Ibuprofeno (50mg/ml)',         fn: w => +(w * 0.10).toFixed(2), unit: 'ml', note:'8/8h' },
+  { name: 'Bromoprida (4mg/ml)',          fn: w => +(w * 0.04).toFixed(2), unit: 'ml' },
+  { name: 'Ondansetrona',                fn: w => +(w * 0.04).toFixed(2), unit: 'ml' },
+  { name: 'Prednisolona (3mg/ml)',        fn: w => +(w * 0.10).toFixed(2), unit: 'ml', note:'1mg/kg/dia' },
+  { name: 'Diazepam Retal (5mg/ml)',      fn: w => +(w * 0.06).toFixed(2), unit: 'ml' },
+  { name: 'Midazolam',                   fn: w => +(w * 0.04).toFixed(2), unit: 'ml' },
+  { name: 'Prometazina',                 fn: w => +(w / 50).toFixed(2),   unit: 'ml' },
+  { name: 'Adrenalina IM (1mg/ml)',       fn: w => +(w / 100).toFixed(2),  unit: 'ml' },
+  { name: 'Amoxicilina 250mg/5ml',        fn: w => +(w * 0.10).toFixed(2), unit: 'ml', note:'8/8h' },
+  { name: 'Clavulin 250+62,5/5ml',        fn: w => +(w / 3).toFixed(1),    unit: 'ml', note:'8/8h' },
+  { name: 'Cefalexina 250mg/5ml',         fn: w => +(w * 0.05).toFixed(1), unit: 'ml', note:'6/6h' },
+  { name: 'Hidroxizina (2mg/ml)',          fn: w => +(w / 3).toFixed(1),    unit: 'ml', note:'8/8h' },
+  { name: 'Azitromicina 200mg/5ml',        fn: w => +(w * 0.05).toFixed(1), unit: 'ml', note:'24/24h' },
+];
+
+function calcPedDoses() {
+  const w = parseFloat(document.getElementById('pedCalcWeight')?.value);
+  const results = document.getElementById('pedCalcResults');
+  const body = document.getElementById('pedCalcBody');
+  if (!results || !body) return;
+  if (!w || w <= 0) { results.style.display = 'none'; return; }
+  results.style.display = 'block';
+  body.innerHTML = window._pedDrugs.map(d => {
+    const dose = d.fn(w);
+    return `<tr style="border-bottom:1px solid var(--gray100)">
+      <td style="padding:7px 10px">${d.name}</td>
+      <td style="padding:7px 10px;text-align:center;font-weight:700;color:var(--blue)">${dose} ${d.unit}</td>
+      <td style="padding:7px 10px;text-align:center;color:var(--gray500);font-size:11px">${d.note||'—'}</td>
+    </tr>`;
+  }).join('');
+}
+window.calcPedDoses = calcPedDoses;
+window.buildPedCalculator = buildPedCalculator;
+
+
 const EMOJI_CATS = {
   '🏥 Médico':    ['💊','💉','🩺','🩹','🏥','🚑','🩻','🧬','🔬','🩸','🫀','🫁','🧠','🦷','🦴','👁️','👂','🤧','🤒','🤕','🤢','😷','🧪','⚕️','🏨','💆','🧘','🚿'],
   '🚨 Urgência':  ['🚨','⚠️','❗','🔴','🟠','🟡','💥','⚡','❤️','💔','🫶','🩺','🚑','🆘','🆕','‼️','🔥','☢️','☣️','🛑'],
@@ -2022,5 +3350,5 @@ function pickEmoji(emoji) {
 window.pickEmoji = pickEmoji;
 
 </script>
-</body>
-</html>
+
+</body></html>
