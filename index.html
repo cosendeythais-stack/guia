@@ -1249,6 +1249,14 @@ function load() {
     G = {...DEF_GROUPS};
     IC = {...DEF_ICONS};
   }
+  // Remover do G chaves que são grades internas (não devem aparecer como abas no menu)
+  var _INTERNAL_GRADE_KEYS = ['sala_vermelha','sala_laranja','sala_verde','sala_amarela','dil_verde','scores','dil_vermelha','dil_laranja'];
+  _INTERNAL_GRADE_KEYS.forEach(function(k){ delete G[k]; delete D[k]; });
+
+  // Garantir que o label correto de 'diluicoes' seja sempre 'Prescrever Agora'
+  if (D['diluicoes']) D['diluicoes'].label = 'Prescrever Agora';
+  if (!G['diluicoes']) G['diluicoes'] = 'FARMÁCIA';
+
   // Merge com ORIGINAL: garantir que nenhuma aba fique vazia
   Object.keys(ORIGINAL).forEach(function(tabKey) {
     if (!D[tabKey]) {
