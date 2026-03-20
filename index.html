@@ -289,12 +289,11 @@ html, body { height: 100%; font-family: var(--sans); font-size: 14px; color: var
 
 /* ── Notas Clínicas (separação receita/observação) ── */
 .notes-block {
-  margin: 0 14px 0 42px;
+  margin: 0 14px 10px 14px;
   padding: 8px 12px;
   background: #fffbeb;
   border-left: 3px solid #f59e0b;
   border-radius: 0 6px 6px 0;
-  margin-bottom: 10px;
 }
 .notes-block-label {
   font-size: 9px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
@@ -302,7 +301,12 @@ html, body { height: 100%; font-family: var(--sans); font-size: 14px; color: var
 }
 .notes-block pre {
   font-family:var(--mono);font-size:11.5px;line-height:1.7;color:#78350f;
-  white-space:pre-wrap;word-break:break-word;
+  white-space:pre-wrap;word-break:break-word;overflow-x:hidden;
+}
+@media (max-width:480px) {
+  .notes-block { margin: 0 8px 8px 8px; padding: 7px 10px; }
+  .notes-block pre { font-size:11px; line-height:1.65; }
+  .notes-block-label { font-size:8px; letter-spacing:1px; }
 }
 
 /* ── Edição por item ── */
@@ -1735,8 +1739,8 @@ function buildRowHTML(k, si, ii, item) {
                     ✏️ EDITAR
                   </button>
                 </div>
-                <div style="font-family:var(--mono);font-size:11.5px;line-height:1.7;color:#78350f;white-space:pre-wrap;word-break:break-word">${_notes.split('\n').map(function(line){var m=line.match(/^(•\s+)(.+?)(\s*[:：]?\s*)$/);if(m){return m[1]+'<strong style="color:#92400e">'+esc(m[2])+esc(m[3])+'</strong>';}return esc(line);}).join('\n')}</div>
-              </div>` : `<div style="margin:4px 14px 10px 42px">
+                <pre style="font-family:var(--mono);font-size:11.5px;line-height:1.7;color:#78350f;white-space:pre-wrap;word-break:break-word;overflow-x:hidden;margin:0">${_notes.split('\n').map(function(line){var m=line.match(/^(•\s+)(.+?)(\s*[:：]?\s*)$/);if(m){return m[1]+'<strong style="color:#92400e">'+esc(m[2])+esc(m[3])+'</strong>';}return esc(line);}).join('\n')}</pre>
+              </div>` : `<div style="margin:4px 14px 10px 14px">
                 <button onclick="event.stopPropagation();mgOpenNotes('${k}',${si},${ii})"
                   style="background:none;border:1.5px dashed #f59e0b;color:#b45309;border-radius:6px;padding:4px 14px;cursor:pointer;font-size:11px;font-weight:600;font-family:var(--sans)">
                   ＋ Adicionar Notas Clínicas
@@ -2860,7 +2864,7 @@ function dilRenderGradePanel(gradeId) {
   if (notesRaw) {
     notesHtml = '<div style="margin-top:10px;padding:8px 10px;background:#fffbeb;border-left:3px solid #f59e0b;border-radius:0 6px 6px 0">'
       +'<div style="font-size:9px;font-weight:800;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:monospace;margin-bottom:4px">📋 Notas Clínicas</div>'
-      +'<pre style="font-family:monospace;font-size:11px;line-height:1.7;color:#78350f;white-space:pre-wrap;word-break:break-word;margin:0">'+esc(notesRaw)+'</pre>'
+      +'<pre style="font-family:monospace;font-size:11px;line-height:1.7;color:#78350f;white-space:pre-wrap;word-break:break-word;overflow-x:hidden;margin:0">'+esc(notesRaw)+'</pre>'
       +'</div>';
   }
 
@@ -2996,9 +3000,9 @@ function dilTopOpen(itemId) {
 
   var notesHtml = '';
   if ((it.notes||'').trim()) {
-    notesHtml = '<div style="margin:0 12px 10px;padding:7px 10px;background:#fffbeb;border-left:3px solid #f59e0b;border-radius:0 6px 6px 0">'
+    notesHtml = '<div style="margin:0 8px 10px;padding:7px 10px;background:#fffbeb;border-left:3px solid #f59e0b;border-radius:0 6px 6px 0">'
       + '<div style="font-size:9px;font-weight:800;color:#92400e;text-transform:uppercase;font-family:monospace;margin-bottom:3px">📋 Notas Clínicas</div>'
-      + '<pre style="font-family:monospace;font-size:11px;line-height:1.7;color:#78350f;white-space:pre-wrap;word-break:break-word;margin:0">' + esc(it.notes) + '</pre>'
+      + '<pre style="font-family:monospace;font-size:11px;line-height:1.7;color:#78350f;white-space:pre-wrap;word-break:break-word;overflow-x:hidden;margin:0">' + esc(it.notes) + '</pre>'
       + '</div>';
   }
 
