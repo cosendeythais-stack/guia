@@ -769,6 +769,33 @@ html, body { max-width: 100vw; overflow-x: hidden; }
   .tab-searchbox { padding: 5px 10px; }
   #tabSearchInput { font-size: 14px; }
 }
+
+/* ─────────────────────────────────────
+   BOLD TOOLBAR para textareas editáveis
+───────────────────────────────────── */
+.bold-toolbar {
+  display: flex; align-items: center; gap: 4px;
+  padding: 4px 6px; background: var(--gray100);
+  border: 1.5px solid var(--gray300); border-bottom: none;
+  border-radius: 6px 6px 0 0; flex-wrap: wrap;
+}
+.bold-toolbar + .field-edit,
+.bold-toolbar + textarea {
+  border-radius: 0 0 6px 6px !important;
+  border-top: none !important;
+}
+.btb-btn {
+  background: var(--white); border: 1.5px solid var(--gray300);
+  color: var(--gray700); padding: 2px 8px; border-radius: 4px;
+  cursor: pointer; font-size: 12px; font-weight: 800;
+  font-family: var(--sans); line-height: 1.5; transition: .12s;
+  white-space: nowrap;
+}
+.btb-btn:hover { background: var(--blue-lt); border-color: var(--blue-bd); color: var(--blue); }
+.btb-hint {
+  font-size: 10px; color: var(--gray400); font-family: var(--mono);
+  margin-left: 4px;
+}
 </style>
 </head>
 <body>
@@ -1088,7 +1115,8 @@ window.goTo = function(k) {
       <label>Badge (opcional — ex: URGÊNCIA)</label>
       <input id="ai_badge" class="field" placeholder="Deixe vazio se não precisar">
       <label>Conteúdo / Prescrição</label>
-      <textarea id="ai_body" class="field" placeholder="Cole ou escreva a prescrição aqui..."></textarea>
+      <div class="bold-toolbar" style="margin-top:4px"><button type="button" class="btb-btn" onclick="applyBold('ai_body')"><b>B</b> Negrito</button><span class="btb-hint">**negrito**</span></div>
+      <textarea id="ai_body" class="field" placeholder="Cole ou escreva a prescrição aqui..." style="border-top:none;border-radius:0 0 7px 7px;margin-top:0"></textarea>
     </div>
     <div class="modal-foot">
       <button class="btn-cancel" onclick="closeModal('modalAddItem')">Cancelar</button>
@@ -1249,8 +1277,9 @@ window.goTo = function(k) {
               📝 Prescrição
               <span style="font-size:10px;color:var(--gray500);font-weight:400">(edite antes de imprimir)</span>
             </label>
+            <div class="bold-toolbar" style="margin-top:0"><button type="button" class="btb-btn" onclick="applyBold('wrd_content')"><b>B</b> Negrito</button><span class="btb-hint">**negrito**</span></div>
             <textarea id="wrd_content" class="field" rows="10"
-              style="flex:1;font-family:var(--mono);font-size:12px;line-height:1.8;resize:vertical;white-space:pre;overflow-x:auto;margin:0"
+              style="flex:1;font-family:var(--mono);font-size:12px;line-height:1.8;resize:vertical;white-space:pre;overflow-x:auto;margin:0;border-top:none;border-radius:0 0 7px 7px"
               placeholder="Conteúdo da prescrição..."></textarea>
           </div>
           <div>
@@ -1803,7 +1832,7 @@ function buildRowHTML(k, si, ii, item) {
     <div class="row-body" onclick="event.stopPropagation()">
       <div id="view-${k}-${si}-${ii}">
         ${(()=>{
-          if (k === 'receitas') {
+          if (['receitas','pediatria','obstetricia'].includes(k)) {
             const _notes = (item.notes || '').trim();
             const notesHtml = _notes ? `
               <div class="notes-block">
@@ -1813,7 +1842,7 @@ function buildRowHTML(k, si, ii, item) {
                     ✏️ EDITAR
                   </button>
                 </div>
-                <pre style="font-family:var(--mono);font-size:11.5px;line-height:1.7;color:#78350f;white-space:pre-wrap;word-break:break-word;overflow-x:hidden;margin:0">${_notes.split('\n').map(function(line){var m=line.match(/^(•\s+)(.+?)(\s*[:：]?\s*)$/);if(m){return m[1]+'<strong style="color:#92400e">'+esc(m[2])+esc(m[3])+'</strong>';}return esc(line);}).join('\n')}</pre>
+                <pre style="font-family:var(--mono);font-size:11.5px;line-height:1.7;color:#78350f;white-space:pre-wrap;word-break:break-word;overflow-x:hidden;margin:0">${_notes.split('\n').map(function(line){var m=line.match(/^(•\s+)(.+?)(\s*[:：]?\s*)$/);if(m){return m[1]+'<strong style="color:#92400e">'+esc(m[2])+esc(m[3])+'</strong>';}return renderBold(esc(line));}).join('\n')}</pre>
               </div>` : `<div style="margin:4px 14px 10px 14px">
                 <button onclick="event.stopPropagation();mgOpenNotes('${k}',${si},${ii})"
                   style="background:none;border:1.5px dashed #f59e0b;color:#b45309;border-radius:6px;padding:4px 14px;cursor:pointer;font-size:11px;font-weight:600;font-family:var(--sans)">
@@ -1822,12 +1851,12 @@ function buildRowHTML(k, si, ii, item) {
               </div>`;
             return `
               <div class="presc-wrap" style="padding-bottom:6px">
-                <pre class="presc" id="rpresc-${k}-${si}-${ii}">${esc(item.content||'')}</pre>
+                <pre class="presc" id="rpresc-${k}-${si}-${ii}">${renderBold(esc(item.content||''))}</pre>
               </div>
               ${notesHtml}`;
           }
           return `<div class="presc-wrap">
-            <pre class="presc" id="rpresc-${k}-${si}-${ii}">${esc(item.content||'')}</pre>
+            <pre class="presc" id="rpresc-${k}-${si}-${ii}">${renderBold(esc(item.content||''))}</pre>
           </div>`;
         })()}
         <div class="row-footer">
@@ -1848,20 +1877,23 @@ function buildRowHTML(k, si, ii, item) {
         <div style="padding:10px 14px 6px;background:#fffef0">
           <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
           <input class="edit-title-input" id="etitle-${k}-${si}-${ii}" value="${esc(item.title)}" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
-          ${k==='receitas' ? `
-            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#1e40af;text-transform:uppercase;font-family:var(--mono)">💊 Receita (vai para impressão)</label>
-            <textarea class="field-edit" id="econtent-${k}-${si}-${ii}" style="margin-top:4px;border-color:#93c5fd;background:#eff6ff">${esc(item.content||'')}</textarea>
+          ${['receitas','pediatria','obstetricia'].includes(k) ? `
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#1e40af;text-transform:uppercase;font-family:var(--mono)">💊 Prescrição</label>
+            ${boldToolbarHTML('econtent-'+k+'-'+si+'-'+ii)}
+            <textarea class="field-edit" id="econtent-${k}-${si}-${ii}" style="margin-top:0;border-color:#93c5fd;background:#eff6ff">${esc(item.content||'')}</textarea>
             <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-              <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">📋 Notas Clínicas (aparecem na impressão lateralmente)</label>
+              <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">📋 Notas Clínicas</label>
               <button type="button" onclick="event.stopPropagation();mgOpenNotes('${k}',${si},${ii})"
                 style="background:#fef3c7;border:1.5px solid #fbbf24;color:#92400e;border-radius:5px;padding:2px 10px;cursor:pointer;font-size:10px;font-weight:700;font-family:var(--sans)">
                 ⤢ Expandir
               </button>
             </div>
+            ${boldToolbarHTML('enotes-'+k+'-'+si+'-'+ii)}
             <textarea class="field-edit" id="enotes-${k}-${si}-${ii}" style="margin-top:0;min-height:100px;background:#fffbeb;border-color:#fcd34d">${esc(item.notes||'')}</textarea>
           ` : `
             <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
-            <textarea class="field-edit" id="econtent-${k}-${si}-${ii}" style="margin-top:4px">${esc(item.content||'')}</textarea>
+            ${boldToolbarHTML('econtent-'+k+'-'+si+'-'+ii)}
+            <textarea class="field-edit" id="econtent-${k}-${si}-${ii}" style="margin-top:0">${esc(item.content||'')}</textarea>
           `}
         </div>
         <div class="edit-actions">
@@ -1909,7 +1941,7 @@ function saveItemEdit(k, si, ii) {
   const newContent = document.getElementById(`econtent-${k}-${si}-${ii}`)?.value;
   const newNotes   = document.getElementById(`enotes-${k}-${si}-${ii}`)?.value;
   if (newTitle) item.title = newTitle;
-  if (k === 'receitas') {
+  if (['receitas','pediatria','obstetricia'].includes(k)) {
     if (newContent !== undefined) item.content = newContent;
     if (newNotes !== undefined) item.notes = newNotes.trim();
   } else if (newContent !== undefined) {
@@ -1955,14 +1987,22 @@ function mgOpenNotes(k, si, ii) {
   hint.style.cssText = 'font-size:11px;color:var(--gray500);line-height:1.5';
   hint.textContent = 'Alternativas, variações de dose, critérios clínicos. Aparecem ao lado da prescrição quando você clica em 🖨️ Receita — não vão para a receita impressa.';
 
+  // Bold toolbar for notes modal
+  const taToolbar = document.createElement('div');
+  taToolbar.className = 'bold-toolbar';
+  taToolbar.style.borderRadius = '6px 6px 0 0';
+  taToolbar.innerHTML = '<button type="button" class="btb-btn" title="Negrito (selecione o texto primeiro)" onclick="applyBold(\'_mgNotesTa\')"><b>B</b> Negrito</button><span class="btb-hint">**negrito**</span>';
+
   const ta = document.createElement('textarea');
+  ta.id = '_mgNotesTa';
   ta.value = item.notes || '';
   ta.placeholder = 'Ex: Variação (quadro grave): Clavulin 875mg em vez de 500mg...';
-  ta.style.cssText = 'flex:1;min-height:280px;border:2px solid #fcd34d;border-radius:8px;padding:12px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.8;color:var(--gray800);background:#fffef7;outline:none;resize:none;scrollbar-width:thin';
+  ta.style.cssText = 'flex:1;min-height:280px;border:2px solid #fcd34d;border-top:none;border-radius:0 0 8px 8px;padding:12px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.8;color:var(--gray800);background:#fffef7;outline:none;resize:none;scrollbar-width:thin';
   ta.onfocus = () => ta.style.borderColor = '#f59e0b';
   ta.onblur  = () => ta.style.borderColor = '#fcd34d';
 
   body.appendChild(hint);
+  body.appendChild(taToolbar);
   body.appendChild(ta);
 
   const foot = document.createElement('div');
@@ -2337,6 +2377,51 @@ function setupSearch() {
   });
 }
 
+
+// ══════════════════════════════════════════════════
+// BOLD TOOLBAR — helper para textareas editáveis
+// ══════════════════════════════════════════════════
+function boldToolbarHTML(targetId, hint) {
+  const h = hint || '**negrito**';
+  return `<div class="bold-toolbar">
+    <button type="button" class="btb-btn" title="Negrito (selecione o texto primeiro)" onclick="applyBold('${targetId}')"><b>B</b> Negrito</button>
+    <span class="btb-hint">${h}</span>
+  </div>`;
+}
+
+function applyBold(taId) {
+  const ta = document.getElementById(taId);
+  if (!ta) return;
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const val = ta.value;
+  if (s === e) {
+    // Sem seleção: insere marcador vazio e posiciona cursor
+    const ins = '****';
+    ta.value = val.slice(0,s) + ins + val.slice(e);
+    ta.selectionStart = ta.selectionEnd = s + 2;
+  } else {
+    const sel = val.slice(s, e);
+    // Toggle: remove negrito se já tem
+    if (sel.startsWith('**') && sel.endsWith('**') && sel.length > 4) {
+      const clean = sel.slice(2, -2);
+      ta.value = val.slice(0,s) + clean + val.slice(e);
+      ta.selectionStart = s; ta.selectionEnd = s + clean.length;
+    } else {
+      const ins = '**' + sel + '**';
+      ta.value = val.slice(0,s) + ins + val.slice(e);
+      ta.selectionStart = s; ta.selectionEnd = s + ins.length;
+    }
+  }
+  ta.focus();
+  // Dispara input para autosave se existir
+  ta.dispatchEvent(new Event('input'));
+}
+window.applyBold = applyBold;
+
+// Converte **texto** → <strong>texto</strong> na renderização
+function renderBold(text) {
+  return String(text||'').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
 // ══════════════════════════════════════════════════
 // TAB SEARCH (busca dentro da aba ativa)
 // ══════════════════════════════════════════════════
@@ -2453,7 +2538,7 @@ function runTabSearch(q, k) {
         </div>
         <div class="row-body" onclick="event.stopPropagation()">
           <div class="presc-wrap">
-            <pre class="presc" id="rpresc-${k}-${si}-${ii}">${esc(item.content||'')}</pre>
+            <pre class="presc" id="rpresc-${k}-${si}-${ii}">${renderBold(esc(item.content||''))}</pre>
           </div>
           <div class="row-footer">
             <button class="btn-copy" onclick="copyItem('${k}',${si},${ii})">📋 Copiar</button>
@@ -5704,7 +5789,7 @@ function buildPedRefPanel() {
         </div>
         <div class="row-body" onclick="event.stopPropagation()">
           <div id="view-pediatria-${secIdx}-${ii}">
-            <div class="presc-wrap"><pre class="presc" id="rpresc-pediatria-${secIdx}-${ii}">${esc(item.content||'')}</pre></div>
+            <div class="presc-wrap"><pre class="presc" id="rpresc-pediatria-${secIdx}-${ii}">${renderBold(esc(item.content||''))}</pre></div>
             <div class="row-footer">
               <button class="btn-copy" onclick="copyItem('pediatria',${secIdx},${ii})">📋 Copiar</button>
               <button class="btn-word" id="fillbtn-pediatria-${secIdx}-${ii}" onclick="pedFillAndPrint('pediatria',${secIdx},${ii})" style="background:#f0fdf4;color:#15803d;border:1.5px solid #bbf7d0">⚡ Preencher doses</button>
@@ -5715,7 +5800,7 @@ function buildPedRefPanel() {
               <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
               <input class="edit-title-input" id="etitle-pediatria-${secIdx}-${ii}" value="${esc(item.title)}" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
               <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo / Prescrição</label>
-              <textarea class="field-edit" id="econtent-pediatria-${secIdx}-${ii}" style="margin-top:4px">${esc(item.content||'')}</textarea>
+              ${boldToolbarHTML('econtent-pediatria-'+secIdx+'-'+ii)}<textarea class="field-edit" id="econtent-pediatria-${secIdx}-${ii}" style="margin-top:0">${renderBold(esc(item.content||''))}</textarea>
             </div>
             <div class="edit-actions">
               <button class="btn-save-edit" onclick="saveItemEdit('pediatria',${secIdx},${ii})">💾 Salvar</button>
@@ -6409,7 +6494,7 @@ function buildObsRefPanel() {
         </div>
         <div class="row-body" onclick="event.stopPropagation()">
           <div id="view-obstetricia-${secIdx}-${ii}">
-            <div class="presc-wrap"><pre class="presc" id="rpresc-obstetricia-${secIdx}-${ii}">${esc(item.content||'')}</pre></div>
+            <div class="presc-wrap"><pre class="presc" id="rpresc-obstetricia-${secIdx}-${ii}">${renderBold(esc(item.content||''))}</pre></div>
             <div class="row-footer">
               <button class="btn-copy" onclick="copyItem('obstetricia',${secIdx},${ii})">📋 Copiar</button>
             </div>
@@ -6419,7 +6504,7 @@ function buildObsRefPanel() {
               <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Título</label>
               <input class="edit-title-input" id="etitle-obstetricia-${secIdx}-${ii}" value="${esc(item.title)}" style="display:block;width:100%;margin-top:4px;margin-bottom:10px">
               <label style="font-size:10px;font-weight:700;letter-spacing:1px;color:#92400e;text-transform:uppercase;font-family:var(--mono)">Conteúdo</label>
-              <textarea class="field-edit" id="econtent-obstetricia-${secIdx}-${ii}" style="margin-top:4px">${esc(item.content||'')}</textarea>
+              ${boldToolbarHTML('econtent-obstetricia-'+secIdx+'-'+ii)}<textarea class="field-edit" id="econtent-obstetricia-${secIdx}-${ii}" style="margin-top:0">${renderBold(esc(item.content||''))}</textarea>
             </div>
             <div class="edit-actions">
               <button class="btn-save-edit" onclick="saveItemEdit('obstetricia',${secIdx},${ii})">💾 Salvar</button>
