@@ -5053,6 +5053,7 @@ window.cfgLimparLixo = cfgLimparLixo;
 function openWordModal(k, si, ii) {
   _wordItem = D[k]?.sections?.[si]?.items?.[ii];
   if (!_wordItem) return;
+  window._pedReceita = null; // garante que dados pediátricos não vazem para receitas normais
   document.getElementById('wrd_nome').value = '';
   document.getElementById('wrd_obs').value  = '';
   var itemContent = _wordItem.content || '';
@@ -5095,6 +5096,10 @@ function gerarWord() {
 
   const nome       = document.getElementById('wrd_nome').value.trim() || 'Paciente não informado';
   const obs        = document.getElementById('wrd_obs').value.trim();
+
+  // Dados pediátricos (preenchidos via calculadora)
+  const pedData    = window._pedReceita || null;
+  window._pedReceita = null; // limpa após uso
   const medico     = (() => { const p = getActiveMedProfile(); return p ? p.medico : (localStorage.getItem('mg_medico')||''); })();
   const crm        = (() => { const p = getActiveMedProfile(); return p ? p.crm    : (localStorage.getItem('mg_crm')||'');    })();
   const medicoLine = [medico, crm].filter(Boolean).join('   |   ');
@@ -5152,6 +5157,13 @@ ${logoHtml}
 <p style="font-size:12pt;margin-bottom:8px">
   <strong>Paciente:</strong> ${he(nome)}
 </p>
+${pedData ? (() => {
+  const partes = [];
+  if (pedData.peso)   partes.push('<strong>Peso:</strong> ' + pedData.peso + ' kg');
+  if (pedData.idade)  partes.push('<strong>Idade:</strong> ' + he(pedData.idade));
+  if (pedData.outroKey && !isNaN(pedData.outroVal)) partes.push('<strong>' + he(pedData.outroKey) + ':</strong> ' + pedData.outroVal);
+  return partes.length ? `<p style="font-size:11pt;margin-bottom:4px;color:#1d4ed8">${partes.join('&nbsp;&nbsp;|&nbsp;&nbsp;')}</p>` : '';
+})() : ''}
 <div style="border-top:1px solid #dee2e6;margin:8px 0 22px"></div>
 
 ${prescLines}
@@ -7128,8 +7140,9 @@ function pedCalcToggle() {
 }
 
 // ── Resolve uma linha de prescrição substituindo XX pelo valor calculado ──
-function pedFillContent(text, w) {
+function pedFillContent(text, w, extras) {
   if (!w || w <= 0) return text;
+  extras = extras || {};
   var lines = text.split('\n');
   return lines.map(function(line, idx) {
     var prev = idx > 0 ? lines[idx-1] : '';
@@ -7138,7 +7151,7 @@ function pedFillContent(text, w) {
     // Padrão: "XX ml (Cálculo: fórmula)"
     var calcM = line.match(/XX\s+(\S+)\s*\(Cálculo:\s*([^)]+)\)/i);
     if (calcM) {
-      var val = _pedCalcValue(calcM[2], w, calcM[1]);
+      var val = _pedCalcValue(calcM[2], w, calcM[1], extras);
       if (val !== null) return line.replace(calcM[0], val + ' ' + calcM[1]);
     }
 
@@ -7150,7 +7163,7 @@ function pedFillContent(text, w) {
       var med  = medM ? medM[1].replace(/\s*[-—–]+\s*\d+.*$/, '').trim() : '';
       var inf  = _pedInferFormula(med || ctx, confM[1]);
       if (inf) {
-        var val2 = _pedCalcValue(inf.formula, w, confM[1]);
+        var val2 = _pedCalcValue(inf.formula, w, confM[1], extras);
         if (val2 !== null) return line.replace(confM[0], val2 + ' ' + confM[1]);
       }
     }
@@ -7174,8 +7187,11 @@ function pedFillContent(text, w) {
 }
 
 function pedFillAndPrint(k, si, ii) {
-  var w    = parseFloat(document.getElementById('pedCalcWeight')?.value);
-  var item = D[k]?.sections?.[si]?.items?.[ii];
+  var w        = parseFloat(document.getElementById('pedCalcWeight')?.value);
+  var idade    = (document.getElementById('pedCalcIdade')?.value    || '').trim();
+  var outroKey = (document.getElementById('pedCalcOutroKey')?.value || '').trim();
+  var outroVal = parseFloat(document.getElementById('pedCalcOutroVal')?.value);
+  var item     = D[k]?.sections?.[si]?.items?.[ii];
   if (!item) return;
   if (!w || w <= 0) {
     toast('⚠️ Digite o peso na calculadora primeiro!');
@@ -7183,11 +7199,25 @@ function pedFillAndPrint(k, si, ii) {
     if (el) { el.scrollIntoView({behavior:'smooth',block:'center'}); el.focus(); }
     return;
   }
-  var filled = pedFillContent(item.content || '', w);
+
+  // Monta extras para substituição na fórmula
+  var extras = {};
+  if (outroKey && !isNaN(outroVal)) extras[outroKey] = outroVal;
+
+  // Passa extras para pedFillContent via parâmetro adicional
+  var filled = pedFillContent(item.content || '', w, extras);
+
+  // Monta texto informativo para o campo observação
+  var obsPartes = ['Peso: ' + w + ' kg'];
+  if (idade) obsPartes.push('Idade: ' + idade);
+  if (outroKey && !isNaN(outroVal)) obsPartes.push(outroKey + ': ' + outroVal);
+
   _wordItem  = item;
   document.getElementById('wrd_nome').value    = '';
-  document.getElementById('wrd_obs').value     = 'Peso: ' + w + ' kg';
+  document.getElementById('wrd_obs').value     = obsPartes.join(' | ');
   document.getElementById('wrd_content').value = filled;
+  // Guarda dados pediátricos para o gerador de receita usar no cabeçalho
+  window._pedReceita = { peso: w, idade: idade, outroKey: outroKey, outroVal: outroVal };
   openModal('modalWord');
   setTimeout(function(){ document.getElementById('wrd_nome')?.focus(); }, 100);
   toast('✅ Doses calculadas para ' + w + ' kg!');
