@@ -3116,13 +3116,14 @@ function calcToggleEdit(key) {
   var overlay = document.getElementById('calc-edit-' + key);
   var btn     = document.getElementById('calc-editbtn-' + key);
   if (!overlay) return;
+  var SVG_PENCIL = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var isOpen = overlay.classList.contains('show');
   // Fecha todos
   document.querySelectorAll('.calc-edit-overlay').forEach(function(el) { el.classList.remove('show'); });
-  document.querySelectorAll('.calc-edit-btn').forEach(function(el) { el.classList.remove('active'); el.textContent = '✏️ Editar'; });
+  document.querySelectorAll('.ch-btn.ch-edit[id^="calc-editbtn-"]').forEach(function(el) { el.classList.remove('active'); el.innerHTML = SVG_PENCIL; });
   if (!isOpen) {
     overlay.classList.add('show');
-    if (btn) { btn.classList.add('active'); btn.textContent = '✕ Fechar'; }
+    if (btn) { btn.classList.add('active'); btn.innerHTML = '✕'; }
     overlay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 }
@@ -4312,13 +4313,13 @@ window.renderDiluicoes = renderDiluicoes;
 
 var INFO_GRADES_DEFAULT = [
   {
-    id:'sala_vermelha', label:'🔴 SALA VERMELHA',
-    sublabel:'Emergência · Risco de vida imediato',
-    headerBg:'linear-gradient(135deg,#dc2626,#b91c1c)',
-    borderColor:'#fca5a5', cardBg:'#fff5f5', cardBorder:'#fecaca',
-    cardColor:'#7f1d1d', accentColor:'#dc2626',
+    id:'info_clinica_geral', label:'🩺 INFORMAÇÃO CLÍNICA GERAL',
+    sublabel:'Protocolos · Urgência · Emergência · Referência clínica',
+    headerBg:'linear-gradient(135deg,#1e3a5f,#2563eb)',
+    borderColor:'#bfdbfe', cardBg:'#f0f7ff', cardBorder:'#bfdbfe',
+    cardColor:'#1e3a5f', accentColor:'#2563eb',
     cards:[
-      {id:'info_sv_pcr_protocolo',      emoji:'❤️', label:'PCR / ACLS'},
+      {id:'info_sv_pcr_protocolo',       emoji:'❤️', label:'PCR / ACLS'},
       {id:'info_sv_iot_protocolo',       emoji:'🫁', label:'IOT · ISR'},
       {id:'info_sepse_bundle',           emoji:'⏱️', label:'Sepse Bundle'},
       {id:'info_choque_classificacao',   emoji:'🩸', label:'Choque'},
@@ -4336,15 +4337,6 @@ var INFO_GRADES_DEFAULT = [
       {id:'info_iot_drogas_detalhado',   emoji:'😴', label:'IOT · Drogas'},
       {id:'info_cardioversao',           emoji:'⚡', label:'Cardioversão'},
       {id:'info_fibrinoliticos',         emoji:'💊', label:'Fibrinolíticos'},
-    ]
-  },
-  {
-    id:'sala_laranja', label:'🟠 SALA LARANJA',
-    sublabel:'Urgência · Risco potencial · Investigação ativa',
-    headerBg:'linear-gradient(135deg,#ea580c,#c2410c)',
-    borderColor:'#fdba74', cardBg:'#fff7ed', cardBorder:'#fed7aa',
-    cardColor:'#7c2d12', accentColor:'#ea580c',
-    cards:[
       {id:'info_sepse_criterios',        emoji:'🔴', label:'Sepse · qSOFA'},
       {id:'info_sepse_atb',              emoji:'💊', label:'ATB Empírico'},
       {id:'info_dor_toracica',           emoji:'❤️', label:'Dor Torácica'},
@@ -4361,15 +4353,6 @@ var INFO_GRADES_DEFAULT = [
       {id:'info_intox_especificas',      emoji:'💊', label:'Intox. Específica'},
       {id:'info_sincope',                emoji:'🔄', label:'Síncope'},
       {id:'antidotos',                   emoji:'⚗️', label:'Antídotos'},
-    ]
-  },
-  {
-    id:'sala_verde', label:'🟢 SALA VERDE / AZUL',
-    sublabel:'Estável · Ambulatório · Menor urgência',
-    headerBg:'linear-gradient(135deg,#16a34a,#0369a1)',
-    borderColor:'#86efac', cardBg:'#f0fdf4', cardBorder:'#bbf7d0',
-    cardColor:'#14532d', accentColor:'#16a34a',
-    cards:[
       {id:'has_tratamento',              emoji:'❤️', label:'HAS · Tratamento'},
       {id:'ref_arritmias_teoria',        emoji:'💓', label:'Arritmias Teoria'},
       {id:'ref_avc_teoria',              emoji:'🧠', label:'AVC Teoria'},
@@ -4381,9 +4364,6 @@ var INFO_GRADES_DEFAULT = [
       {id:'ref_lab_geral',               emoji:'🔬', label:'Valores Normais'},
       {id:'info_tvp_anticoag',           emoji:'🩸', label:'TVP · Anticoag'},
       {id:'info_pancreatite',            emoji:'🫘', label:'Pancreatite'},
-      {id:'info_dor_toracica',           emoji:'❤️', label:'Dor Torácica'},
-      {id:'info_dor_abdominal',          emoji:'🩺', label:'Dor Abdominal'},
-      {id:'info_sincope',                emoji:'🔄', label:'Síncope'},
     ]
   },
   {
@@ -4426,7 +4406,7 @@ var INFO_GRADES_DEFAULT = [
 ];
 
 // ── Persistência ──────────────────────────────────────────────────
-var INFO_GRADES_VERSION = '2025v3';
+var INFO_GRADES_VERSION = '2025v4';
 function infoGradesLoad() {
   try {
     var ver = localStorage.getItem('mg_info_grades_ver');
@@ -5089,8 +5069,17 @@ function renderInfo(container) {
     // corpo (inicia fechado)
     html += '<div class="ig-body" id="igb-'+grade.id+'" style="'+cv+'">';
 
+    // campo de busca
+    html += '<div style="padding:0 0 8px;position:relative">'
+          + '<input type="text" id="igsearch-'+grade.id+'" placeholder="🔍 Buscar protocolo..." '
+          + 'oninput="igFilterCards(\'' + grade.id + '\')" '
+          + 'onclick="event.stopPropagation()" '
+          + 'style="width:100%;box-sizing:border-box;padding:7px 32px 7px 12px;border:1.5px solid var(--bc);border-radius:8px;font-size:12px;font-family:var(--sans);background:#fff;color:var(--gray800);outline:none;transition:border-color .14s">'
+          + '<span onclick="igClearSearch(\'' + grade.id + '\')" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:13px;color:#94a3b8;line-height:1" title="Limpar">✕</span>'
+          + '</div>';
+
     // grid de cards — com atributo data-gid para saber a grade
-    html += '<div class="ig-grid" data-gid="'+grade.id+'">';
+    html += '<div class="ig-grid" data-gid="'+grade.id+'" id="iggrid-'+grade.id+'">';
 
     grade.cards.forEach(function(card, ci) {
       var item = infoGetItem(card.id);
@@ -5144,6 +5133,40 @@ function infoGradeToggle(gradeId) {
 
 window.renderInfo      = renderInfo;
 window.infoGradeToggle = infoGradeToggle;
+
+function igFilterCards(gradeId) {
+  var input = document.getElementById('igsearch-' + gradeId);
+  if (!input) return;
+  var q = input.value.trim().toLowerCase();
+  var grid = document.getElementById('iggrid-' + gradeId);
+  if (!grid) return;
+  var wrappers = grid.querySelectorAll('.ig-cw');
+  var hasResult = false;
+  wrappers.forEach(function(w) {
+    var label = (w.querySelector('.ig-card-l') || {}).textContent || '';
+    var match = !q || label.toLowerCase().indexOf(q) !== -1;
+    w.style.display = match ? '' : 'none';
+    if (match) hasResult = true;
+  });
+  var addBtn = grid.querySelector('.ig-add');
+  if (addBtn) addBtn.style.display = q ? 'none' : '';
+  var noRes = document.getElementById('ig-nores-' + gradeId);
+  if (!noRes) {
+    noRes = document.createElement('div');
+    noRes.id = 'ig-nores-' + gradeId;
+    noRes.style.cssText = 'width:100%;padding:10px 4px;font-size:11px;color:#94a3b8;font-style:italic';
+    noRes.textContent = 'Nenhum protocolo encontrado.';
+    grid.appendChild(noRes);
+  }
+  noRes.style.display = (q && !hasResult) ? '' : 'none';
+}
+
+function igClearSearch(gradeId) {
+  var input = document.getElementById('igsearch-' + gradeId);
+  if (input) { input.value = ''; igFilterCards(gradeId); }
+}
+window.igFilterCards = igFilterCards;
+window.igClearSearch = igClearSearch;
 // compat stubs (chamados de lugares antigos)
 window.infoCardOpen   = function(gid,cid,ci){ igOpenPanel(gid,ci); };
 window.infoCardClose  = function(gid,ci){ igClosePanel(gid); };
@@ -5185,25 +5208,282 @@ function calcDelCriteria(key, cid) {
 }
 
 function calcAddNew() {
-  var title = prompt('Nome da calculadora (ex: 🔴 Minha Calculadora):');
-  if (!title || !title.trim()) return;
-  var key = 'custom_' + Date.now();
-  var data = loadCalcData();
-  data[key] = {
-    title: title.trim(),
-    type: 'criteria',
-    criteria: [
-      { id: key+'_c1', text: 'Critério 1 (clique ✏️ para editar)', score: 1 }
-    ]
-  };
-  // Adicionar à lista de calcs conhecidas
-  if (!window._customCalcKeys) window._customCalcKeys = [];
-  window._customCalcKeys.push(key);
-  try { localStorage.setItem('mg_custom_calcs', JSON.stringify(window._customCalcKeys)); } catch(e){}
-  saveCalcData(data);
-  renderCalc(document.getElementById('content'));
-  toast('✅ Calculadora criada!');
+  // Abre modal bonito em vez de prompt()
+  var modal = document.getElementById('modalNovaCalc');
+  if (!modal) return;
+  document.getElementById('ncalc_edit_key').value = '';
+  document.getElementById('ncalc_titulo').value = '';
+  document.getElementById('ncalc_fonte').value = '';
+  document.getElementById('ncalc_conduta').value = '';
+  document.getElementById('ncalc_formula_expr').value = '';
+  document.getElementById('ncalc_formula_unidade').value = '';
+  document.getElementById('ncalc_ref_texto').value = '';
+  document.getElementById('ncalc_criterios_list').innerHTML = '';
+  document.getElementById('ncalc_campos_list').innerHTML = '';
+  // reset faixas
+  for (var i=0;i<4;i++) {
+    var li = document.getElementById('ncalc_faixa_lim_'+i);
+    var di = document.getElementById('ncalc_faixa_desc_'+i);
+    var ii = document.getElementById('ncalc_faixa_icon_'+i);
+    if(li) li.value=''; if(di) di.value=''; if(ii) ii.value='';
+  }
+  ncalcSetTipo('escore');
+  ncalcAddCriterio();
+  ncalcAddCampo();
+  openModal('modalNovaCalc');
 }
+
+function ncalcSetTipo(tipo) {
+  document.getElementById('ncalc_tipo').value = tipo;
+  ['escore','formula','referencia'].forEach(function(t) {
+    var p = document.getElementById('ncalc_painel_'+t);
+    var b = document.getElementById('ncalc_tab_'+t);
+    if (p) p.style.display = t===tipo ? 'block' : 'none';
+    if (b) {
+      b.style.background   = t===tipo ? 'var(--blue)' : 'var(--white)';
+      b.style.color        = t===tipo ? '#fff'        : 'var(--gray600)';
+      b.style.borderColor  = t===tipo ? 'var(--blue)' : 'var(--gray300)';
+      b.style.fontWeight   = t===tipo ? '700'         : '600';
+    }
+  });
+}
+window.ncalcSetTipo = ncalcSetTipo;
+
+function ncalcAddCriterio() {
+  var list = document.getElementById('ncalc_criterios_list');
+  if (!list) return;
+  var uid = 'nc'+Date.now()+(Math.random()*9999|0);
+  var row = document.createElement('div');
+  row.id = 'ncrow_'+uid;
+  row.style.cssText = 'display:flex;gap:6px;align-items:center;margin-bottom:5px';
+  row.innerHTML =
+    '<input class="field" placeholder="Ex: Confusão mental aguda" id="nc_text_'+uid+'" style="flex:1;min-width:0">'+
+    '<input class="field" type="number" placeholder="Pts" id="nc_pts_'+uid+'" value="1" style="width:58px;text-align:center" title="Negativo = penalidade">'+
+    '<button onclick="document.getElementById(\'ncrow_'+uid+'\').remove()" style="background:none;border:none;color:#dc2626;font-size:16px;cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0" title="Remover">✕</button>';
+  list.appendChild(row);
+}
+window.ncalcAddCriterio = ncalcAddCriterio;
+
+function ncalcAddCampo() {
+  var list = document.getElementById('ncalc_campos_list');
+  if (!list) return;
+  var uid = 'nf'+Date.now()+(Math.random()*9999|0);
+  var row = document.createElement('div');
+  row.id = 'nfrow_'+uid;
+  row.style.cssText = 'display:grid;grid-template-columns:1fr 80px 68px auto;gap:5px;align-items:center;margin-bottom:5px';
+  row.innerHTML =
+    '<input class="field" placeholder="Label (ex: Creatinina)" id="nc_fl_'+uid+'">'+
+    '<input class="field" placeholder="ID (cr)" id="nc_fi_'+uid+'" title="Identificador usado na fórmula">'+
+    '<input class="field" placeholder="mg/dL" id="nc_fu_'+uid+'" title="Unidade">'+
+    '<button onclick="document.getElementById(\'nfrow_'+uid+'\').remove()" style="background:none;border:none;color:#dc2626;font-size:16px;cursor:pointer;padding:0 4px;line-height:1" title="Remover">✕</button>';
+  list.appendChild(row);
+}
+window.ncalcAddCampo = ncalcAddCampo;
+
+function ncalcSalvar() {
+  var editKey = document.getElementById('ncalc_edit_key').value.trim();
+  var tipo    = document.getElementById('ncalc_tipo').value;
+  var titulo  = document.getElementById('ncalc_titulo').value.trim();
+  var fonte   = document.getElementById('ncalc_fonte').value.trim();
+  var conduta = document.getElementById('ncalc_conduta').value.trim();
+  if (!titulo) { toast('⚠️ Digite o nome da calculadora'); return; }
+
+  var obj = { title: titulo, type: tipo, fonte: fonte, condutaDefault: conduta };
+
+  if (tipo === 'escore') {
+    var criteria = [];
+    document.querySelectorAll('#ncalc_criterios_list [id^="nc_text_"]').forEach(function(el) {
+      var uid  = el.id.replace('nc_text_','');
+      var text = el.value.trim();
+      if (!text) return;
+      var score = parseFloat(document.getElementById('nc_pts_'+uid).value) || 1;
+      criteria.push({ id: 'c_'+uid, text: text, score: score, danger: score < 0 });
+    });
+    if (!criteria.length) { toast('⚠️ Adicione pelo menos 1 critério'); return; }
+    obj.criteria = criteria;
+    var faixas = [];
+    for (var i=0;i<4;i++) {
+      var limV = (document.getElementById('ncalc_faixa_lim_'+i)||{}).value||'';
+      var desV = (document.getElementById('ncalc_faixa_desc_'+i)||{}).value||'';
+      var icV  = (document.getElementById('ncalc_faixa_icon_'+i)||{}).value||'';
+      if (limV.trim() && desV.trim()) faixas.push({ lim: parseFloat(limV), desc: desV.trim(), icon: icV.trim() });
+    }
+    obj.faixas = faixas;
+
+  } else if (tipo === 'formula') {
+    var campos = [];
+    document.querySelectorAll('#ncalc_campos_list [id^="nc_fl_"]').forEach(function(el) {
+      var uid   = el.id.replace('nc_fl_','');
+      var label = el.value.trim();
+      if (!label) return;
+      var fid   = (document.getElementById('nc_fi_'+uid)||{}).value.trim().replace(/\W/g,'_') || ('f'+campos.length);
+      var unit  = (document.getElementById('nc_fu_'+uid)||{}).value.trim();
+      campos.push({ id: fid, label: label, unit: unit });
+    });
+    if (!campos.length) { toast('⚠️ Adicione pelo menos 1 campo'); return; }
+    var formula = document.getElementById('ncalc_formula_expr').value.trim();
+    if (!formula) { toast('⚠️ Digite a fórmula de cálculo'); return; }
+    obj.campos  = campos;
+    obj.formula = formula;
+    obj.unidadeResultado = document.getElementById('ncalc_formula_unidade').value.trim();
+
+  } else { // referencia
+    var refTxt = document.getElementById('ncalc_ref_texto').value.trim();
+    if (!refTxt) { toast('⚠️ Digite o conteúdo da referência'); return; }
+    obj.refTexto = refTxt;
+  }
+
+  var key = editKey || ('custom_' + Date.now());
+  var data = loadCalcData();
+  data[key] = obj;
+  saveCalcData(data);
+
+  if (!editKey) {
+    var customs = [];
+    try { customs = JSON.parse(localStorage.getItem('mg_custom_calcs')||'[]'); } catch(e){}
+    if (customs.indexOf(key) < 0) customs.push(key);
+    try { localStorage.setItem('mg_custom_calcs', JSON.stringify(customs)); } catch(e){}
+  }
+
+  closeModal('modalNovaCalc');
+  renderCalc(document.getElementById('content'));
+  toast(editKey ? '✅ Calculadora atualizada!' : '✅ Calculadora criada!');
+}
+window.ncalcSalvar = ncalcSalvar;
+
+function ncalcEditar(key) {
+  var data = loadCalcData();
+  var calc = data[key];
+  if (!calc) return;
+  var modal = document.getElementById('modalNovaCalc');
+  if (!modal) return;
+  document.getElementById('ncalc_edit_key').value = key;
+  document.getElementById('ncalc_titulo').value   = calc.title || '';
+  document.getElementById('ncalc_fonte').value    = calc.fonte || '';
+  document.getElementById('ncalc_conduta').value  = calc.condutaDefault || '';
+  // reset
+  document.getElementById('ncalc_formula_expr').value    = '';
+  document.getElementById('ncalc_formula_unidade').value = '';
+  document.getElementById('ncalc_ref_texto').value       = '';
+  document.getElementById('ncalc_criterios_list').innerHTML = '';
+  document.getElementById('ncalc_campos_list').innerHTML    = '';
+  for (var i=0;i<4;i++) {
+    var li=document.getElementById('ncalc_faixa_lim_'+i), di=document.getElementById('ncalc_faixa_desc_'+i), ii=document.getElementById('ncalc_faixa_icon_'+i);
+    if(li) li.value=''; if(di) di.value=''; if(ii) ii.value='';
+  }
+  var tipo = calc.type || 'escore';
+  ncalcSetTipo(tipo);
+
+  if (tipo === 'escore') {
+    (calc.criteria||[]).forEach(function(c) {
+      ncalcAddCriterio();
+      var rows = document.querySelectorAll('#ncalc_criterios_list [id^="nc_text_"]');
+      var lastTxt = rows[rows.length-1];
+      var uid = lastTxt.id.replace('nc_text_','');
+      lastTxt.value = c.text||'';
+      var ptsEl = document.getElementById('nc_pts_'+uid);
+      if (ptsEl) ptsEl.value = c.score||1;
+    });
+    (calc.faixas||[]).forEach(function(f,i) {
+      var li=document.getElementById('ncalc_faixa_lim_'+i), di=document.getElementById('ncalc_faixa_desc_'+i), ii=document.getElementById('ncalc_faixa_icon_'+i);
+      if(li) li.value = f.lim!==undefined ? f.lim : '';
+      if(di) di.value = f.desc||'';
+      if(ii) ii.value = f.icon||'';
+    });
+  } else if (tipo === 'formula') {
+    (calc.campos||[]).forEach(function(c) {
+      ncalcAddCampo();
+      var rows = document.querySelectorAll('#ncalc_campos_list [id^="nc_fl_"]');
+      var lastLabel = rows[rows.length-1];
+      var uid = lastLabel.id.replace('nc_fl_','');
+      lastLabel.value = c.label||'';
+      var fiEl = document.getElementById('nc_fi_'+uid);
+      var fuEl = document.getElementById('nc_fu_'+uid);
+      if(fiEl) fiEl.value = c.id||'';
+      if(fuEl) fuEl.value = c.unit||'';
+    });
+    document.getElementById('ncalc_formula_expr').value    = calc.formula||'';
+    document.getElementById('ncalc_formula_unidade').value = calc.unidadeResultado||'';
+  } else {
+    document.getElementById('ncalc_ref_texto').value = calc.refTexto||'';
+    ncalcAddCampo(); // mantém campo para não dar erro
+  }
+  openModal('modalNovaCalc');
+}
+window.ncalcEditar = ncalcEditar;
+
+function ncalcCalcEscore(key) {
+  var data = loadCalcData();
+  var calc = data[key];
+  if (!calc) return;
+  var total = 0;
+  (calc.criteria||[]).forEach(function(c) {
+    var el = document.getElementById(c.id);
+    if (el && el.checked) total += (c.score||0);
+  });
+  // Interpretar faixas
+  var interpretacao = '';
+  var faixas = (calc.faixas||[]).slice().sort(function(a,b){ return a.lim - b.lim; });
+  if (faixas.length) {
+    for (var i = faixas.length-1; i >= 0; i--) {
+      if (total >= faixas[i].lim) {
+        interpretacao = '\n' + (faixas[i].icon ? faixas[i].icon+' ' : '') + faixas[i].desc;
+        break;
+      }
+    }
+    if (!interpretacao && faixas[0]) interpretacao = '\n'+(faixas[0].icon?faixas[0].icon+' ':'')+faixas[0].desc;
+  }
+  var maxPts = (calc.criteria||[]).reduce(function(a,c){ return a+(c.score>0?c.score:0); },0);
+  var html = '<strong>'+esc(calc.title)+': '+total+'/'+maxPts+'</strong>'+interpretacao;
+  if (calc.fonte) html += '\n<span style="font-size:10px;color:var(--gray400)">📚 '+esc(calc.fonte)+'</span>';
+  var condKey = 'custom_'+key;
+  // Salvar conduta default se ainda não existe
+  if (calc.condutaDefault) {
+    try {
+      var stored = JSON.parse(localStorage.getItem(MG_CONDUTAS_KEY)||'{}');
+      if (!stored[condKey]) { stored[condKey] = calc.condutaDefault; localStorage.setItem(MG_CONDUTAS_KEY, JSON.stringify(stored)); }
+    } catch(e){}
+  }
+  showResWithConduta('r_custom_'+key, html, condKey);
+}
+window.ncalcCalcEscore = ncalcCalcEscore;
+
+function ncalcCalcFormula(key) {
+  var data = loadCalcData();
+  var calc = data[key];
+  if (!calc || !calc.formula) return;
+  // Montar contexto de variáveis
+  var ctx = {};
+  var ok = true;
+  (calc.campos||[]).forEach(function(c) {
+    var el = document.getElementById('cf_'+key+'_'+c.id);
+    var v = el ? parseFloat(el.value) : NaN;
+    if (isNaN(v)) { toast('⚠️ Preencha: '+c.label); ok = false; }
+    ctx[c.id] = v;
+  });
+  if (!ok) return;
+  var resultado;
+  try {
+    var argNames = Object.keys(ctx);
+    var argVals  = argNames.map(function(n){ return ctx[n]; });
+    resultado = (new Function(argNames, 'return (' + calc.formula + ')')).apply(null, argVals);
+  } catch(e) {
+    toast('⚠️ Erro na fórmula: '+e.message); return;
+  }
+  if (isNaN(resultado) || !isFinite(resultado)) { toast('⚠️ Resultado inválido — verifique os valores'); return; }
+  var unid = calc.unidadeResultado ? ' '+calc.unidadeResultado : '';
+  var html = '<strong>'+esc(calc.title)+'</strong>\nResultado: <strong>'+parseFloat(resultado.toFixed(4))+unid+'</strong>';
+  if (calc.fonte) html += '\n<span style="font-size:10px;color:var(--gray400)">📚 '+esc(calc.fonte)+'</span>';
+  var condKey = 'custom_'+key;
+  if (calc.condutaDefault) {
+    try {
+      var stored = JSON.parse(localStorage.getItem(MG_CONDUTAS_KEY)||'{}');
+      if (!stored[condKey]) { stored[condKey] = calc.condutaDefault; localStorage.setItem(MG_CONDUTAS_KEY, JSON.stringify(stored)); }
+    } catch(e){}
+  }
+  showResWithConduta('r_custom_'+key, html, condKey);
+}
+window.ncalcCalcFormula = ncalcCalcFormula;
 
 function calcDelete(key) {
   if (!confirm('Excluir esta calculadora?')) return;
@@ -5284,7 +5564,6 @@ function renderCalc(container) {
       <div class="ch-actions">
         <button class="ch-btn ch-edit" id="calc-editbtn-imc" onclick="calcToggleEdit('imc')" title="Editar">
           <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Editar
         </button>
         <button class="ch-btn ch-del" onclick="calcDelete('imc')" title="Excluir">
           <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -5306,9 +5585,7 @@ function renderCalc(container) {
       <span>${esc(glasgow.title)}</span>
       <div class="ch-actions">
         <button class="ch-btn ch-edit" id="calc-editbtn-glasgow" onclick="calcToggleEdit('glasgow')" title="Editar">
-          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Editar
-        </button>
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="ch-btn ch-del" onclick="calcDelete('glasgow')" title="Excluir">
           <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -5329,9 +5606,7 @@ function renderCalc(container) {
       <span>${esc(curb.title)}</span>
       <div class="ch-actions">
         <button class="ch-btn ch-edit" id="calc-editbtn-curb" onclick="calcToggleEdit('curb')" title="Editar">
-          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Editar
-        </button>
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="ch-btn ch-del" onclick="calcDelete('curb')" title="Excluir">
           <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -5352,9 +5627,7 @@ function renderCalc(container) {
       <span>${esc(wells.title)}</span>
       <div class="ch-actions">
         <button class="ch-btn ch-edit" id="calc-editbtn-wells" onclick="calcToggleEdit('wells')" title="Editar">
-          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Editar
-        </button>
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="ch-btn ch-del" onclick="calcDelete('wells')" title="Excluir">
           <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -5375,9 +5648,7 @@ function renderCalc(container) {
       <span>${esc(alvarado.title)}</span>
       <div class="ch-actions">
         <button class="ch-btn ch-edit" id="calc-editbtn-alvarado" onclick="calcToggleEdit('alvarado')" title="Editar">
-          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Editar
-        </button>
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="ch-btn ch-del" onclick="calcDelete('alvarado')" title="Excluir">
           <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -5398,9 +5669,7 @@ function renderCalc(container) {
       <span>${esc(ranson.title)}</span>
       <div class="ch-actions">
         <button class="ch-btn ch-edit" id="calc-editbtn-ranson" onclick="calcToggleEdit('ranson')" title="Editar">
-          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Editar
-        </button>
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button class="ch-btn ch-del" onclick="calcDelete('ranson')" title="Excluir">
           <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -5422,7 +5691,7 @@ function renderCalc(container) {
   <div class="calc-card collapsed">
     <div class="calc-card-head" style="background:linear-gradient(135deg,#eff6ff,#f8fafc)">
       <span>🫘 Taxa de Filtração Glomerular — CKD-EPI / MDRD</span>
-      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Editar</button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
+      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
     </div>
     <div class="calc-body">
       <div class="cf"><label>Creatinina sérica (mg/dL)</label><input type="number" id="tfg_cr" class="ci" placeholder="Ex: 1.2" step="0.01" min="0.1"></div>
@@ -5440,7 +5709,7 @@ function renderCalc(container) {
   <div class="calc-card collapsed">
     <div class="calc-card-head" style="background:linear-gradient(135deg,#fdf4ff,#f8fafc)">
       <span>🫁 Gasometria Arterial — Interpretação Completa</span>
-      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Editar</button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
+      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
     </div>
     <div class="calc-body">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
@@ -5462,7 +5731,7 @@ function renderCalc(container) {
   <div class="calc-card collapsed">
     <div class="calc-card-head" style="background:linear-gradient(135deg,#fef3f2,#f8fafc)">
       <span>❤️ CHA₂DS₂-VASc — Risco de AVC em FA</span>
-      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Editar</button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
+      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
     </div>
     <div class="calc-body">
       ${['c2_ic','c2_has','c2_idade75','c2_dm','c2_avc','c2_vasc','c2_idade65','c2_sexoF'].map((id,i)=>`
@@ -5476,7 +5745,7 @@ function renderCalc(container) {
   <div class="calc-card collapsed">
     <div class="calc-card-head" style="background:linear-gradient(135deg,#fff7ed,#f8fafc)">
       <span>🩹 HAS-BLED — Risco de Sangramento</span>
-      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Editar</button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
+      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
     </div>
     <div class="calc-body">
       ${['hb_has','hb_renal','hb_hepatico','hb_avc','hb_sangramento','hb_inr','hb_drogas','hb_alcool','hb_idade65'].map((id,i)=>`
@@ -5490,7 +5759,7 @@ function renderCalc(container) {
   <div class="calc-card collapsed">
     <div class="calc-card-head" style="background:linear-gradient(135deg,#f0fdf4,#f8fafc)">
       <span>🧪 Ânion Gap + Albumina + Delta-Delta</span>
-      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Editar</button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
+      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
     </div>
     <div class="calc-body">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
@@ -5508,7 +5777,7 @@ function renderCalc(container) {
   <div class="calc-card collapsed">
     <div class="calc-card-head" style="background:linear-gradient(135deg,#ecfeff,#f8fafc)">
       <span>💧 Fração de Excreção de Sódio (FENa)</span>
-      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Editar</button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
+      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
     </div>
     <div class="calc-body">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
@@ -5526,7 +5795,7 @@ function renderCalc(container) {
   <div class="calc-card collapsed">
     <div class="calc-card-head" style="background:linear-gradient(135deg,#fff7ed,#f8fafc)">
       <span>🧂 Osmolalidade + Correção Na pela Glicemia</span>
-      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Editar</button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
+      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
     </div>
     <div class="calc-body">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
@@ -5545,7 +5814,7 @@ function renderCalc(container) {
   <div class="calc-card collapsed">
     <div class="calc-card-head" style="background:linear-gradient(135deg,#f0f9ff,#f8fafc)">
       <span>💦 Déficit de Água Livre — Hipernatremia</span>
-      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Editar</button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
+      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
     </div>
     <div class="calc-body">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
@@ -5563,7 +5832,7 @@ function renderCalc(container) {
   <div class="calc-card collapsed">
     <div class="calc-card-head" style="background:linear-gradient(135deg,#fff1f2,#f8fafc)">
       <span>🔴 SOFA / qSOFA — Sepse</span>
-      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Editar</button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
+      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
     </div>
     <div class="calc-body">
       <p style="font-size:11px;font-weight:700;color:#dc2626;margin-bottom:6px">qSOFA (triagem rápida)</p>
@@ -5598,7 +5867,7 @@ function renderCalc(container) {
   <div class="calc-card collapsed">
     <div class="calc-card-head" style="background:linear-gradient(135deg,#fef3f2,#f8fafc)">
       <span>💥 Índice de Choque — Instabilidade Hemodinâmica</span>
-      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Editar</button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
+      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
     </div>
     <div class="calc-body">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
@@ -5614,7 +5883,7 @@ function renderCalc(container) {
   <div class="calc-card collapsed">
     <div class="calc-card-head" style="background:linear-gradient(135deg,#f0fdf4,#f8fafc)">
       <span>⚡ Reposição de Sódio e Potássio</span>
-      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Editar</button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
+      <div class="ch-actions"><button class="ch-btn ch-edit" onclick="alert('✏️ Para editar o resultado, calcule primeiro e clique diretamente no texto do resultado.')" title="Editar resultado calculado"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="ch-btn ch-del" onclick="toast('Calculadora padrão — não pode ser removida')" title="Calculadora padrão"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="calc-chevron">▼</span></div>
     </div>
     <div class="calc-body">
       <p style="font-size:11px;font-weight:700;color:#166534;margin-bottom:6px">Déficit de Sódio (Hiponatremia)</p>
@@ -5646,28 +5915,53 @@ function renderCalc(container) {
   if (customKeys.length) {
     var calcData = loadCalcData();
     var extra = '';
+    var SVG_EDIT = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4L5.5 17.5 2 18l.5-3.5L14.7 2.3z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var SVG_DEL  = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
     customKeys.forEach(function(k) {
       var calc = calcData[k];
       if (!calc) return;
-      var crits = (calc.criteria||[]).map(function(c){ return chkLine(c,k); }).join('');
-      var SVG_PLUS = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><line x1="10" y1="4" x2="10" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="4" y1="10" x2="16" y2="10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-      var SVG_DEL  = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><polyline points="3,6 17,6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 6V4h4v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M5 6l1 11h8l1-11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      var tipo = calc.type || 'escore';
+
       extra += '<div class="calc-card collapsed" style="margin:8px 14px">';
       extra += '<div class="calc-card-head"><span style="flex:1">'+esc(calc.title)+'</span>';
       extra += '<div class="ch-actions">';
-      // + Critério button removed
-      extra += '<button class="ch-btn ch-del" onclick="calcDelete(\''+k+'\')">'+SVG_DEL+'</button>';
+      extra += '<button class="ch-btn ch-edit" onclick="ncalcEditar(\'' + k + '\')" title="Editar">'+SVG_EDIT+'</button>';
+      extra += '<button class="ch-btn ch-del"  onclick="calcDelete(\'' + k + '\')" title="Excluir">'+SVG_DEL+'</button>';
       extra += '<span class="calc-chevron">▼</span>';
       extra += '</div></div>';
-      extra += '<div class="calc-body">'+crits+'</div></div>';
+      extra += '<div class="calc-body">';
+
+      if (tipo === 'escore') {
+        extra += (calc.criteria||[]).map(function(c){ return chkLine(c,k); }).join('');
+        extra += '<button class="btn-ok" style="margin-top:4px" onclick="ncalcCalcEscore(\'' + k + '\')">Calcular</button>';
+        extra += '<div id="r_custom_'+k+'" class="cresult"></div>';
+
+      } else if (tipo === 'formula') {
+        (calc.campos||[]).forEach(function(campo) {
+          extra += '<div class="cf"><label>'+esc(campo.label)+(campo.unit?' <span style="font-weight:400;color:var(--gray400)">('+esc(campo.unit)+')</span>':'')+'</label>';
+          extra += '<input type="number" class="ci" id="cf_'+k+'_'+campo.id+'" placeholder=""></div>';
+        });
+        if (calc.formula) extra += '<div style="font-size:10px;color:var(--gray400);font-family:var(--mono);padding:4px 0 6px">📐 '+esc(calc.formula)+'</div>';
+        extra += '<button class="btn-ok" onclick="ncalcCalcFormula(\'' + k + '\')">Calcular</button>';
+        extra += '<div id="r_custom_'+k+'" class="cresult"></div>';
+
+      } else {
+        extra += '<div style="white-space:pre-wrap;font-size:12px;line-height:1.8;color:var(--gray800);font-family:var(--mono);background:var(--gray50);border-radius:6px;padding:10px 12px;border:1px solid var(--gray200)">';
+        extra += esc(calc.refTexto||'');
+        extra += '</div>';
+        if (calc.fonte) extra += '<div style="font-size:10px;color:var(--gray400);margin-top:6px">📚 '+esc(calc.fonte)+'</div>';
+      }
+
+      extra += '</div></div>';
     });
-    if (extra) container.innerHTML += extra;
+        if (extra) container.innerHTML += extra;
   }
 
-  // ── Wiring click-to-collapse em todos os calc-card-head ──
+  // ── Wiring click-to-collapse (APÓS innerHTML += para não perder listeners) ──
   container.querySelectorAll('.calc-card-head').forEach(function(head) {
     head.addEventListener('click', function(e) {
-      if (e.target !== head && (e.target.tagName === 'BUTTON' || e.target.closest('button'))) return;
+      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
       head.closest('.calc-card').classList.toggle('collapsed');
     });
   });
@@ -5691,27 +5985,7 @@ function calcToggleCard(cardEl, e) {
 window.calcToggleCard = calcToggleCard;
 
 // ── Expor funções das calculadoras ao escopo global (onclick inline) ──
-window.calcTFG          = function(){ calcTFG(); };
-window.calcGasometria   = function(){ calcGasometria(); };
-window.calcCHA2DS2      = function(){ calcCHA2DS2(); };
-window.calcHASBLED      = function(){ calcHASBLED(); };
-window.calcAnionGap     = function(){ calcAnionGap(); };
-window.calcFENa         = function(){ calcFENa(); };
-window.calcOsmolalidade = function(){ calcOsmolalidade(); };
-window.calcDeficitAgua  = function(){ calcDeficitAgua(); };
-window.calcQSOFA        = function(){ calcQSOFA(); };
-window.calcSOFA         = function(){ calcSOFA(); };
-window.calcIndiceChoque = function(){ calcIndiceChoque(); };
-window.calcReposicaoNa  = function(){ calcReposicaoNa(); };
-window.calcReposicaoK   = function(){ calcReposicaoK(); };
-window.calcIMC          = function(){ calcIMC(); };
-window.calcGlasgow      = function(){ calcGlasgow(); };
-window.calcCURB         = function(){ calcCURB(); };
-window.calcWells        = function(){ calcWells(); };
-window.calcAlvarado     = function(){ calcAlvarado(); };
-window.calcRanson       = function(){ calcRanson(); };
-window.calcPedo         = function(){ calcPedo(); };
-window.calcAdulto       = function(){ calcAdulto(); };
+// calc functions are global via function declarations
 
 function calcPedo() {
   const p=parseFloat(document.getElementById('pp')?.value);
@@ -13301,6 +13575,121 @@ window.iaShowBtnSalvar = iaShowBtnSalvar;
         <button onclick="pedCalcCopy()" id="pedCalcCopyBtn" style="display:none;background:#f0fdf4;color:#15803d;border:1.5px solid #bbf7d0;padding:7px 12px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">📋 Copiar</button>
       </div>
       <div id="pedCalcAllDiv" style="display:none;overflow-x:auto"><div id="pedCalcAllContent"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: NOVA CALCULADORA ═══ -->
+<div class="modal" id="modalNovaCalc">
+  <div class="modal-overlay" onclick="closeModal('modalNovaCalc')"></div>
+  <div class="modal-box" style="max-width:560px">
+    <div class="modal-head">
+      <h3 id="ncalc_modal_title">🧮 Nova Calculadora</h3>
+      <button class="modal-close" onclick="closeModal('modalNovaCalc')">×</button>
+    </div>
+    <div class="modal-body" style="padding:14px 16px">
+      <input type="hidden" id="ncalc_edit_key">
+      <input type="hidden" id="ncalc_tipo" value="escore">
+
+      <!-- Tipo tabs -->
+      <div style="display:flex;gap:6px;margin-bottom:14px">
+        <button id="ncalc_tab_escore" onclick="ncalcSetTipo('escore')"
+          style="flex:1;padding:7px 4px;border-radius:7px;border:1.5px solid var(--blue);background:var(--blue);color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:.13s">
+          ☑️ Escore
+        </button>
+        <button id="ncalc_tab_formula" onclick="ncalcSetTipo('formula')"
+          style="flex:1;padding:7px 4px;border-radius:7px;border:1.5px solid var(--gray300);background:var(--white);color:var(--gray600);font-size:12px;font-weight:600;cursor:pointer;transition:.13s">
+          📐 Fórmula
+        </button>
+        <button id="ncalc_tab_referencia" onclick="ncalcSetTipo('referencia')"
+          style="flex:1;padding:7px 4px;border-radius:7px;border:1.5px solid var(--gray300);background:var(--white);color:var(--gray600);font-size:12px;font-weight:600;cursor:pointer;transition:.13s">
+          📋 Referência
+        </button>
+      </div>
+
+      <!-- Nome + fonte (todos os tipos) -->
+      <label>Nome da Calculadora</label>
+      <input class="field" id="ncalc_titulo" placeholder="Ex: 🔴 Score de Sepse — qSOFA modificado">
+      <label>Fonte / Referência</label>
+      <input class="field" id="ncalc_fonte" placeholder="Ex: SSC 2021, KDIGO 2024…" style="margin-bottom:12px">
+
+      <!-- ── PAINEL: ESCORE ── -->
+      <div id="ncalc_painel_escore">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <label style="margin:0">Critérios e Pontuações</label>
+          <button onclick="ncalcAddCriterio()" style="background:var(--blue-lt);color:var(--blue);border:1.5px solid var(--blue-bd);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer">+ Critério</button>
+        </div>
+        <div id="ncalc_criterios_list" style="margin-bottom:10px"></div>
+
+        <label>Interpretação por Faixa <span style="font-weight:400;color:var(--gray400)">(opcional — pontuação mínima → descrição)</span></label>
+        <div style="display:grid;grid-template-columns:60px 1fr 50px;gap:4px;margin-bottom:4px">
+          <span style="font-size:10px;color:var(--gray400);text-align:center">≥ Pts</span>
+          <span style="font-size:10px;color:var(--gray400)">Interpretação</span>
+          <span style="font-size:10px;color:var(--gray400);text-align:center">Ícone</span>
+        </div>
+        <div id="ncalc_faixas_wrap">
+          <div style="display:grid;grid-template-columns:60px 1fr 50px;gap:4px;margin-bottom:4px">
+            <input class="field" id="ncalc_faixa_lim_0" placeholder="0" style="text-align:center">
+            <input class="field" id="ncalc_faixa_desc_0" placeholder="Baixo risco — ambulatorial">
+            <input class="field" id="ncalc_faixa_icon_0" placeholder="🟢" style="text-align:center">
+          </div>
+          <div style="display:grid;grid-template-columns:60px 1fr 50px;gap:4px;margin-bottom:4px">
+            <input class="field" id="ncalc_faixa_lim_1" placeholder="2" style="text-align:center">
+            <input class="field" id="ncalc_faixa_desc_1" placeholder="Risco moderado — considerar internação">
+            <input class="field" id="ncalc_faixa_icon_1" placeholder="🟡" style="text-align:center">
+          </div>
+          <div style="display:grid;grid-template-columns:60px 1fr 50px;gap:4px;margin-bottom:4px">
+            <input class="field" id="ncalc_faixa_lim_2" placeholder="3" style="text-align:center">
+            <input class="field" id="ncalc_faixa_desc_2" placeholder="Alto risco — internação / UTI">
+            <input class="field" id="ncalc_faixa_icon_2" placeholder="🔴" style="text-align:center">
+          </div>
+          <div style="display:grid;grid-template-columns:60px 1fr 50px;gap:4px;margin-bottom:6px">
+            <input class="field" id="ncalc_faixa_lim_3" style="text-align:center" placeholder="">
+            <input class="field" id="ncalc_faixa_desc_3" placeholder="(faixa 4 — opcional)">
+            <input class="field" id="ncalc_faixa_icon_3" placeholder="" style="text-align:center">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PAINEL: FÓRMULA ── -->
+      <div id="ncalc_painel_formula" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <label style="margin:0">Campos de Entrada</label>
+          <button onclick="ncalcAddCampo()" style="background:var(--blue-lt);color:var(--blue);border:1.5px solid var(--blue-bd);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer">+ Campo</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 80px 68px auto;gap:5px;margin-bottom:4px">
+          <span style="font-size:10px;color:var(--gray400)">Label</span>
+          <span style="font-size:10px;color:var(--gray400)">ID (fórmula)</span>
+          <span style="font-size:10px;color:var(--gray400)">Unidade</span>
+          <span></span>
+        </div>
+        <div id="ncalc_campos_list" style="margin-bottom:10px"></div>
+
+        <label>Fórmula <span style="font-weight:400;color:var(--gray400)">(use os IDs dos campos acima)</span></label>
+        <input class="field" id="ncalc_formula_expr" placeholder="Ex: 140 * (140-idade) / (72 * cr)  ou  peso / (altura * altura)"
+          style="font-family:var(--mono);font-size:12px">
+        <div style="font-size:10px;color:var(--gray400);margin:3px 0 8px;line-height:1.6">
+          Operadores: <code>+ - * / ** Math.sqrt() Math.log()</code> etc. Use os IDs exatos dos campos.
+        </div>
+        <label>Unidade do Resultado</label>
+        <input class="field" id="ncalc_formula_unidade" placeholder="Ex: mL/min/1,73m²" style="margin-bottom:4px">
+      </div>
+
+      <!-- ── PAINEL: REFERÊNCIA ── -->
+      <div id="ncalc_painel_referencia" style="display:none">
+        <label>Conteúdo da Referência</label>
+        <textarea class="field" id="ncalc_ref_texto" rows="8"
+          placeholder="Cole aqui tabelas, critérios diagnósticos, doses, protocolos…&#10;&#10;Ex:&#10;CLASSIFICAÇÃO CHILD-PUGH:&#10;A (5-6 pts) → Bem compensada&#10;B (7-9 pts) → Comprometimento funcional&#10;C (10-15 pts) → Descompensada"></textarea>
+      </div>
+
+      <!-- Conduta padrão (todos os tipos) -->
+      <label style="margin-top:12px">Conduta / Observações <span style="font-weight:400;color:var(--gray400)">(editável após calcular)</span></label>
+      <textarea class="field" id="ncalc_conduta" rows="4"
+        placeholder="Ex: Score 0-1 → alta com orientações. Score ≥ 2 → internar, solicitar HC+RX+gasometria…"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeModal('modalNovaCalc')">Cancelar</button>
+      <button class="btn-ok" onclick="ncalcSalvar()">💾 Salvar Calculadora</button>
     </div>
   </div>
 </div>
