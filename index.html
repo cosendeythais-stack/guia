@@ -13274,17 +13274,13 @@ window.addEventListener('load', function(){
 function renderCaderno(container) {
   function cadLoad() { try { return JSON.parse(localStorage.getItem('mg_caderno2')||'{}'); } catch(e){ return {}; } }
   function cadSave(d) { try { localStorage.setItem('mg_caderno2', JSON.stringify(d)); } catch(e){} }
-  var CADERNO_DEFAULT_HTML = '<p><strong>SENHA API: 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</strong></p>';
+
   var data = cadLoad();
-  if (!data.html || data.html === '' || data.html === '<p><br></p>') {
-    data.html = CADERNO_DEFAULT_HTML;
-    cadSave(data);
-  }
 
   if (!document.getElementById('cad-style')) {
     var s = document.createElement('style');
     s.id = 'cad-style';
-    s.textContent = '.cad-tb{background:none;border:1.5px solid var(--gray300);color:var(--gray700);padding:3px 8px;border-radius:5px;cursor:pointer;font-size:11px;font-family:var(--sans);transition:.12s;line-height:1.5;white-space:nowrap}.cad-tb:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-lt)}.cad-tb.active{background:var(--blue-lt);border-color:var(--blue-bd);color:var(--blue)}#cad-editor{flex:1;overflow-y:auto;padding:24px 32px;font-family:var(--sans);font-size:14px;line-height:1.85;color:var(--gray900);outline:none;scrollbar-width:thin;word-break:break-word;background:#fff}#cad-editor h1{font-size:20px;font-weight:800;margin:12px 0 4px}#cad-editor h2{font-size:16px;font-weight:700;margin:10px 0 4px}#cad-editor ul,#cad-editor ol{padding-left:24px;margin:4px 0}#cad-editor li{margin:2px 0}#cad-editor p{margin:2px 0}#cad-editor table{border-collapse:collapse;margin:10px 0}#cad-editor td,#cad-editor th{border:1.5px solid var(--gray300);padding:6px 12px;min-width:80px;font-size:13px;vertical-align:top}#cad-editor th{background:var(--gray100);font-weight:700}';
+    s.textContent = '.cad-tb{background:none;border:1.5px solid var(--gray300);color:var(--gray700);padding:3px 8px;border-radius:5px;cursor:pointer;font-size:11px;font-family:var(--sans);transition:.12s;line-height:1.5;white-space:nowrap}.cad-tb:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-lt)}.cad-tb.active{background:var(--blue-lt);border-color:var(--blue-bd);color:var(--blue)}#cad-editor{flex:1;overflow-y:auto;padding:24px 32px;font-family:Arial,sans-serif;font-size:14px;line-height:1.85;color:var(--gray900);outline:none;scrollbar-width:thin;word-break:break-word;background:#fff}#cad-editor *{font-family:Arial,sans-serif!important}#cad-editor ul,#cad-editor ol{padding-left:24px;margin:4px 0}#cad-editor li{margin:2px 0}#cad-editor p{margin:2px 0}#cad-editor table{border-collapse:collapse;margin:10px 0}#cad-editor td,#cad-editor th{border:1.5px solid var(--gray300);padding:6px 12px;min-width:80px;font-size:13px;vertical-align:top}#cad-editor th{background:var(--gray100);font-weight:700}';
     document.head.appendChild(s);
   }
 
@@ -13294,105 +13290,146 @@ function renderCaderno(container) {
   var toolbar = document.createElement('div');
   toolbar.style.cssText = 'display:flex;align-items:center;gap:3px;padding:6px 10px;background:var(--gray50);border-bottom:1.5px solid var(--gray200);flex-shrink:0;flex-wrap:wrap;row-gap:4px';
 
-  function mkBtn(cmd,html,title,extra){var b=document.createElement('button');b.className='cad-tb';b.dataset.cmd=cmd;b.title=title;b.innerHTML=html;if(extra)b.style.cssText=extra;return b;}
+  function mkBtn(cmd,html,title){var b=document.createElement('button');b.className='cad-tb';b.dataset.cmd=cmd;b.title=title;b.innerHTML=html;return b;}
   function mkSep(){var d=document.createElement('div');d.style.cssText='width:1px;height:20px;background:var(--gray300);margin:0 3px;flex-shrink:0';return d;}
 
-  toolbar.appendChild(mkBtn('bold','<b>B</b>','Negrito (Ctrl+B)',''));
-  toolbar.appendChild(mkBtn('italic','<i>I</i>','Italico (Ctrl+I)',''));
-  toolbar.appendChild(mkBtn('underline','<u>U</u>','Sublinhado (Ctrl+U)',''));
+  // B I U
+  toolbar.appendChild(mkBtn('bold','<b>B</b>','Negrito (Ctrl+B)'));
+  toolbar.appendChild(mkBtn('italic','<i>I</i>','Itálico (Ctrl+I)'));
+  toolbar.appendChild(mkBtn('underline','<u>U</u>','Sublinhado (Ctrl+U)'));
   toolbar.appendChild(mkSep());
 
-  var caseBtn=document.createElement('button');
-  caseBtn.className='cad-tb';caseBtn.title='Alternar MAIUSCULO / Capitalizado / minusculo';
-  caseBtn.innerHTML='Aa';caseBtn.style.cssText='font-weight:700';
-  caseBtn.addEventListener('mousedown',function(e){
+  // Aa — alternar caixa
+  var caseBtn = document.createElement('button');
+  caseBtn.className = 'cad-tb'; caseBtn.title = 'Alternar MAIÚSCULO / Capitalizado / minúsculo';
+  caseBtn.innerHTML = 'Aa'; caseBtn.style.fontWeight = '700';
+  caseBtn.addEventListener('mousedown', function(e){
     e.preventDefault();
-    var sel=window.getSelection();
-    if(!sel||sel.rangeCount===0)return;
-    var txt=sel.getRangeAt(0).toString();
-    if(!txt)return;
-    var next=txt===txt.toUpperCase()?txt.replace(/\b\w/g,function(c){return c.toUpperCase();}).replace(/\B\w/g,function(c){return c.toLowerCase();}):txt===txt.replace(/\b\w/g,function(c){return c.toUpperCase();}).replace(/\B\w/g,function(c){return c.toLowerCase();})?txt.toLowerCase():txt.toUpperCase();
-    document.execCommand('insertText',false,next);
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var txt = sel.getRangeAt(0).toString();
+    if (!txt) return;
+    var cap = txt.replace(/\b\w/g, function(c){ return c.toUpperCase(); }).replace(/\B\w/g, function(c){ return c.toLowerCase(); });
+    var next = txt === txt.toUpperCase() ? cap : txt === cap ? txt.toLowerCase() : txt.toUpperCase();
+    document.execCommand('insertText', false, next);
     editor.focus();
   });
   toolbar.appendChild(caseBtn);
   toolbar.appendChild(mkSep());
-  toolbar.appendChild(mkBtn('insertUnorderedList','&bull; Lista','Lista com bullets',''));
-  toolbar.appendChild(mkBtn('insertOrderedList','1. Num','Lista numerada',''));
-  toolbar.appendChild(mkSep());
-  toolbar.appendChild(mkBtn('h1','T1','Titulo grande','font-weight:700;font-size:12px'));
-  toolbar.appendChild(mkBtn('h2','T2','Titulo medio','font-weight:600;font-size:11px'));
-  toolbar.appendChild(mkSep());
-  toolbar.appendChild(mkBtn('removeFormat','x fmt','Limpar formatacao','font-size:10px'));
 
-  var spacer=document.createElement('div');spacer.style.flex='1';toolbar.appendChild(spacer);
+  // Listas
+  toolbar.appendChild(mkBtn('insertUnorderedList','&bull; Lista','Lista com marcadores'));
+  toolbar.appendChild(mkBtn('insertOrderedList','1. Num','Lista numerada'));
+  toolbar.appendChild(mkSep());
 
-  var clearBtn=document.createElement('button');
-  clearBtn.className='cad-tb';clearBtn.textContent='Limpar tudo';
-  clearBtn.addEventListener('mouseenter',function(){clearBtn.style.color='#dc2626';clearBtn.style.borderColor='#dc2626';});
-  clearBtn.addEventListener('mouseleave',function(){clearBtn.style.color='';clearBtn.style.borderColor='';});
+  // Tamanho de fonte (Arial)
+  var szLabel = document.createElement('span');
+  szLabel.textContent = 'Tamanho:';
+  szLabel.style.cssText = 'font-size:11px;color:var(--gray500);font-family:var(--sans);white-space:nowrap';
+  toolbar.appendChild(szLabel);
+
+  var szSelect = document.createElement('select');
+  szSelect.title = 'Tamanho da fonte (Arial)';
+  szSelect.style.cssText = 'font-size:11px;font-family:var(--sans);border:1.5px solid var(--gray300);border-radius:5px;padding:2px 6px;background:#fff;color:var(--gray700);cursor:pointer;outline:none;margin-left:4px';
+  [['Pequeno','2'],['Normal','3'],['Médio','4'],['Grande','5'],['Maior','6'],['Enorme','7']].forEach(function(o){
+    var op = document.createElement('option'); op.value = o[1]; op.textContent = o[0];
+    if (o[1] === '3') op.selected = true;
+    szSelect.appendChild(op);
+  });
+  szSelect.addEventListener('change', function(){
+    editor.focus();
+    document.execCommand('fontSize', false, szSelect.value);
+    editor.focus();
+  });
+  toolbar.appendChild(szSelect);
+
+  var spacer = document.createElement('div'); spacer.style.flex = '1'; toolbar.appendChild(spacer);
+
+  // Limpar tudo
+  var clearBtn = document.createElement('button');
+  clearBtn.className = 'cad-tb'; clearBtn.textContent = 'Limpar tudo';
+  clearBtn.addEventListener('mouseenter', function(){ clearBtn.style.color='#dc2626'; clearBtn.style.borderColor='#dc2626'; });
+  clearBtn.addEventListener('mouseleave', function(){ clearBtn.style.color=''; clearBtn.style.borderColor=''; });
+  clearBtn.addEventListener('click', function(){
+    if (!confirm('Limpar todo o conteúdo?')) return;
+    editor.innerHTML = '<p><br></p>'; data.html = ''; cadSave(data);
+    status.textContent = 'Aguardando salvar...'; editor.focus();
+  });
   toolbar.appendChild(clearBtn);
 
-  var editor=document.createElement('div');
-  editor.id='cad-editor';editor.contentEditable='true';editor.spellcheck=true;
-  editor.innerHTML=data.html||'<p><br></p>';
+  // Botão Salvar
+  var saveBtn = document.createElement('button');
+  saveBtn.className = 'cad-tb';
+  saveBtn.innerHTML = '💾 Salvar';
+  saveBtn.style.cssText = 'background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700;padding:3px 14px;margin-left:4px';
+  saveBtn.addEventListener('click', function(){ salvarCaderno(); });
+  toolbar.appendChild(saveBtn);
 
-  var status=document.createElement('div');
-  status.style.cssText='padding:4px 14px;font-size:10px;color:var(--gray400);background:var(--gray50);border-top:1px solid var(--gray200);flex-shrink:0;font-family:var(--mono)';
-  status.textContent='Salvo automaticamente';
+  var editor = document.createElement('div');
+  editor.id = 'cad-editor'; editor.contentEditable = 'true'; editor.spellcheck = true;
+  editor.innerHTML = data.html || '<p><br></p>';
 
-  wrap.appendChild(toolbar);wrap.appendChild(editor);wrap.appendChild(status);
-  container.innerHTML='';container.appendChild(wrap);
+  var status = document.createElement('div');
+  status.style.cssText = 'padding:4px 14px;font-size:10px;color:var(--gray400);background:var(--gray50);border-top:1px solid var(--gray200);flex-shrink:0;font-family:var(--mono)';
+  status.textContent = 'Use 💾 Salvar para gravar no Firebase';
 
-  var saveTimer=null;
-  // Referência global para salvar o caderno de qualquer lugar (ex: beforeunload)
-  window._cadSaveNow = function() {
-    if (!editor) return;
-    clearTimeout(saveTimer);
+  wrap.appendChild(toolbar); wrap.appendChild(editor); wrap.appendChild(status);
+  container.innerHTML = ''; container.appendChild(wrap);
+
+  function salvarCaderno(){
     data.html = editor.innerHTML;
     cadSave(data);
-    status.textContent = 'Salvo automaticamente';
-  };
-
-  function autoSave(){
-    clearTimeout(saveTimer);
-    status.textContent='salvando...';
-    // Salva imediatamente no localStorage (sem debounce) para não perder nada
-    data.html = editor.innerHTML;
-    cadSave(data);
-    // Atualiza status com pequeno delay visual apenas
-    saveTimer=setTimeout(function(){ status.textContent='Salvo automaticamente'; }, 400);
+    // dispara sincronização com Firebase
+    if (typeof salvarNaNuvem === 'function') {
+      salvarNaNuvem();
+      status.textContent = 'Enviando para o Firebase...';
+      status.style.color = '#2563eb';
+    } else {
+      status.textContent = 'Salvo localmente ✓';
+      status.style.color = 'var(--gray400)';
+    }
+    saveBtn.innerHTML = '✅ Salvo!';
+    setTimeout(function(){
+      saveBtn.innerHTML = '💾 Salvar';
+      status.textContent = 'Salvo ✓';
+      status.style.color = 'var(--gray400)';
+    }, 2000);
   }
 
-  toolbar.addEventListener('mousedown',function(e){
-    var btn=e.target.closest('.cad-tb');
-    if(!btn||!btn.dataset.cmd)return;
-    e.preventDefault();
-    var cmd=btn.dataset.cmd;
-    if(cmd==='h1'||cmd==='h2'){document.execCommand('formatBlock',false,cmd);}
-    else{document.execCommand(cmd,false,null);}
-    editor.focus();updateActive();
+  window._cadSaveNow = function(){ if (editor) salvarCaderno(); };
+
+  // marca alterações não salvas ao digitar
+  editor.addEventListener('input', function(){
+    status.textContent = 'Alterações não salvas — clique em 💾 Salvar';
+    status.style.color = '#b45309';
+    updateActive();
   });
 
-  clearBtn.addEventListener('click',function(){
-    if(!confirm('Limpar todo o conteudo?'))return;
-    editor.innerHTML='<p><br></p>';data.html='';cadSave(data);
-    status.textContent='Salvo automaticamente';editor.focus();
+  toolbar.addEventListener('mousedown', function(e){
+    var btn = e.target.closest('.cad-tb');
+    if (!btn || !btn.dataset.cmd) return;
+    e.preventDefault();
+    document.execCommand(btn.dataset.cmd, false, null);
+    editor.focus(); updateActive();
+  });
+
+  // Ctrl+S também salva
+  editor.addEventListener('keydown', function(e){
+    if ((e.ctrlKey || e.metaKey) && e.key === 's'){ e.preventDefault(); salvarCaderno(); }
   });
 
   function updateActive(){
     ['bold','italic','underline'].forEach(function(cmd){
-      var b=toolbar.querySelector('[data-cmd="'+cmd+'"]');
-      if(b)b.classList.toggle('active',document.queryCommandState(cmd));
+      var b = toolbar.querySelector('[data-cmd="'+cmd+'"]');
+      if (b) b.classList.toggle('active', document.queryCommandState(cmd));
     });
   }
 
-  editor.addEventListener('input',autoSave);
-  editor.addEventListener('keyup',updateActive);
-  editor.addEventListener('mouseup',updateActive);
+  editor.addEventListener('keyup', updateActive);
+  editor.addEventListener('mouseup', updateActive);
 
   editor.focus();
-  try{var r=document.createRange();r.selectNodeContents(editor);r.collapse(false);var sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);}catch(e){}
+  try{ var r=document.createRange(); r.selectNodeContents(editor); r.collapse(false); var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r); }catch(e){}
 }
 </script>
 
