@@ -389,7 +389,7 @@ html, body { height: 100%; font-family: var(--sans); font-size: 14px; color: var
 .emoji-cat-btn.on{background:var(--blue-lt);border-color:var(--blue-bd)}
 .emoji-cat-btn:hover{border-color:var(--gray400)}
 .emoji-grid {
-  display:grid;grid-template-columns:repeat(8,1fr);gap:2px;
+  display:grid;grid-template-columns:repeat(9,1fr);gap:2px;
   max-height:200px;overflow-y:auto;scrollbar-width:thin;
 }
 .emoji-btn {
@@ -2192,30 +2192,25 @@ const DEF_ICONS = {
   receitas:'💊', diluicoes:'🚨', info:'🧠', esf:'🏠', calculos:'🧮', caderno:'📓', config:'⚙️'
 };
 
-// ── Chave IA — salva no localStorage E no Firebase ──
-// Fluxo: usuário configura uma vez → vai pro Firebase → qualquer dispositivo carrega automático
-var GROQ_KEY_EMBED = '';  // não usada mais para embutir chave — mantida só por compatibilidade
+// ── Chave IA embutida (fallback automático) ──
+// Quando o usuário ativa a chave pela primeira vez, ela é salva no localStorage
+// E também atualizada aqui neste arquivo via cfgAtivarChave().
+// Nas próximas aberturas — mesmo em novo navegador ou aba privada na mesma rede —
+// a constante abaixo é usada automaticamente como fallback.
+var GROQ_KEY_EMBED = '';  // chave removida do HTML por segurança — salva só no localStorage
 
 function getGroqKey() {
-  // localStorage é sempre a fonte local (mais rápida)
+  // 1. Tenta localStorage (prioridade — permite trocar/remover)
   var lsKey = '';
   try { lsKey = localStorage.getItem('groq_api_key') || ''; } catch(e) {}
-  return lsKey || GROQ_KEY_EMBED || '';
+  if (lsKey) return lsKey;
+  // 2. Fallback: constante embutida no arquivo (vazia por segurança — usuário configura em ⚙️)
+  return GROQ_KEY_EMBED || '';
 }
 
-// Verifica se IA está configurada
+// Verifica se IA está configurada — usado para mostrar status em tempo real
 function iaConfigurada() {
   return !!getGroqKey();
-}
-
-// ── Salva chave no localStorage E agenda sync pro Firebase ──
-function salvarChaveIA(chave) {
-  if (!chave || chave.length < 20) return false;
-  try { localStorage.setItem('groq_api_key', chave); } catch(e) {}
-  // Sobe pro Firebase junto com todos os outros dados
-  // groq_api_key entra no payload via montarPayload (ALL_DATA_KEYS inclui ela agora)
-  if (typeof agendarSync === 'function') agendarSync();
-  return true;
 }
 
 // ── State ──
@@ -5446,13 +5441,132 @@ window.igDS=igDS; window.igDO=igDO; window.igDL=igDL; window.igDrop=igDrop; wind
 var _igEmojiCb = null; // callback ao selecionar emoji
 
 var IG_EMOJI_CATS = [
-  { label:'Medicina', emojis:['🩺','💊','💉','🩸','🧬','🔬','🩻','🫀','🫁','🧠','🦴','🦷','🦶','🖐️','👁️','👂','🩹','🩼','🩽','🩾','⚕️','🏥','🚑','🔴','🟡','🟢','⚡','🌡️','💧','🫘','🫃','🤰','👶','🍼','💪','🧫','🧪','⚗️','🩶','🩷'] },
-  { label:'Alertas', emojis:['🚨','⚠️','❗','❌','✅','🔴','🟠','🟡','🟢','🔵','🟣','⭕','❓','ℹ️','📣','🔔','🔕','🚫','⛔','🛑','💥','🆘','🆗','🆙','🔃','🔄','↗️','↘️','⬆️','⬇️','➡️','⬅️'] },
-  { label:'Órgãos', emojis:['🫀','🫁','🧠','🦴','🦷','👁️','👂','🦶','🖐️','🦵','💪','🦿','🦾','🦻','🦰','🦱','🦲','🦳','👅','🫶','🫳','🫴','✋','🤲','🙌','👐','🤝','👋','🤙','🤞','✌️'] },
-  { label:'Doenças', emojis:['🦠','🧬','🔬','💉','💊','🩸','🩹','🌡️','😷','🤒','🤕','🤧','😵','💀','☠️','🦟','🐛','🦷','🩻','🫁','🫀','🔴','🟡','⚠️','🚨','❗','💔','🫶'] },
-  { label:'Procedimentos', emojis:['💉','🩸','🩹','🩺','🔬','🩻','🩼','🧲','⚡','🔧','🔩','🪛','✂️','🗡️','🪡','🧵','🪢','🫙','💊','📋','📝','🗒️','📌','📎','🖊️','✏️','🖇️','📐','📏','🔭','🔍'] },
-  { label:'Vitais/Exames', emojis:['❤️','💓','💗','💛','🩶','🩷','🩸','🫀','📈','📉','📊','🔢','🔑','⚖️','💯','💲','🔋','🔌','💡','🔦','🕯️','☀️','🌊','💨','🌡️','🧪','⚗️','🧫','🔬','🩺','🩻'] },
-  { label:'Geral', emojis:['⭐','🌟','✨','💫','🔥','❄️','💧','🌈','☁️','⛅','🌤️','🌙','☀️','🌞','🌍','🌎','🌏','🏠','🏥','🏨','🏦','🏫','🏭','🏗️','🏛️','🗺️','📍','🚩','🏁','🎯','🏆','🎖️','🥇','🥈','🥉','🎀','🎁','🎊','🎉','🎈'] },
+
+  // ── ÓRGÃOS E SISTEMAS ──────────────────────────────────────────
+  { label:'🫀 Coração/Vasc', emojis:[
+    '🫀','❤️','💓','💔','💗','💘','💙','💚','💛','🧡','🩷','🩶','🖤','🤍',
+    '🩸','💉','🩹','🩺','📈','📉','⚡','🔋','⏱️','🌡️','💊','🩻',
+    '🔴','🟠','🟡','🟢','🔵','🟣','⚪','⚫'
+  ]},
+  { label:'🫁 Pulmão/Resp', emojis:[
+    '🫁','💨','🌬️','🫧','💧','🌊','☁️','🌫️','💦','🫗',
+    '😮‍💨','😤','😷','🤧','🤒','🫂','🧫','🦠','🌡️','⚕️',
+    '🟦','🔵','💙','🩵','🫐','🔷','🔹'
+  ]},
+  { label:'🧠 Neurologia', emojis:[
+    '🧠','💭','🤔','😵','😵‍💫','🥴','💤','😴','👁️','👀','🫣',
+    '⚡','🌀','🔮','💡','🕯️','🔦','⭐','🌟','✨','💫',
+    '🧩','🎯','📡','📻','🔊','🔇','🔕'
+  ]},
+  { label:'🦴 Ortopedia', emojis:[
+    '🦴','🦷','🦶','🦵','🦾','🦿','🖐️','✋','🤚','🫲','🫱','🫳','🫴',
+    '💪','🤜','🤛','👊','✊','🤝','🤲','🙌','👐','🫶',
+    '⚙️','🔩','🪛','🔧','🪝','🧲','📏','📐'
+  ]},
+  { label:'👁️ Oftalmo/ORL', emojis:[
+    '👁️','👀','🫣','👃','👂','🦻','👅','🦷','🗣️','💬','🔊','🔉','🔈','🔇',
+    '🌈','🔭','🔬','💎','💠','🔷','🔹','🟦','🟣','🔮',
+    '😷','🤧','🤒','🥵','🥶','😮','😲'
+  ]},
+  { label:'🫘 Nefro/Uro', emojis:[
+    '🫘','💧','💦','🚿','🪣','🧴','⚗️','🧪','🔬','🩺','🩻',
+    '🟡','🟠','🟤','🫙','🧃','🫗','💊','💉','🩸',
+    '⚖️','📊','📈','🔢','🔑','🔐','🔓','🔒'
+  ]},
+  { label:'🍽️ Gastro/Abdome', emojis:[
+    '🫃','🫄','🤰','🍽️','🥗','🥦','🥕','🌽','🍎','🍋','🫙','🧃',
+    '🤢','🤮','😮','💩','🔴','🟡','🟢','⚠️','🚨',
+    '🧫','🦠','🔬','🧪','⚗️','🩺','💊','💉'
+  ]},
+  { label:'🤰 Obstetrícia', emojis:[
+    '🤰','🫄','👶','🍼','🫶','💕','🩺','🩸','💉','💊',
+    '🌸','🌺','🌻','🌹','🌷','🌼','💐','🌿','🍃','🌱',
+    '❤️','🩷','🩶','💗','💓','💘','🫀','👼','🌙','⭐'
+  ]},
+  { label:'🧒 Pediatria', emojis:[
+    '👶','🍼','🧒','👦','👧','🧑','🎈','🎀','🧸','🪀','🎠','🎡',
+    '💊','🩺','🩹','💉','🌡️','🧪','🔬','🩸',
+    '🌈','⭐','🌟','☀️','🌙','🌻','🌸','🌺','🍎','🍊'
+  ]},
+  { label:'🧬 Infectologia', emojis:[
+    '🦠','🧬','🔬','🧪','⚗️','🫧','💉','🩸','🩹','🌡️',
+    '🦟','🦗','🕷️','🐛','🦔','🐀','🐁','🦅','🦆','🕊️',
+    '🔴','🟠','🟡','⚠️','🚨','❗','💊','🏥','🩺','😷'
+  ]},
+  { label:'🧘 Saúde Mental', emojis:[
+    '🧠','💭','🤔','😔','😢','😭','😰','😨','😱','😳','🤯','😤','😠',
+    '😊','😌','🥰','😄','🌈','☀️','🌱','🌿','🍃','🌸',
+    '🫂','🤝','🫶','💗','❤️','🕊️','🌟','✨','💫','🌙'
+  ]},
+  { label:'🩺 Clínica Geral', emojis:[
+    '🩺','💊','💉','🩸','🩹','🩻','🌡️','⚕️','🏥','🚑',
+    '📋','📝','📄','📃','🗒️','📌','📎','✏️','🖊️','📏',
+    '🔬','🧪','🧫','🧬','⚗️','🔭','🔍','🔎','📊','📈'
+  ]},
+
+  // ── ESPECIALIDADES ─────────────────────────────────────────────
+  { label:'💊 Farmacologia', emojis:[
+    '💊','💉','🩸','⚗️','🧪','🧫','🔬','🧬','🫧','🧴','🧹','🧽',
+    '🟢','🟡','🟠','🔴','🟣','🔵','⚪','🟤','⚫','🟥','🟦','🟩',
+    '📦','🫙','🪣','🔋','⚙️','🔩','🪛','🔧'
+  ]},
+  { label:'🔪 Cirurgia', emojis:[
+    '🔪','✂️','🩹','🩺','🩻','🩼','💉','🩸','🧲','🪡','🧵','🪢',
+    '🔧','🔩','🪛','⚙️','🛠️','⚒️','🪚','🔨','🗜️','📌','🪤','🧷',
+    '🫀','🫁','🧠','🦴','🦷','💊','⚕️','🏥'
+  ]},
+  { label:'🩻 Imagem/Diagnóstico', emojis:[
+    '🩻','🔬','🔭','🧫','🧪','📡','📺','💻','🖥️','📸','📷','🎞️',
+    '🟢','🟡','🔵','🟣','⚪','⬛','🔲','🔳','▪️','▫️','◾','◽',
+    '📊','📈','📉','🔢','🔑','🗝️','🔐','🔓'
+  ]},
+  { label:'🏋️ Emergência/UTI', emojis:[
+    '🚨','🚑','🏥','⚡','🔴','🟠','💥','⚠️','❗','🆘','🆕','🔔',
+    '💊','💉','🩸','🩹','🩺','🌡️','💧','🫧','🫀','🫁','🧠',
+    '🔋','⚙️','🔧','🪛','📡','📻','🎙️','📞','☎️'
+  ]},
+  { label:'❤️ Cardiologia', emojis:[
+    '❤️','🫀','💓','💔','💗','💘','💙','💚','💛','🧡','🩷','🩶',
+    '📈','📉','📊','⚡','🔋','⏱️','⏰','⌚','🕐','🕑','🕒',
+    '🔴','🟡','🟢','🔵','💊','💉','🩸','🩺','🩻','🌡️'
+  ]},
+  { label:'🌿 Saúde Coletiva', emojis:[
+    '🌿','🌱','🍃','🌳','🌲','🌴','🌾','🌻','🌸','🌺','🌹','🌷',
+    '🏠','🏡','🏘️','🏚️','🏗️','🏥','🏫','🏛️','🏟️','🏬',
+    '👥','👫','👪','🫂','🤝','🫶','❤️','💚','💙','🌍','🌎','🌏'
+  ]},
+
+  // ── INTERFACE / ORGANIZAÇÃO ─────────────────────────────────────
+  { label:'⚠️ Alertas/Status', emojis:[
+    '🚨','⚠️','❗','❌','✅','✔️','☑️','🔴','🟠','🟡','🟢','🔵','🟣',
+    '⭕','❓','❔','ℹ️','📣','🔔','🔕','🚫','⛔','🛑','💥','🆘',
+    '🔃','🔄','⏳','⏰','🔔','📢','📯','🎺','🚩','🏴','🏳️'
+  ]},
+  { label:'📋 Documentos', emojis:[
+    '📋','📝','📄','📃','📑','🗒️','🗓️','📅','📆','📌','📍','📎','🖇️',
+    '✏️','🖊️','🖋️','📐','📏','🗂️','🗃️','🗄️','📁','📂','🗑️',
+    '💼','🎒','👜','👝','📦','📫','📬','📭','📮','📰','🗞️'
+  ]},
+  { label:'🔢 Escores/Cálculos', emojis:[
+    '🔢','🔣','🔤','🔡','🔠','📊','📈','📉','📐','📏','⚖️','🧮',
+    '1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','0️⃣','🔟',
+    '➕','➖','✖️','➗','🟰','💯','🔑','🗝️','🔐'
+  ]},
+  { label:'🎨 Cores/Marcadores', emojis:[
+    '🔴','🟠','🟡','🟢','🔵','🟣','🟤','⚫','⚪','🟥','🟧','🟨','🟩','🟦','🟪','🟫',
+    '❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','🩷','🩵','🩶',
+    '🔶','🔷','🔸','🔹','🔺','🔻','💠','🔘','🔲','🔳'
+  ]},
+  { label:'⭐ Favoritos/Destaques', emojis:[
+    '⭐','🌟','💫','✨','🌠','🌌','☀️','🌙','🌛','🌜','🌝','🌚',
+    '🏆','🥇','🥈','🥉','🎖️','🏅','🎯','🎪','🎨','🎭','🎬','🎤',
+    '💎','👑','🪙','🔑','🗝️','💡','🕯️','🔦','🪔','🌈','🎀','🎁'
+  ]},
+  { label:'🌍 Geral', emojis:[
+    '🌍','🌎','🌏','🗺️','🧭','🏔️','⛰️','🌋','🗻','🏕️','🏖️','🏜️',
+    '🏠','🏡','🏢','🏣','🏤','🏥','🏦','🏧','🏨','🏩','🏪','🏫','🏬','🏭',
+    '🚑','🚒','🚓','🚕','🚗','🚌','🚎','🏎️','🚂','✈️','🚀','🛸'
+  ]},
 ];
 
 function igShowEmojiGrid(anchorEl, cb) {
@@ -5462,7 +5576,7 @@ function igShowEmojiGrid(anchorEl, cb) {
 
   var box = document.createElement('div');
   box.id = '_igEmojiGrid';
-  box.style.cssText = 'position:fixed;z-index:9999;background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.18);width:300px;max-height:340px;display:flex;flex-direction:column;overflow:hidden;font-family:var(--sans)';
+  box.style.cssText = 'position:fixed;z-index:9999;background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.18);width:340px;max-height:400px;display:flex;flex-direction:column;overflow:hidden;font-family:var(--sans)';
 
   // Search
   var searchRow = document.createElement('div');
@@ -5489,7 +5603,7 @@ function igShowEmojiGrid(anchorEl, cb) {
   // Grid
   var grid = document.createElement('div');
   grid.id = '_igEmojiCatGrid';
-  grid.style.cssText = 'flex:1;overflow-y:auto;padding:6px 8px;display:grid;grid-template-columns:repeat(8,1fr);gap:2px';
+  grid.style.cssText = 'flex:1;overflow-y:auto;padding:6px 8px;display:grid;grid-template-columns:repeat(9,1fr);gap:2px';
 
   box.appendChild(searchRow);
   box.appendChild(tabs);
@@ -5499,8 +5613,8 @@ function igShowEmojiGrid(anchorEl, cb) {
   var r = anchorEl.getBoundingClientRect();
   var top = r.bottom + 6;
   var left = r.left;
-  if (left + 300 > window.innerWidth) left = window.innerWidth - 308;
-  if (top + 340 > window.innerHeight) top = r.top - 344;
+  if (left + 340 > window.innerWidth) left = window.innerWidth - 348;
+  if (top + 400 > window.innerHeight) top = r.top - 404;
   box.style.top = top + 'px';
   box.style.left = left + 'px';
 
@@ -8396,13 +8510,32 @@ function cfgAbrirAiStudio() {
   window.open('https://console.groq.com/keys', '_blank');
 }
 
-// ── _embedKeyAndDownload — desativado ──
-// Chave agora sincroniza via Firebase automaticamente.
-// Função mantida para compatibilidade mas não faz mais nada.
+// ── Embutir chave no HTML e gerar download automático ──
 function _embedKeyAndDownload(chave) {
-  // Comportamento antigo removido: não gera mais download de HTML
-  // A chave vai pro Firebase via salvarChaveIA() → agendarSync()
-  return false;
+  try {
+    // Atualiza a constante em memória imediatamente
+    GROQ_KEY_EMBED = chave;
+    // Obtém o HTML atual da página
+    var html = document.documentElement.outerHTML;
+    // Substitui a linha da constante com a chave nova
+    html = html.replace(
+      /var GROQ_KEY_EMBED = '[^']*';/,
+      "var GROQ_KEY_EMBED = '" + chave + "';"
+    );
+    // Gera download do arquivo já com a chave embutida
+    var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'MedGuia_Pro_busca__1_.html';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+    return true;
+  } catch(e) {
+    console.warn('Embed key error:', e);
+    return false;
+  }
 }
 
 function cfgAtivarChave() {
@@ -8410,11 +8543,15 @@ function cfgAtivarChave() {
   var chave = (input ? input.value : '').trim();
   if (!chave) { toast('⚠️ Cole a chave no campo antes de ativar.'); return; }
   if (chave.length < 20) { toast('⚠️ Chave inválida — verifique se copiou corretamente.'); return; }
+  localStorage.setItem('groq_api_key', chave);
   if (input) input.value = '';
-  // Salva no localStorage + sincroniza com Firebase automaticamente
-  // Em qualquer outro dispositivo, a chave aparece ao abrir o app
-  salvarChaveIA(chave);
-  toast('✅ Chave ativada e salva na nuvem! Funciona em qualquer dispositivo automaticamente.');
+  // Embutir chave no arquivo e oferecer download para uso permanente
+  var ok = _embedKeyAndDownload(chave);
+  if (ok) {
+    toast('✅ Chave ativada! Arquivo atualizado baixado — substitua o anterior para ativar em qualquer rede.');
+  } else {
+    toast('✅ Chave ativada! A IA está pronta para uso.');
+  }
   cfgAtualizarStatusChave();
 }
 
@@ -8428,12 +8565,17 @@ function cfgAtivarChaveTroca() {
   var chave = (input ? input.value : '').trim();
   if (!chave) { toast('⚠️ Cole a nova chave no campo.'); return; }
   if (chave.length < 20) { toast('⚠️ Chave inválida — verifique se copiou corretamente.'); return; }
+  localStorage.setItem('groq_api_key', chave);
   if (input) input.value = '';
   var wrap = document.getElementById('apiTrocarWrap');
   if (wrap) wrap.style.display = 'none';
-  // Salva + sincroniza com Firebase — todos os dispositivos recebem a nova chave
-  salvarChaveIA(chave);
-  toast('✅ Chave atualizada e sincronizada! Todos os dispositivos recebem automaticamente.');
+  // Embutir chave no arquivo e oferecer download
+  var ok = _embedKeyAndDownload(chave);
+  if (ok) {
+    toast('✅ Chave atualizada! Arquivo novo baixado — substitua o anterior.');
+  } else {
+    toast('✅ Chave atualizada com sucesso!');
+  }
   cfgAtualizarStatusChave();
 }
 
@@ -8448,8 +8590,6 @@ function cfgTrocarChave() { cfgMostrarTrocarChave(); }
 function cfgApagarChave() {
   if (!confirm('Remover a chave de API?\n\nAs funcionalidades de IA serão desativadas até você configurar uma nova chave.')) return;
   localStorage.removeItem('groq_api_key');
-  // Remove também do Firebase para não restaurar na próxima abertura
-  if (typeof agendarSync === 'function') agendarSync();
   toast('🗑️ Chave removida. A IA foi desativada.');
   cfgAtualizarStatusChave();
 }
@@ -9943,8 +10083,7 @@ var ALL_DATA_KEYS = [
   'mg_dil_grades',        // grades Prescrever Agora (customizadas)
   'mg_info_grades',       // grades Info Clínica/Escores (customizadas)
   'mg_dil_grades_ver',    // versão das grades de diluição
-  'mg_info_grades_ver',   // versão das grades de info
-  'groq_api_key'          // chave da IA — sincroniza entre dispositivos via Firebase
+  'mg_info_grades_ver'    // versão das grades de info
 ];
 
 // Coleta TODOS os dados do localStorage em um objeto JSON exportável
@@ -13788,15 +13927,8 @@ function carregarDaNuvem() {
     var aplicou = false;
     chaves.forEach(function(chave) {
       var valor = dados[chave];
-      if (valor && typeof valor === 'string' && valor.length > 2) {
-        try {
-          localStorage.setItem(chave, valor);
-          aplicou = true;
-          // Log especial para chave de IA
-          if (chave === 'groq_api_key') {
-            console.log('[MedGuia] ✅ Chave IA restaurada do Firebase automaticamente');
-          }
-        } catch(e) {}
+      if (valor && typeof valor === 'string' && valor.length > 10) {
+        try { localStorage.setItem(chave, valor); aplicou = true; } catch(e) {}
       }
     });
 
