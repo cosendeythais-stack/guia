@@ -4308,55 +4308,137 @@ function dilSaveItemEdit(itemId, newTitle, newContent, newNotes) {
 window.dilSaveItemEdit = dilSaveItemEdit;
 
 // ── Drag state ───────────────────────────────────────────────────
+// _dilDrag: { gid, cardId, subLabel (null se flat) }
 var _dilDrag = null;
-function dilDS(e,gid,ci){ _dilDrag={gid,ci}; e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain',ci); setTimeout(function(){e.currentTarget.classList.add('ig-dragging');},0); }
-function dilDO(e,gid,ci){ if(!_dilDrag) return; e.preventDefault(); e.currentTarget.classList.add('ig-over'); }
-function dilDL(e){ e.currentTarget.classList.remove('ig-over'); }
-function dilDrop(e,gid,ci){
-  e.preventDefault(); e.currentTarget.classList.remove('ig-over');
+
+function dilDS(e, gid, cardId, subLabel) {
+  _dilDrag = { gid: gid, cardId: cardId, subLabel: subLabel || null };
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', cardId);
+  setTimeout(function(){ e.currentTarget.classList.add('ig-dragging'); }, 0);
+}
+
+function dilDO(e, gid, cardId, subLabel) {
   if (!_dilDrag) return;
-  var grades=dilGradesLoad();
-  var sg=grades.find(function(g){return g.id===_dilDrag.gid;});
-  var dg=grades.find(function(g){return g.id===gid;});
-  if (!sg||!dg) return;
-  var moved=sg.cards.splice(_dilDrag.ci,1)[0];
-  var dest=(_dilDrag.gid===gid && ci>_dilDrag.ci) ? ci-1 : ci;
-  dg.cards.splice(dest,0,moved);
-  dilGradesSave(grades); _dilDrag=null;
+  e.preventDefault();
+  e.currentTarget.classList.add('ig-over');
+}
+
+function dilDL(e) { e.currentTarget.classList.remove('ig-over'); }
+
+// Drop sobre outro card (inserir antes/depois dele)
+function dilDrop(e, destGid, destCardId, destSubLabel) {
+  e.preventDefault(); e.stopPropagation();
+  e.currentTarget.classList.remove('ig-over');
+  if (!_dilDrag || _dilDrag.cardId === destCardId) { _dilDrag = null; return; }
+  var grades = dilGradesLoad();
+  // --- Remover card da origem ---
+  var srcGrade = grades.find(function(g){ return g.id === _dilDrag.gid; });
+  if (!srcGrade) return;
+  var moved = null;
+  if (srcGrade.subsections && srcGrade.subsections.length > 0) {
+    srcGrade.subsections.forEach(function(sub) {
+      var idx = (sub.cards||[]).findIndex(function(c){ return c.id === _dilDrag.cardId; });
+      if (idx !== -1) { moved = sub.cards.splice(idx, 1)[0]; }
+    });
+  } else {
+    var idx = (srcGrade.cards||[]).findIndex(function(c){ return c.id === _dilDrag.cardId; });
+    if (idx !== -1) { moved = srcGrade.cards.splice(idx, 1)[0]; }
+  }
+  if (!moved) { _dilDrag = null; return; }
+  // --- Inserir na destino (antes do card alvo) ---
+  var destGrade = grades.find(function(g){ return g.id === destGid; });
+  if (!destGrade) { _dilDrag = null; return; }
+  if (destGrade.subsections && destGrade.subsections.length > 0) {
+    var destSub = destGrade.subsections.find(function(s){ return s.label === destSubLabel; });
+    if (!destSub) destSub = destGrade.subsections[0];
+    if (!destSub.cards) destSub.cards = [];
+    var di = destSub.cards.findIndex(function(c){ return c.id === destCardId; });
+    if (di === -1) di = destSub.cards.length;
+    destSub.cards.splice(di, 0, moved);
+  } else {
+    if (!destGrade.cards) destGrade.cards = [];
+    var di2 = destGrade.cards.findIndex(function(c){ return c.id === destCardId; });
+    if (di2 === -1) di2 = destGrade.cards.length;
+    destGrade.cards.splice(di2, 0, moved);
+  }
+  dilGradesSave(grades); _dilDrag = null;
   renderDiluicoes(document.getElementById('content'));
 }
-function dilDE(e){ document.querySelectorAll('.ig-cw').forEach(function(el){el.classList.remove('ig-dragging','ig-over');}); _dilDrag=null; }
-window.dilDS=dilDS; window.dilDO=dilDO; window.dilDL=dilDL; window.dilDrop=dilDrop; window.dilDE=dilDE;
+
+// Drop sobre uma seção (grid vazio ou área da seção) — adiciona ao final
+function dilDropSection(e, destGid, destSubLabel) {
+  e.preventDefault(); e.stopPropagation();
+  e.currentTarget.classList.remove('ig-over-section');
+  if (!_dilDrag) return;
+  var grades = dilGradesLoad();
+  // --- Remover card da origem ---
+  var srcGrade = grades.find(function(g){ return g.id === _dilDrag.gid; });
+  if (!srcGrade) return;
+  var moved = null;
+  if (srcGrade.subsections && srcGrade.subsections.length > 0) {
+    srcGrade.subsections.forEach(function(sub) {
+      var idx = (sub.cards||[]).findIndex(function(c){ return c.id === _dilDrag.cardId; });
+      if (idx !== -1) { moved = sub.cards.splice(idx, 1)[0]; }
+    });
+  } else {
+    var idx = (srcGrade.cards||[]).findIndex(function(c){ return c.id === _dilDrag.cardId; });
+    if (idx !== -1) { moved = srcGrade.cards.splice(idx, 1)[0]; }
+  }
+  if (!moved) { _dilDrag = null; return; }
+  // --- Inserir no destino (final da seção) ---
+  var destGrade = grades.find(function(g){ return g.id === destGid; });
+  if (!destGrade) { _dilDrag = null; return; }
+  if (destGrade.subsections && destGrade.subsections.length > 0) {
+    var destSub = destGrade.subsections.find(function(s){ return s.label === destSubLabel; });
+    if (!destSub) destSub = destGrade.subsections[0];
+    if (!destSub.cards) destSub.cards = [];
+    destSub.cards.push(moved);
+  } else {
+    if (!destGrade.cards) destGrade.cards = [];
+    destGrade.cards.push(moved);
+  }
+  dilGradesSave(grades); _dilDrag = null;
+  renderDiluicoes(document.getElementById('content'));
+}
+
+function dilDE(e) {
+  document.querySelectorAll('.ig-cw,.ig-grid,.dil-subsec').forEach(function(el){
+    el.classList.remove('ig-dragging','ig-over','ig-over-section');
+  });
+  _dilDrag = null;
+}
+
+window.dilDS=dilDS; window.dilDO=dilDO; window.dilDL=dilDL; window.dilDrop=dilDrop;
+window.dilDropSection=dilDropSection; window.dilDE=dilDE;
 
 // ── Copy / Paste de cards entre subsessões ───────────────────────
 var _dilCopied = null; // { gid, ci, card }
 
-function dilCopyCard(gid, ci) {
+function dilCopyCard(gid, cardId) {
   var grades = dilGradesLoad();
   var grade = grades.find(function(g){ return g.id === gid; });
   if (!grade) return;
 
-  // Resolve card pelo índice flat
+  // Resolve card pelo id
   var allCards = [];
   if (grade.subsections && grade.subsections.length > 0) {
     grade.subsections.forEach(function(sub){ (sub.cards||[]).forEach(function(c){ allCards.push(c); }); });
   } else {
     allCards = grade.cards || [];
   }
-  var card = allCards[ci];
+  var card = allCards.find(function(c){ return c.id === cardId; });
   if (!card) return;
 
-  _dilCopied = { gid: gid, ci: ci, card: JSON.parse(JSON.stringify(card)) };
+  _dilCopied = { gid: gid, cardId: cardId, card: JSON.parse(JSON.stringify(card)) };
   document.body.classList.add('dil-has-copy');
 
   // Feedback visual
   document.querySelectorAll('.ig-cw').forEach(function(el){ el.classList.remove('dil-copied-src'); });
   var allCW = document.querySelectorAll('.ig-cw');
-  // Encontra o elemento pelo índice
-  var idx = 0;
   for (var i = 0; i < allCW.length; i++) {
     var ods = allCW[i].getAttribute('ondragstart') || '';
-    if (ods.indexOf("'"+gid+"'") !== -1 && ods.indexOf(','+ci+')') !== -1) {
+    if (ods.indexOf("'"+gid+"'") !== -1 && ods.indexOf("'"+cardId+"'") !== -1) {
       allCW[i].classList.add('dil-copied-src');
       break;
     }
@@ -4397,11 +4479,16 @@ window.dilCopyCard = dilCopyCard;
 window.dilPasteCard = dilPasteCard;
 
 // ── Modal add/edit card ─────────────────────────────────────────────
-function dilOpenCardModal(gradeId, editIdx) {
+function dilOpenCardModal(gradeId, editCardId) {
   var grades = dilGradesLoad();
   var grade  = grades.find(function(g){ return g.id === gradeId; });
   if (!grade) return;
-  var ed     = (editIdx !== null && editIdx >= 0) ? dilGradeCards(grade)[editIdx] : null;
+  // editCardId is a string cardId (or null for new card)
+  var ed = null;
+  if (editCardId !== null && editCardId !== 'null' && editCardId !== undefined) {
+    var flatCards = dilGradeCards(grade);
+    ed = flatCards.find(function(c){ return c.id === editCardId; }) || null;
+  }
   var edItem = ed ? dilGetItem(ed.id) : null;
 
   // Subseções da grade para o "Colocar em" (só em novo card)
@@ -4416,6 +4503,7 @@ function dilOpenCardModal(gradeId, editIdx) {
   var old = document.getElementById('modalDilCard'); if (old) old.remove();
   var modal = document.createElement('div');
   modal.className = 'modal show'; modal.id = 'modalDilCard';
+  var safeEditCardId = editCardId ? String(editCardId).replace(/\\/g,'\\\\').replace(/'/g,"\\'") : 'null';
   modal.innerHTML =
     '<div class="modal-overlay" onclick="document.getElementById(\'modalDilCard\').remove()"></div>'
     +'<div class="modal-box" style="max-width:480px">'
@@ -4452,9 +4540,9 @@ function dilOpenCardModal(gradeId, editIdx) {
 
     +'</div>'
     +'<div class="modal-foot">'
-    +(ed?'<button class="btn-danger" onclick="dilDelCard(\''+gradeId+'\','+editIdx+')">🗑 Excluir</button>':'')
+    +(ed?'<button class="btn-danger" onclick="dilDelCard(\''+gradeId+'\',\''+safeEditCardId+'\')">🗑 Excluir</button>':'')
     +'<button class="btn-cancel" onclick="document.getElementById(\'modalDilCard\').remove()">Cancelar</button>'
-    +'<button class="btn-ok" onclick="dilSaveCardNew(\''+gradeId+'\','+(ed?editIdx:'null')+')">💾 Salvar</button>'
+    +'<button class="btn-ok" onclick="dilSaveCardNew(\''+gradeId+'\','+(ed?'\''+safeEditCardId+'\'':'null')+')">💾 Salvar</button>'
     +'</div></div>';
 
   document.body.appendChild(modal);
@@ -4468,7 +4556,7 @@ function dilOpenCardModal(gradeId, editIdx) {
   }
 }
 
-function dilSaveCardNew(gid, editIdx) {
+function dilSaveCardNew(gid, editCardId) {
   var emoji   = (document.getElementById('dilc_emoji').value || '').trim() || '💊';
   var label   = (document.getElementById('dilc_label').value || '').trim();
   var content = (document.getElementById('dilc_content').value || '').trim();
@@ -4479,28 +4567,27 @@ function dilSaveCardNew(gid, editIdx) {
   var grade  = grades.find(function(g){ return g.id === gid; });
   if (!grade) return;
 
-  var isEd = editIdx !== null && editIdx !== 'null';
+  var isEd = editCardId !== null && editCardId !== 'null' && editCardId !== undefined;
 
   if (isEd) {
     // Editar card existente — atualizar label/emoji e conteúdo do item
-    var fi     = parseInt(editIdx);
-    var cards  = dilGradeCards(grade);
-    var card   = cards[fi];
+    var flatCards = dilGradeCards(grade);
+    var card = flatCards.find(function(c){ return c.id === editCardId; });
     if (card) {
       card.emoji = emoji;
       card.label = label;
       var item = dilGetItem(card.id);
       if (item) { item.content = content; item.notes = notes; }
-      // Salvar no lugar certo (subsections ou cards)
+      // Persiste no lugar certo (subsections ou cards)
       if (grade.subsections) {
-        var cnt = 0;
         grade.subsections.forEach(function(s) {
           var sc = s.cards || [];
-          if (fi >= cnt && fi < cnt + sc.length) sc[fi - cnt] = card;
-          cnt += sc.length;
+          var si = sc.findIndex(function(c){ return c.id === editCardId; });
+          if (si !== -1) sc[si] = card;
         });
       } else if (grade.cards) {
-        grade.cards[fi] = card;
+        var ci = grade.cards.findIndex(function(c){ return c.id === editCardId; });
+        if (ci !== -1) grade.cards[ci] = card;
       }
     }
   } else {
@@ -4583,33 +4670,36 @@ function dilSaveCard(gid, editIdx){
   dilGradesSave(grades); document.getElementById('modalDilCard').remove();
   renderDiluicoes(document.getElementById('content')); toast('✅ Card salvo!');
 }
-function dilDelCard(gid,ci){
+function dilDelCard(gid, cardId){
   if(!confirm('Remover este card?')) return;
   var grades=dilGradesLoad(); var grade=grades.find(function(g){return g.id===gid;});
   if(!grade) return;
-  var fi = parseInt(ci);
   if(grade.subsections) {
-    var cnt=0;
     grade.subsections.forEach(function(s){
       var sc=s.cards||[];
-      if(fi>=cnt && fi<cnt+sc.length) sc.splice(fi-cnt,1);
-      cnt+=sc.length;
+      var idx=sc.findIndex(function(c){return c.id===cardId;});
+      if(idx!==-1) sc.splice(idx,1);
     });
-  } else { grade.cards.splice(fi,1); }
-  dilGradesSave(grades); document.getElementById('modalDilCard').remove();
+  } else {
+    var idx=(grade.cards||[]).findIndex(function(c){return c.id===cardId;});
+    if(idx!==-1) grade.cards.splice(idx,1);
+  }
+  dilGradesSave(grades);
+  // Close modal if open
+  var m=document.getElementById('modalDilCard'); if(m) m.remove();
   renderDiluicoes(document.getElementById('content')); toast('🗑 Card removido');
 }
 window.dilOpenCardModal=dilOpenCardModal; window.dilSyncLabel=dilSyncLabel; window.dilPrev=dilPrev;
 window.dilSaveCard=dilSaveCard; window.dilDelCard=dilDelCard;
 
 // ── Trocar emoji de card DIL ──────────────────────────────────────
-function dilChangeEmoji(gradeId, cardIdx, anchorEl) {
+function dilChangeEmoji(gradeId, cardId, anchorEl) {
   openEmojiPickerGeneric(anchorEl, function(emoji) {
     var grades = dilGradesLoad();
     var grade  = grades.find(function(g){ return g.id === gradeId; });
     if (!grade) return;
     var flatCards = dilGradeCards(grade);
-    var card = flatCards[cardIdx];
+    var card = flatCards.find(function(c){ return c.id === cardId; });
     if (!card) return;
     card.emoji = emoji;
     // Atualiza também o icon do item
@@ -4724,7 +4814,7 @@ function dilRenderGradePanel(gradeId) {
     ? '<button class="ig-inline-btn" onclick="dilCalcPedNotes(\''+gradeId+'\')" title="Calcular doses pediátricas" style="color:#1d4ed8;font-weight:700">🧮 Calcular</button>'
     : '';
 
-  // Encontrar índice do card na grade para edição
+  // Encontrar índice do card na grade para edição (mantido para compatibilidade com dilIaPanel)
   var cardCi = dilGradeCards(grade).findIndex(function(c){ return c.id === cardId; });
 
   panel.innerHTML =
@@ -4736,7 +4826,7 @@ function dilRenderGradePanel(gradeId) {
     +'</div>'
     +'<div class="ig-pb" id="dilpb-'+gradeId+'" style="position:relative">'
     +'<div class="ig-inline-acts">'
-    +'<button class="ig-inline-btn" onclick="dilStartEdit(\''+gradeId+'\','+cardCi+')" title="Editar">✏️</button>'
+    +'<button class="ig-inline-btn" onclick="dilStartEdit(\''+gradeId+'\',\''+cardId+'\')" title="Editar">✏️</button>'
     +'<button class="ig-inline-btn" onclick="dilCopyPanel(\''+gradeId+'\')" title="Copiar">📋</button>'
     +'<button class="ig-inline-btn" onclick="dilIaPanel(\''+gradeId+'\','+cardCi+')" title="Organizar com IA" style="color:#7c3aed">🤖</button>'
     + calcBtn
@@ -4807,11 +4897,13 @@ function dilClosePanel(gradeId) {
   });
 }
 
-function dilStartEdit(gradeId, cardIdx) {
+function dilStartEdit(gradeId, cardId) {
   var grades = dilGradesLoad();
   var grade  = grades.find(function(g){return g.id===gradeId;});
   if (!grade) return;
-  var card = dilGradeCards(grade)[cardIdx];
+  var flatCards = dilGradeCards(grade);
+  var card = flatCards.find(function(c){ return c.id === cardId; });
+  if (!card) return;
   var item = dilGetItem(card.id);
   if (!item) return;
   var body = document.getElementById('dilpb-'+gradeId);
@@ -4826,13 +4918,13 @@ function dilStartEdit(gradeId, cardIdx) {
     +'<textarea class="ig-edit-area" id="dile-notes-'+gradeId+'" style="min-height:80px;background:#fffbeb;border-color:#fbbf24">'+esc(item.notes||'')+'</textarea>'
     +'</div>'
     +'<div class="ig-edit-bar">'
-    +'<button class="ig-save-btn" onclick="dilConfirmEdit(\''+gradeId+'\',\''+card.id+'\','+cardIdx+')">💾 Salvar</button>'
+    +'<button class="ig-save-btn" onclick="dilConfirmEdit(\''+gradeId+'\',\''+card.id+'\')">💾 Salvar</button>'
     +'<button class="ig-cancel-btn" onclick="dilRenderGradePanel(\''+gradeId+'\')">Cancelar</button>'
     +'</div>';
   setTimeout(function(){ var t=document.getElementById('dile-content-'+gradeId); if(t) t.focus(); },50);
 }
 
-function dilConfirmEdit(gradeId, itemId, cardIdx) {
+function dilConfirmEdit(gradeId, itemId) {
   var titleEl   = document.getElementById('dile-title-'+gradeId);
   var contentEl = document.getElementById('dile-content-'+gradeId);
   var notesEl   = document.getElementById('dile-notes-'+gradeId);
@@ -5306,30 +5398,34 @@ function renderDiluicoes(container) {
 
     // Suporte a subsecções
     if (grade.subsections && grade.subsections.length > 0) {
-      // Construir mapa global de índice de card para drag-and-drop
-      var allCards = [];
-      grade.subsections.forEach(function(sub){ (sub.cards||[]).forEach(function(c){ allCards.push(c); }); });
-
       grade.subsections.forEach(function(sub) {
         var safeSubLabel = sub.label.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-        html += '<div class="dil-subsec">';
-        html += '<div class="dil-subsec-title" style="display:flex;align-items:center;justify-content:space-between">'+esc(sub.label)+'<button class="ig-paste-btn" onclick="dilPasteCard(\''+grade.id+'\',\''+safeSubLabel+'\')" title="Colar card copiado aqui">📋 Colar</button></div>';
-        html += '<div class="ig-grid" data-gid="'+grade.id+'">';
+        // drop na seção inteira (fundo da seção quando grid está vazio ou soltar fora dos cards)
+        html += '<div class="dil-subsec"'
+              + ' ondragover="event.preventDefault();this.classList.add(\'ig-over-section\')"'
+              + ' ondragleave="this.classList.remove(\'ig-over-section\')"'
+              + ' ondrop="dilDropSection(event,\''+grade.id+'\',\''+safeSubLabel+'\')">';
+        html += '<div class="dil-subsec-title" style="display:flex;align-items:center;justify-content:space-between">'+esc(sub.label)
+              + '<span style="display:flex;gap:4px">'
+              + '<span style="font-size:10px;color:var(--gray400);font-weight:500;align-self:center">arrastar aqui ↓</span>'
+              + '<button class="ig-paste-btn" onclick="dilPasteCard(\''+grade.id+'\',\''+safeSubLabel+'\')" title="Colar card copiado aqui">📋 Colar</button>'
+              + '</span></div>';
+        html += '<div class="ig-grid" data-gid="'+grade.id+'" data-sublabel="'+esc(sub.label)+'">';
         (sub.cards||[]).forEach(function(card) {
-          var ci = allCards.findIndex(function(c){ return c.id === card.id; });
           var item = dilGetItem(card.id);
           if (!item) return;
+          var safeCardId = card.id.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
           html += '<div class="ig-cw" draggable="true"'
-                + ' ondragstart="dilDS(event,\''+grade.id+'\','+ci+')"'
-                + ' ondragover="dilDO(event,\''+grade.id+'\','+ci+')"'
+                + ' ondragstart="dilDS(event,\''+grade.id+'\',\''+safeCardId+'\',\''+safeSubLabel+'\')"'
+                + ' ondragover="dilDO(event,\''+grade.id+'\',\''+safeCardId+'\',\''+safeSubLabel+'\');event.stopPropagation()"'
                 + ' ondragleave="dilDL(event)"'
-                + ' ondrop="dilDrop(event,\''+grade.id+'\','+ci+')"'
+                + ' ondrop="dilDrop(event,\''+grade.id+'\',\''+safeCardId+'\',\''+safeSubLabel+'\')"'
                 + ' ondragend="dilDE(event)">'
                 + '<div class="ig-acts">'
-                + '<span class="ig-act" onclick="event.stopPropagation();dilChangeEmoji(\''+grade.id+'\','+ci+',this)" title="Trocar emoji">😊</span>'
-                + '<span class="ig-act" onclick="event.stopPropagation();dilCopyCard(\''+grade.id+'\','+ci+')" title="Copiar card para outra subsessão" style="font-size:13px">📋</span>'
-                + '<span class="ig-act" onclick="event.stopPropagation();dilOpenCardModal(\''+grade.id+'\','+ci+')" title="Editar card">✏️</span>'
-                + '<span class="ig-act del" onclick="event.stopPropagation();dilDelCard(\''+grade.id+'\','+ci+')" title="Excluir card">✕</span>'
+                + '<span class="ig-act" onclick="event.stopPropagation();dilChangeEmoji(\''+grade.id+'\',\''+safeCardId+'\',this)" title="Trocar emoji">😊</span>'
+                + '<span class="ig-act" onclick="event.stopPropagation();dilCopyCard(\''+grade.id+'\',\''+safeCardId+'\')" title="Copiar card para outra subsessão" style="font-size:13px">📋</span>'
+                + '<span class="ig-act" onclick="event.stopPropagation();dilOpenCardModal(\''+grade.id+'\',\''+safeCardId+'\')" title="Editar card">✏️</span>'
+                + '<span class="ig-act del" onclick="event.stopPropagation();dilDelCard(\''+grade.id+'\',\''+safeCardId+'\')" title="Excluir card">✕</span>'
                 + '</div>'
                 + '<div class="ig-card" data-cardid="'+card.id+'" onclick="dilOpenPanel(\''+grade.id+'\',\''+card.id+'\')" title="'+esc(item.title)+'">'
                 + '<span class="ig-card-e">'+card.emoji+'</span>'
@@ -5338,28 +5434,32 @@ function renderDiluicoes(container) {
                 + '</div>';
         });
         html += '</div>'; // ig-grid
-        html += '</div>'; // dil-subsec (sem + novo aqui)
+        html += '</div>'; // dil-subsec
       });
       // + novo UMA VEZ, no rodapé da grade
       html += '<div class="ig-add" onclick="dilOpenCardModal(\''+grade.id+'\',null)">＋ novo</div>';
     } else {
       // Fallback: grade sem subsecções (grid flat como antes)
-      html += '<div class="ig-grid" data-gid="'+grade.id+'">';
+      html += '<div class="ig-grid" data-gid="'+grade.id+'"'
+            + ' ondragover="event.preventDefault();this.classList.add(\'ig-over-section\')"'
+            + ' ondragleave="this.classList.remove(\'ig-over-section\')"'
+            + ' ondrop="dilDropSection(event,\''+grade.id+'\',null)">';
       var allCards2 = grade.cards || [];
-      allCards2.forEach(function(card, ci) {
+      allCards2.forEach(function(card) {
         var item = dilGetItem(card.id);
         if (!item) return;
+        var safeCardId = card.id.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
         html += '<div class="ig-cw" draggable="true"'
-              + ' ondragstart="dilDS(event,\''+grade.id+'\','+ci+')"'
-              + ' ondragover="dilDO(event,\''+grade.id+'\','+ci+')"'
+              + ' ondragstart="dilDS(event,\''+grade.id+'\',\''+safeCardId+'\',null)"'
+              + ' ondragover="dilDO(event,\''+grade.id+'\',\''+safeCardId+'\',null);event.stopPropagation()"'
               + ' ondragleave="dilDL(event)"'
-              + ' ondrop="dilDrop(event,\''+grade.id+'\','+ci+')"'
+              + ' ondrop="dilDrop(event,\''+grade.id+'\',\''+safeCardId+'\',null)"'
               + ' ondragend="dilDE(event)">'
               + '<div class="ig-acts">'
-              + '<span class="ig-act" onclick="event.stopPropagation();dilChangeEmoji(\''+grade.id+'\','+ci+',this)" title="Trocar emoji">😊</span>'
-              + '<span class="ig-act" onclick="event.stopPropagation();dilCopyCard(\''+grade.id+'\','+ci+')" title="Copiar card" style="font-size:13px">📋</span>'
-              + '<span class="ig-act" onclick="event.stopPropagation();dilOpenCardModal(\''+grade.id+'\','+ci+')" title="Editar card">✏️</span>'
-              + '<span class="ig-act del" onclick="event.stopPropagation();dilDelCard(\''+grade.id+'\','+ci+')" title="Excluir card">✕</span>'
+              + '<span class="ig-act" onclick="event.stopPropagation();dilChangeEmoji(\''+grade.id+'\',\''+safeCardId+'\',this)" title="Trocar emoji">😊</span>'
+              + '<span class="ig-act" onclick="event.stopPropagation();dilCopyCard(\''+grade.id+'\',\''+safeCardId+'\')" title="Copiar card" style="font-size:13px">📋</span>'
+              + '<span class="ig-act" onclick="event.stopPropagation();dilOpenCardModal(\''+grade.id+'\',\''+safeCardId+'\')" title="Editar card">✏️</span>'
+              + '<span class="ig-act del" onclick="event.stopPropagation();dilDelCard(\''+grade.id+'\',\''+safeCardId+'\')" title="Excluir card">✕</span>'
               + '</div>'
               + '<div class="ig-card" data-cardid="'+card.id+'" onclick="dilOpenPanel(\''+grade.id+'\',\''+card.id+'\')" title="'+esc(item.title)+'">'
               + '<span class="ig-card-e">'+card.emoji+'</span>'
@@ -5535,6 +5635,8 @@ function infoInjectCSS() {
     '.ig-cw.ig-dragging{opacity:.25;outline:2px dashed #2563eb;border-radius:9px}',
     '.ig-cw.ig-over{outline:2.5px solid #2563eb;border-radius:9px;background:rgba(37,99,235,.07)}',
     '.ig-cw.dil-copied-src{outline:2.5px solid #16a34a;border-radius:9px;background:rgba(22,163,74,.08)}',
+    '.dil-subsec.ig-over-section{background:rgba(37,99,235,.06);border-radius:8px;outline:2px dashed #2563eb}',
+    '.ig-grid.ig-over-section{background:rgba(37,99,235,.06);border-radius:8px;outline:2px dashed #2563eb;min-height:40px}',
     '.ig-paste-btn{background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.35);color:#15803d;border-radius:5px;padding:2px 8px;font-size:10px;font-weight:700;cursor:pointer;font-family:var(--sans);white-space:nowrap;flex-shrink:0;display:none}',
     '.dil-copied-src ~ * .ig-paste-btn, body.dil-has-copy .ig-paste-btn{display:inline-flex}',
 
@@ -5920,11 +6022,10 @@ function igOpenCardModal(gradeId, editIdx) {
     +'<input id="igc_title" class="field" value="'+esc(edItem?edItem.title:'')+'" placeholder="Ex: PCR — Protocolo ACLS" style="margin:0">'
     +'</div>'
 
-    // Conteúdo com barra de negrito + botão IA
+    // Conteúdo com barra de negrito
     +'<div>'
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'
     +'<label style="font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--gray500);font-family:var(--mono)">Conteúdo</label>'
-    +'<button type="button" onclick="igCardIaOrganizar()" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--sans)">🤖 Organizar com IA</button>'
     +'</div>'
     +'<div class="bold-toolbar" style="border-radius:6px 6px 0 0">'
     +'<button type="button" class="btb-btn" onclick="applyBold(\'igc_content\')"><b>B</b> Negrito</button>'
@@ -6644,13 +6745,10 @@ function renderInfo(container) {
             + ' ondragleave="igDL(event)"'
             + ' ondrop="igDrop(event,\''+grade.id+'\','+ci+')"'
             + ' ondragend="igDE(event)">'
-            // botões de editar/excluir (aparecem no hover)
+            // apenas botão de emoji no hover (editar/excluir ficam dentro do painel)
             + '<div class="ig-acts">'
             + '<span class="ig-act" onclick="event.stopPropagation();igChangeEmoji(\''+grade.id+'\','+ci+',this)" title="Trocar emoji">😊</span>'
-            + '<span class="ig-act" onclick="event.stopPropagation();igOpenCardModal(\''+grade.id+'\','+ci+')" title="Editar card">✏️</span>'
-            + '<span class="ig-act del" onclick="event.stopPropagation();igDelCard(\''+grade.id+'\','+ci+')" title="Excluir card">✕</span>'
             + '</div>'
-            // face do card
             + '<div class="ig-card" onclick="igOpenPanel(\''+grade.id+'\','+ci+')" title="'+esc(item.title)+'">'
             + '<span class="ig-card-e">'+card.emoji+'</span>'
             + '<span class="ig-card-l">'+esc(card.label)+'</span>'
